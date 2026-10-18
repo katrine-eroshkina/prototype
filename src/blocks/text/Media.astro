@@ -1,0 +1,18 @@
+---
+/** text:media — текст + картинка, универсальный блок */
+import Section, { type Theme } from '../Section.astro';
+import Placeholder from '../Placeholder.astro';
+import type { PageCtx } from '@/data/content';
+
+interface Props { ctx: PageCtx; theme?: Theme }
+const { theme = 'light' } = Astro.props;
+---
+<Section id="text" variant="media" {theme}>
+  <div class="grid items-center gap-10 lg:grid-cols-2 lg:gap-16">
+    <div>
+      <h2 class="text-3xl font-semibold tracking-tight text-balance md:text-4xl">Заголовок произвольного блока</h2>
+      <p class="mt-4 text-lg text-muted-foreground">Скриншоты, графики, фото процесса. Картинка может стоять слева или справа.</p>
+    </div>
+    <Placeholder class="aspect-[4/3]" />
+  </div>
+</Section>

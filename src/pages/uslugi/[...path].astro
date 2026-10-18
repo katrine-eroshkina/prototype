@@ -1,18 +1,15 @@
 ---
 /**
- * Все страницы услуг из src/data/sitemap.ts:
- *   /uslugi/konsalting/, /uslugi/digital/           — направление (T2)
- *   /uslugi/strategiya/                             — услуга консалтинга (T3)
- *   /uslugi/seo/                                    — категория digital (T2)
- *   /uslugi/seo/seo-audit/                          — услуга digital (T3)
- * Направление не входит в URL услуг: адреса короче и не меняются при перегруппировке.
+ * Страницы услуг (модель business-up и брифа):
+ *   /uslugi/[категория]/          — категория (T2, схема «category»)
+ *   /uslugi/[категория]/[услуга]/ — услуга (T3, схема «service»)
+ * Каталог /uslugi/ — отдельный файл index.astro.
  */
 import Base from '../../layouts/Base.astro';
-import LinkList from '../../components/wire/LinkList.astro';
-import { directions } from '../../data/sitemap';
+import { groups, catUrl, serviceUrl } from '../../data/sitemap';
 import type { RecipeKey } from '../../data/recipes';
+import type { Crumb, PageCtx } from '../../data/content';
 
-type Crumb = { href?: string; title: string };
 type Entry = {
   path: string;
   title: string;
@@ -20,44 +17,40 @@ type Entry = {
   recipe: RecipeKey;
   crumbs: Crumb[];
   draft?: boolean;
-  children?: { href: string; title: string; draft?: boolean }[];
+  ctx: Partial<PageCtx>;
 };
 
 export function getStaticPaths() {
   const entries: Entry[] = [];
   const root: Crumb = { href: '/uslugi/', title: 'Услуги' };
 
-  for (const dir of directions) {
-    const dirCrumb: Crumb = { href: `/uslugi/${dir.slug}/`, title: dir.title };
-    entries.push({
-      path: dir.slug,
-      title: dir.title,
-      template: 'listing',
-      recipe: 'direction',
-      crumbs: [root, { title: dir.title }],
-      children: dir.items.map((i) => ({ href: `/uslugi/${i.slug}/`, title: i.title, draft: i.draft })),
-    });
-
-    for (const item of dir.items) {
-      const isCategory = Boolean(item.children?.length);
+  for (const g of groups) {
+    for (const c of g.categories) {
+      const category = { slug: c.slug, title: c.title };
       entries.push({
-        path: item.slug,
-        title: item.title,
-        template: isCategory ? 'listing' : 'detail',
-        recipe: isCategory ? 'category' : 'service',
-        crumbs: [root, dirCrumb, { title: item.title }],
-        draft: item.draft,
-        children: item.children?.map((c) => ({ href: `/uslugi/${item.slug}/${c.slug}/`, title: c.title, draft: c.draft })),
+        path: c.slug,
+        title: c.title,
+        template: 'listing',
+        recipe: 'category',
+        crumbs: [root, { title: c.title }],
+        draft: c.draft,
+        ctx: {
+          kind: 'category',
+          direction: g.slug,
+          category,
+          children: c.children.map((s) => ({ href: serviceUrl(c, s), title: s.title, draft: s.draft })),
+        },
       });
 
-      for (const child of item.children ?? []) {
+      for (const s of c.children) {
         entries.push({
-          path: `${item.slug}/${child.slug}`,
-          title: child.title,
+          path: `${c.slug}/${s.slug}`,
+          title: s.title,
           template: 'detail',
           recipe: 'service',
-          crumbs: [root, dirCrumb, { href: `/uslugi/${item.slug}/`, title: item.title }, { title: child.title }],
-          draft: child.draft,
+          crumbs: [root, { href: catUrl(c), title: c.title }, { title: s.title }],
+          draft: s.draft,
+          ctx: { kind: 'service', direction: g.slug, category },
         });
       }
     }
@@ -66,8 +59,6 @@ export function getStaticPaths() {
   return entries.map((entry) => ({ params: { path: entry.path }, props: entry }));
 }
 
-const { title, template, recipe, crumbs, draft, children } = Astro.props as Entry;
+const { title, template, recipe, crumbs, draft, ctx } = Astro.props as Entry;
 ---
-<Base {title} {template} {recipe} {crumbs} {draft}>
-  {children && <LinkList items={children} />}
-</Base>
+<Base {title} {template} {recipe} {crumbs} {draft} {ctx} />

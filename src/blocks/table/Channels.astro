@@ -1,0 +1,24 @@
+---
+/** table:channels — сравнение каналов / факторы стоимости */
+import Section, { type Theme } from '../Section.astro';
+import SectionHead from '../SectionHead.astro';
+import { channelsTable, type PageCtx } from '@/data/content';
+
+interface Props { ctx: PageCtx; theme?: Theme }
+const { ctx, theme = 'light' } = Astro.props;
+---
+<Section id="table" variant="channels" {theme}>
+  <SectionHead eyebrow="Сравнение" title={ctx.kind === 'prices' ? 'От чего зависит цена' : 'Какой канал выбрать'} />
+  <div class="overflow-x-auto rounded-xl border bg-card shadow-sm">
+    <table class="w-full min-w-[640px] text-sm">
+      <thead class="border-b bg-muted/50">
+        <tr><th class="p-4 text-left font-medium text-muted-foreground"></th>{channelsTable.cols.map((c) => <th class="p-4 text-left font-semibold">{c}</th>)}</tr>
+      </thead>
+      <tbody class="divide-y">
+        {channelsTable.rows.map((r) => (
+          <tr><th class="p-4 text-left font-normal text-muted-foreground">{r.label}</th>{r.vals.map((v) => <td class="p-4">{v}</td>)}</tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</Section>

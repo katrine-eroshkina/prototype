@@ -1,11 +1,4 @@
 ---
 import Base from '../layouts/Base.astro';
-import LinkList from '../components/wire/LinkList.astro';
-import { directions } from '../data/sitemap';
 ---
-<Base title="Главная" template="home" recipe="home">
-  <LinkList
-    title="Направления"
-    items={directions.map((d) => ({ href: `/uslugi/${d.slug}/`, title: d.title }))}
-  />
-</Base>
+<Base title="Главная" template="home" recipe="home" />

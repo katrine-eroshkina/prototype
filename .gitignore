@@ -10,3 +10,10 @@ dist/
 
 # Скриншоты конкурентов и старого лого — только локально
 docs/competitors/
+
+# В GitHub — только сам прототип. Внутренние материалы остаются локально:
+docs/
+public/refs/
+public/logo-old.png
+src/pages/refs.astro
+.mcp.json

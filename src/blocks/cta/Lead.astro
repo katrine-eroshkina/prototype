@@ -1,0 +1,24 @@
+---
+/** cta:lead — лид-магнит (формат под вопросом) */
+import Section, { type Theme } from '../Section.astro';
+import { Input } from '@/components/ui/input';
+import { buttonVariants } from '@/components/ui/button';
+import type { PageCtx } from '@/data/content';
+
+interface Props { ctx: PageCtx; theme?: Theme }
+const { theme = 'alt' } = Astro.props;
+---
+<Section id="cta" variant="lead" {theme}>
+  <div class="grid gap-8 rounded-2xl border bg-card p-8 shadow-sm md:grid-cols-2 md:items-center md:p-12">
+    <div>
+      <p class="text-sm text-muted-foreground">Бесплатно</p>
+      <h2 class="mt-2 text-2xl font-semibold tracking-tight md:text-3xl">Экспресс-аудит маркетинга за 3 дня</h2>
+      <p class="mt-3 text-muted-foreground">Где теряются заявки и что исправить первым.</p>
+    </div>
+    <form class="flex flex-col gap-3 sm:flex-row" onsubmit="return false">
+      <Input placeholder="Сайт или Telegram" />
+      <button class={buttonVariants()} type="submit">Получить</button>
+    </form>
+  </div>
+  <p class="mt-4 font-mono text-xs text-draft">формат лид-магнита под вопросом</p>
+</Section>

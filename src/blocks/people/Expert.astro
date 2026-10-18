@@ -1,0 +1,28 @@
+---
+/** people:expert — основатель: фото, слово основателя, регалии, контакты (как у business-up, Косатки) */
+import Section, { type Theme } from '../Section.astro';
+import Placeholder from '../Placeholder.astro';
+import type { PageCtx } from '@/data/content';
+
+interface Props { ctx: PageCtx; theme?: Theme }
+const { theme = 'alt' } = Astro.props;
+const creds = ['XX лет в маркетинге', 'XXX проектов в B2B и B2C', 'Спикер отраслевых конференций', 'Сертификаты Яндекса и VK'];
+---
+<Section id="people" variant="expert" {theme}>
+  <div class="grid items-start gap-10 md:grid-cols-[340px_1fr] lg:gap-16">
+    <div>
+      <Placeholder class="aspect-[4/5]" label="фото основателя" />
+      <p class="mt-4 font-semibold">Имя Фамилия</p>
+      <p class="text-sm text-muted-foreground">Основатель burkov/agency</p>
+    </div>
+    <div>
+      <p class="text-sm text-muted-foreground">Слово основателя</p>
+      <blockquote class="mt-3 text-2xl font-medium leading-snug tracking-tight text-balance md:text-3xl">«Зачем мы существуем и чем отличаемся — 2–3 предложения от первого лица.»</blockquote>
+      <p class="mt-6 max-w-xl text-muted-foreground">Короткий абзац: как пришёл в маркетинг, почему собрал команду и за что отвечает лично.</p>
+      <ul class="mt-8 grid gap-3 border-t pt-6 sm:grid-cols-2">
+        {creds.map((c) => <li class="flex gap-2 text-sm"><span aria-hidden="true">✓</span>{c}</li>)}
+      </ul>
+      <p class="mt-6 text-sm">Написать лично: <span class="underline underline-offset-4">Telegram</span> · <span class="underline underline-offset-4">MAX</span></p>
+    </div>
+  </div>
+</Section>

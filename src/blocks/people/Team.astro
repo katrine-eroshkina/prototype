@@ -1,0 +1,30 @@
+---
+/** people:team — команда. На главной — 4 человека и ссылка «О компании». */
+import Section, { type Theme } from '../Section.astro';
+import SectionHead from '../SectionHead.astro';
+import Placeholder from '../Placeholder.astro';
+import type { PageCtx } from '@/data/content';
+
+interface Props { ctx: PageCtx; theme?: Theme }
+const { ctx, theme = 'light' } = Astro.props;
+const isHome = ctx.kind === 'home';
+const all = ['Основатель', 'Директор по маркетингу', 'Руководитель SEO', 'Руководитель рекламы', 'Аналитик', 'SMM-стратег', 'Специалист по Avito', 'Аккаунт-менеджер'];
+const roles = isHome ? all.slice(0, 4) : all;
+---
+<Section id="people" variant="team" {theme}>
+  <SectionHead
+    eyebrow="Команда"
+    title={isHome ? 'Команда, которая ведёт ваш проект' : 'Кто с вами работает'}
+    lead={isHome ? 'XX специалистов. За каждым проектом — команда.' : undefined}
+    action={isHome ? { href: '/o-kompanii/', label: 'О компании' } : undefined}
+  />
+  <div class="grid grid-cols-2 gap-6 lg:grid-cols-4">
+    {roles.map((r) => (
+      <div>
+        <Placeholder class="aspect-[4/5]" label="фото" />
+        <p class="mt-3 font-medium">Имя Фамилия</p>
+        <p class="text-sm text-muted-foreground">{r}</p>
+      </div>
+    ))}
+  </div>
+</Section>

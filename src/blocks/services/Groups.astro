@@ -1,0 +1,86 @@
+---
+/**
+ * services:groups — все категории по группам Консалтинг / Digital.
+ * Главная — раскрывашка: заголовок и кнопка «Все услуги» слева, аккордеон категорий справа.
+ * Каталог /uslugi/ — подробные карточки: что это → услуги → цена «от».
+ */
+import Section, { type Theme } from '../Section.astro';
+import ServicesAccordion from '@/components/islands/ServicesAccordion';
+import { badgeVariants } from '@/components/ui/badge';
+import { buttonVariants } from '@/components/ui/button';
+import { groups, catUrl, serviceUrl } from '@/data/sitemap';
+import { categoryAbout, categoryCard, type PageCtx } from '@/data/content';
+import { cn } from '@/lib/utils';
+import { url } from '@/lib/url';
+
+interface Props { ctx: PageCtx; theme?: Theme }
+const { ctx, theme = 'light' } = Astro.props;
+const compact = ctx.kind === 'home';
+
+// Данные для острова: ссылки уже с учётом base
+const accGroups = groups.map((g) => ({
+  title: g.title,
+  items: g.categories.map((c) => ({
+    slug: c.slug,
+    title: c.title,
+    href: url(catUrl(c)),
+    what: categoryAbout[c.slug]?.what,
+    when: categoryAbout[c.slug]?.when,
+    services: c.children.map((s) => ({ title: s.title, href: url(serviceUrl(c, s)) })),
+    // Цена-заглушка: консалтинг — разово, digital — в месяц
+    price: g.slug === 'digital' ? 'от XX 000 ₽/мес' : 'от XX 000 ₽',
+  })),
+}));
+---
+<Section id="services" variant="groups" {theme}>
+  {compact ? (
+    <div class="grid gap-10 lg:grid-cols-[1fr_1.4fr] lg:gap-16">
+      <div class="lg:sticky lg:top-24 lg:self-start">
+        <span class={badgeVariants({ variant: 'outline' })}>Услуги</span>
+        <h2 class="mt-3 text-3xl font-semibold tracking-tight md:text-4xl">Консалтинг и digital</h2>
+        <p class="mt-4 text-lg text-muted-foreground">Выберите, с чем нужна помощь.</p>
+        <a class:list={[buttonVariants({ size: 'lg' }), 'mt-8']} href={url('/uslugi/')}>Все услуги и цены →</a>
+      </div>
+      <ServicesAccordion client:visible groups={accGroups} ctaHref="#cta-form" />
+    </div>
+  ) : (
+    <div class="grid gap-14">
+      {groups.map((g, i) => (
+        <div id={g.slug} class="scroll-mt-20">
+          <div class="mb-6">
+            <h3 class="text-2xl font-semibold"><span class="mr-2 font-mono text-base text-muted-foreground">0{i + 1}</span>{g.title}</h3>
+            <p class="mt-1 text-muted-foreground">{g.lead}</p>
+          </div>
+          <div class={cn('grid gap-4 sm:grid-cols-2', g.categories.length > 2 && 'lg:grid-cols-3')}>
+            {g.categories.map((c) => {
+              const info = categoryCard[c.slug];
+              return (
+                <a href={url(catUrl(c))} class="group flex flex-col rounded-xl border bg-card p-6 shadow-sm transition hover:shadow-md">
+                  <div class="flex items-start justify-between gap-4">
+                    <h4 class="text-lg font-semibold">{c.title}</h4>
+                    <span class="grid size-8 shrink-0 place-items-center rounded-full border text-muted-foreground transition group-hover:bg-primary group-hover:text-primary-foreground" aria-hidden="true">→</span>
+                  </div>
+                  {info && <p class="mt-2 text-sm text-muted-foreground">{info.what}</p>}
+                  {c.children.length > 0 && (
+                    <div class="mt-4 flex flex-wrap gap-1.5">
+                      {c.children.map((s) => <span class={badgeVariants({ variant: 'outline' })}>{s.title}</span>)}
+                    </div>
+                  )}
+                  <span class="mt-auto pt-5 text-sm font-medium">от XX 000 ₽</span>
+                </a>
+              );
+            })}
+            {/* Если последний ряд неполный — карточка-подсказка вместо пустоты */}
+            {g.categories.length > 2 && g.categories.length % 3 !== 0 && (
+              <a href="#cta-form" class={cn('flex flex-col justify-center rounded-xl border border-dashed p-6 transition hover:bg-muted/50', g.categories.length % 3 === 1 && 'lg:col-span-2')}>
+                <span class="text-lg font-semibold">Не знаете, с чего начать?</span>
+                <span class="mt-2 text-sm text-muted-foreground">Расскажите о задаче — подскажем, какой канал окупится быстрее.</span>
+                <span class="mt-4 text-sm font-medium">Обсудить задачу →</span>
+              </a>
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
+  )}
+</Section>

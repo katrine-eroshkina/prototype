@@ -1,0 +1,24 @@
+---
+/** hero:page — внутренняя страница: крошки, заголовок, лид, кнопки */
+import Section, { type Theme } from '../Section.astro';
+import Breadcrumbs from '@/components/wire/Breadcrumbs.astro';
+import { buttonVariants } from '@/components/ui/button';
+import { heroLead, type PageCtx } from '@/data/content';
+import { url } from '@/lib/url';
+
+interface Props { ctx: PageCtx; theme?: Theme }
+const { ctx, theme = 'light' } = Astro.props;
+const lead = heroLead(ctx);
+const showCta = !['text', 'system', 'blog', 'casesList', 'contacts'].includes(ctx.kind);
+---
+<Section id="hero" variant="page" {theme} class="pb-12 pt-10 md:pb-16 md:pt-14">
+  {ctx.crumbs && <Breadcrumbs items={ctx.crumbs} />}
+  <h1 class="mt-6 max-w-3xl text-4xl font-semibold tracking-tight text-balance md:text-5xl">{ctx.title}</h1>
+  {lead && <p class="mt-5 max-w-2xl text-lg text-muted-foreground text-pretty">{lead}</p>}
+  {showCta && (
+    <div class="mt-8 flex flex-wrap gap-3">
+      <a class={buttonVariants({ size: 'lg' })} href="#cta-form">Обсудить задачу</a>
+      <a class={buttonVariants({ size: 'lg', variant: 'outline' })} href={url('/tseny/')}>Цены</a>
+    </div>
+  )}
+</Section>

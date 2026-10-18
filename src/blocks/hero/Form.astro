@@ -1,0 +1,43 @@
+---
+/** hero:form — посадочная услуги: оффер и факты слева, короткая форма справа */
+import Section, { type Theme } from '../Section.astro';
+import Breadcrumbs from '@/components/wire/Breadcrumbs.astro';
+import { Input } from '@/components/ui/input';
+import { buttonVariants } from '@/components/ui/button';
+import { heroLead, type PageCtx } from '@/data/content';
+
+interface Props { ctx: PageCtx; theme?: Theme }
+const { ctx, theme = 'light' } = Astro.props;
+const facts = [
+  { v: 'от XX 000 ₽', l: 'стоимость' },
+  { v: 'X недель', l: 'срок' },
+  { v: 'договор', l: 'с KPI' },
+];
+---
+<Section id="hero" variant="form" {theme} class="pt-10 md:pt-14">
+  {ctx.crumbs && <Breadcrumbs items={ctx.crumbs} />}
+  <div class="mt-6 grid gap-12 lg:grid-cols-[1fr_400px] lg:items-start">
+    <div>
+      <h1 class="text-4xl font-semibold tracking-tight text-balance md:text-5xl">{ctx.title}</h1>
+      <p class="mt-5 max-w-xl text-lg text-muted-foreground text-pretty">{heroLead(ctx)}</p>
+      <dl class="mt-10 grid max-w-lg grid-cols-3 divide-x border-y">
+        {facts.map((f) => (
+          <div class="px-4 py-4 first:pl-0">
+            <dt class="text-xs text-muted-foreground">{f.l}</dt>
+            <dd class="mt-1 font-semibold">{f.v}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+    <form class="rounded-xl border bg-card p-6 shadow-sm" onsubmit="return false">
+      <p class="font-semibold">Получить расчёт</p>
+      <p class="mt-1 text-sm text-muted-foreground">Ответим в течение рабочего дня</p>
+      <div class="mt-5 grid gap-3">
+        <Input placeholder="Имя" />
+        <Input placeholder="Телефон или Telegram" />
+        <Input placeholder="Сайт, если есть" />
+        <button class={buttonVariants({ size: 'lg' })} type="submit">Отправить</button>
+      </div>
+    </form>
+  </div>
+</Section>

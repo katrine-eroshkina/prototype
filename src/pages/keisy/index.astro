@@ -1,8 +1,4 @@
 ---
 import Base from '../../layouts/Base.astro';
-import LinkList from '../../components/wire/LinkList.astro';
-import { cases } from '../../data/sitemap';
 ---
-<Base title="Кейсы" template="listing" recipe="casesList" crumbs={[{ title: 'Кейсы' }]}>
-  <LinkList items={cases.map((c) => ({ href: `/keisy/${c.slug}/`, title: c.title }))} />
-</Base>
+<Base title="Кейсы" template="listing" recipe="casesList" crumbs={[{ title: 'Кейсы' }]} />

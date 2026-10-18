@@ -1,0 +1,17 @@
+---
+/** text:article — статья или юридический текст, колонка до 70 знаков */
+import Section, { type Theme } from '../Section.astro';
+import type { PageCtx } from '@/data/content';
+
+interface Props { ctx: PageCtx; theme?: Theme }
+const { theme = 'light' } = Astro.props;
+---
+<Section id="text" variant="article" {theme} class="pt-4">
+  <article class="max-w-[70ch] space-y-4 text-lg leading-relaxed text-muted-foreground [&_h2]:mt-10 [&_h2]:text-2xl [&_h2]:font-semibold [&_h2]:text-foreground">
+    <h2>1. Заголовок раздела</h2>
+    <p>Текст статьи или документа. Ширина колонки — до 70 знаков, чтобы удобно читать.</p>
+    <p>Абзац текста. Абзац текста. Абзац текста. Абзац текста.</p>
+    <h2>2. Заголовок раздела</h2>
+    <ul class="list-disc space-y-2 pl-6"><li>Пункт списка</li><li>Пункт списка</li></ul>
+  </article>
+</Section>

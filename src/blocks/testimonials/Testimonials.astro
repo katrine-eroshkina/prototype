@@ -1,0 +1,23 @@
+---
+/** testimonials — отзывы карточками с цитатой и автором */
+import Section, { type Theme } from '../Section.astro';
+import SectionHead from '../SectionHead.astro';
+import type { PageCtx } from '@/data/content';
+
+interface Props { ctx: PageCtx; theme?: Theme }
+const { theme = 'light' } = Astro.props;
+---
+<Section id="testimonials" {theme}>
+  <SectionHead eyebrow="Отзывы" title="Что говорят клиенты" />
+  <div class="grid gap-4 md:grid-cols-3">
+    {[1, 2, 3].map(() => (
+      <figure class="flex flex-col justify-between rounded-xl border bg-card p-6 shadow-sm">
+        <blockquote class="text-pretty">«Отзыв в 2–3 предложения: задача, что изменилось и одна цифра.»</blockquote>
+        <figcaption class="mt-6 flex items-center gap-3">
+          <span class="size-10 rounded-full bg-muted"></span>
+          <span><span class="block text-sm font-semibold">Имя Фамилия</span><span class="block text-xs text-muted-foreground">Должность, компания</span></span>
+        </figcaption>
+      </figure>
+    ))}
+  </div>
+</Section>

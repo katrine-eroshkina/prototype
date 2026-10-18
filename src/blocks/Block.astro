@@ -1,0 +1,80 @@
+---
+/**
+ * Диспетчер: «блок:вариант» из recipes.ts → компонент src/blocks/<блок>/<Вариант>.astro.
+ * Если вариант не указан, берётся первый (основной).
+ * Фон: у акцентных вариантов свой (тёмный/серый), остальные чередуются светлый ↔ серый.
+ */
+import type { PageCtx } from '../data/content';
+import type { Theme } from './Section.astro';
+import WireBlock from '../components/wire/WireBlock.astro';
+
+import HeroMain from './hero/Main.astro';
+import HeroPage from './hero/Page.astro';
+import HeroForm from './hero/Form.astro';
+import HeroCase from './hero/Case.astro';
+import HeroAbout from './hero/About.astro';
+import ServicesGroups from './services/Groups.astro';
+import ServicesChildren from './services/Children.astro';
+import CardsSituations from './cards/Situations.astro';
+import CardsBenefits from './cards/Benefits.astro';
+import CardsAudience from './cards/Audience.astro';
+import CardsIncludes from './cards/Includes.astro';
+import CardsValues from './cards/Values.astro';
+import Process from './process/Process.astro';
+import ProcessHistory from './process/History.astro';
+import Pricing from './pricing/Pricing.astro';
+import Stats from './stats/Stats.astro';
+import CasesGrid from './cases/Grid.astro';
+import CasesMetrics from './cases/Metrics.astro';
+import CasesStory from './cases/Story.astro';
+import CasesPosts from './cases/Posts.astro';
+import CasesProblems from './cases/Problems.astro';
+import PeopleTeam from './people/Team.astro';
+import PeopleExpert from './people/Expert.astro';
+import LogosClients from './logos/Clients.astro';
+import LogosDocuments from './logos/Documents.astro';
+import Testimonials from './testimonials/Testimonials.astro';
+import Faq from './faq/Faq.astro';
+import CtaForm from './cta/Form.astro';
+import CtaBanner from './cta/Banner.astro';
+import CtaLead from './cta/Lead.astro';
+import CtaCross from './cta/Cross.astro';
+import TextMedia from './text/Media.astro';
+import TextStatement from './text/Statement.astro';
+import TextArticle from './text/Article.astro';
+import Contacts from './contacts/Contacts.astro';
+import Geography from './geography/Geography.astro';
+import TableChannels from './table/Channels.astro';
+
+interface Props { id: string; ctx: PageCtx; index: number }
+const { id, ctx, index } = Astro.props;
+
+/** Библиотека: блок → варианты (первый — основной) */
+const library: Record<string, Record<string, any>> = {
+  hero: { main: HeroMain, page: HeroPage, form: HeroForm, case: HeroCase, about: HeroAbout },
+  services: { groups: ServicesGroups, children: ServicesChildren },
+  cards: { situations: CardsSituations, includes: CardsIncludes, benefits: CardsBenefits, audience: CardsAudience, values: CardsValues },
+  process: { default: Process, history: ProcessHistory },
+  pricing: { default: Pricing },
+  stats: { default: Stats },
+  cases: { grid: CasesGrid, metrics: CasesMetrics, story: CasesStory, posts: CasesPosts, problems: CasesProblems },
+  people: { team: PeopleTeam, expert: PeopleExpert },
+  logos: { clients: LogosClients, documents: LogosDocuments },
+  testimonials: { default: Testimonials },
+  faq: { default: Faq },
+  cta: { form: CtaForm, banner: CtaBanner, lead: CtaLead, cross: CtaCross },
+  text: { media: TextMedia, statement: TextStatement, article: TextArticle },
+  contacts: { default: Contacts },
+  geography: { default: Geography },
+  table: { channels: TableChannels },
+};
+
+const [block, variant] = id.split(':');
+const variants = library[block];
+const Component = variants ? (variant ? variants[variant] : Object.values(variants)[0]) : undefined;
+
+/** Варианты со своим фоном — им тему не передаём */
+const selfThemed = new Set(['text:statement', 'cta:form', 'cta:banner', 'cta:lead', 'cta:cross', 'cases:metrics', 'people:expert']);
+const theme: Theme | undefined = block === 'hero' ? 'light' : selfThemed.has(id) ? undefined : index % 2 ? 'alt' : 'light';
+---
+{Component ? <Component {ctx} {theme} /> : <div class="container"><WireBlock {id} /></div>}

@@ -1,0 +1,42 @@
+---
+/**
+ * hero:about — первый экран «О компании»: заголовок, текст, ссылка на PDF-презентацию
+ * и строка KPI под ними.
+ */
+import Section, { type Theme } from '../Section.astro';
+import Breadcrumbs from '@/components/wire/Breadcrumbs.astro';
+import { badgeVariants } from '@/components/ui/badge';
+import type { PageCtx } from '@/data/content';
+
+interface Props { ctx: PageCtx; theme?: Theme }
+const { ctx, theme = 'light' } = Astro.props;
+const kpi = [
+  { v: 'XX', l: 'специалистов в команде' },
+  { v: 'XXX', l: 'проектов с 20XX года' },
+  { v: 'XX %', l: 'клиентов с нами дольше года' },
+  { v: '2', l: 'направления: консалтинг и digital' },
+];
+---
+<Section id="hero" variant="about" {theme} class="pt-10 md:pt-14">
+  {ctx.crumbs && <Breadcrumbs items={ctx.crumbs} />}
+  <div class="mt-6 grid gap-6 lg:grid-cols-[1.3fr_1fr] lg:items-end">
+    <div>
+      <span class={badgeVariants({ variant: 'secondary' })}>О компании</span>
+      <h1 class="mt-4 text-4xl font-semibold tracking-tight text-balance md:text-6xl">Команда, которая считает маркетинг в деньгах</h1>
+    </div>
+    <div class="lg:pb-2">
+      <p class="text-lg text-muted-foreground">Консалтинг и digital под одной крышей: сначала разбираемся в бизнесе, потом приводим клиентов.</p>
+      <a class="mt-4 inline-flex items-center gap-2 text-sm font-medium underline underline-offset-4" href="#">Скачать презентацию компании (PDF)</a>
+    </div>
+  </div>
+
+  <dl class="mt-12 grid grid-cols-2 gap-y-6 border-y py-8 lg:grid-cols-4 lg:divide-x">
+    {kpi.map((k) => (
+      <div class="lg:px-8 lg:first:pl-0">
+        <dd class="text-4xl font-semibold tracking-tight md:text-5xl">{k.v}</dd>
+        <dt class="mt-2 text-sm text-muted-foreground">{k.l}</dt>
+      </div>
+    ))}
+  </dl>
+  <p class="mt-4 font-mono text-xs text-draft">цифры — заглушки</p>
+</Section>

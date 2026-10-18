@@ -1,0 +1,110 @@
+---
+/**
+ * cases:grid — кейсы.
+ * На страницах-анонсах (главная, категория) — заголовок + 3 карточки.
+ * На /keisy/ — фильтр по услугам, крупный первый кейс, сетка, «Показать ещё».
+ */
+import Section, { type Theme } from '../Section.astro';
+import SectionHead from '../SectionHead.astro';
+import Placeholder from '../Placeholder.astro';
+import { badgeVariants } from '@/components/ui/badge';
+import { buttonVariants } from '@/components/ui/button';
+import { listCases, sampleCases, type PageCtx } from '@/data/content';
+import { cases as caseLinks } from '@/data/sitemap';
+import { cn } from '@/lib/utils';
+import { url } from '@/lib/url';
+
+interface Props { ctx: PageCtx; theme?: Theme }
+const { ctx, theme = 'light' } = Astro.props;
+const isList = ctx.kind === 'casesList';
+const href = (i: number) => url(`/keisy/${caseLinks[i % caseLinks.length].slug}/`);
+const filters = ['Все', ...new Set(listCases.map((c) => c.tag))];
+const [featured, ...rest] = listCases;
+---
+{isList ? (
+  /* Список кейсов: тот же фон, что у первого экрана, без разрыва */
+  <Section id="cases" variant="grid" theme="light" class="pt-8 md:pt-10">
+    <div class="flex flex-wrap items-center justify-between gap-4 border-b pb-6">
+      <div class="inline-flex flex-wrap gap-1 rounded-lg border bg-muted/50 p-1" role="group" aria-label="Фильтр по услугам">
+        {filters.map((f, i) => (
+          <button type="button" data-filter={f} aria-pressed={i === 0 ? 'true' : 'false'}
+            class="rounded-md px-3 py-1.5 text-sm text-muted-foreground transition hover:text-foreground aria-pressed:bg-background aria-pressed:text-foreground aria-pressed:shadow-sm">{f}</button>
+        ))}
+      </div>
+      <span class="text-sm text-muted-foreground"><span data-count>{listCases.length}</span> проектов</span>
+    </div>
+
+    <!-- Крупный первый кейс -->
+    <a href={href(0)} data-tag={featured.tag} class="group mt-8 grid overflow-hidden rounded-xl border bg-card shadow-sm transition hover:shadow-md lg:grid-cols-2">
+      <Placeholder class="aspect-[16/10] rounded-none border-0 lg:aspect-auto lg:min-h-80" label="обложка кейса" />
+      <div class="flex flex-col p-6 md:p-10">
+        <div class="flex flex-wrap gap-2">
+          <span class={badgeVariants()}>{featured.tag}</span>
+          <span class={badgeVariants({ variant: 'outline' })}>{featured.industry}</span>
+        </div>
+        <h2 class="mt-5 text-2xl font-semibold tracking-tight text-balance md:text-3xl group-hover:underline">{featured.title}</h2>
+        <p class="mt-3 text-muted-foreground">{featured.lead}</p>
+        <div class="mt-auto pt-8">
+          <p class="text-4xl font-semibold tracking-tight"><span class="text-muted-foreground">{featured.from}</span> → {featured.to}</p>
+          <p class="mt-1 text-sm text-muted-foreground">{featured.unit} · за {featured.period}</p>
+        </div>
+      </div>
+    </a>
+
+    <!-- Остальные -->
+    <div class="mt-6 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      {rest.map((c, i) => (
+        <a href={href(i + 1)} data-tag={c.tag} class="group flex flex-col overflow-hidden rounded-xl border bg-card shadow-sm transition hover:shadow-md">
+          <Placeholder class="aspect-[16/10] rounded-none border-0 border-b" label="обложка кейса" />
+          <div class="flex flex-1 flex-col p-6">
+            <div class="flex flex-wrap gap-2">
+              <span class={badgeVariants()}>{c.tag}</span>
+              <span class={badgeVariants({ variant: 'outline' })}>{c.industry}</span>
+            </div>
+            <h3 class="mt-4 text-lg font-semibold group-hover:underline">{c.title}</h3>
+            <div class="mt-auto border-t pt-4">
+              <p class="text-2xl font-semibold tracking-tight"><span class="text-muted-foreground">{c.from}</span> → {c.to}</p>
+              <p class="mt-0.5 text-sm text-muted-foreground">{c.unit} · за {c.period}</p>
+            </div>
+          </div>
+        </a>
+      ))}
+    </div>
+
+    <div class="mt-10 flex justify-center">
+      <button type="button" class={buttonVariants({ variant: 'outline', size: 'lg' })}>Показать ещё</button>
+    </div>
+  </Section>
+) : (
+  <Section id="cases" variant="grid" {theme}>
+    {ctx.kind === 'case'
+      ? <SectionHead eyebrow="Кейсы" title="Подобрали для вас" action={{ href: '/keisy/', label: 'Больше кейсов' }} />
+      : <SectionHead eyebrow="Кейсы" title="Результаты в цифрах" action={{ href: '/keisy/', label: 'Все кейсы' }} />}
+    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      {sampleCases.map((c, i) => (
+        <a class={cn('group flex flex-col overflow-hidden rounded-xl border bg-card shadow-sm transition hover:shadow-md')} href={href(i)}>
+          <Placeholder class="aspect-[16/10] rounded-none border-0 border-b" label="обложка кейса" />
+          <div class="flex flex-1 flex-col p-6">
+            <span class={cn(badgeVariants({ variant: 'secondary' }), 'self-start')}>{c.tag}</span>
+            <h3 class="mt-4 text-lg font-semibold group-hover:underline">{c.title}</h3>
+            <p class="mt-auto pt-4 text-sm text-muted-foreground">{c.from} → <b class="text-foreground">{c.to}</b> {c.unit} · {c.period}</p>
+          </div>
+        </a>
+      ))}
+    </div>
+  </Section>
+)}
+
+<script>
+  // Фильтр кейсов по услуге (только на /keisy/)
+  const btns = document.querySelectorAll<HTMLButtonElement>('[data-filter]');
+  const cards = document.querySelectorAll<HTMLElement>('[data-tag]');
+  const count = document.querySelector<HTMLElement>('[data-count]');
+  btns.forEach((b) => b.addEventListener('click', () => {
+    const f = b.dataset.filter;
+    btns.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    let n = 0;
+    cards.forEach((c) => { const show = f === 'Все' || c.dataset.tag === f; c.hidden = !show; if (show) n++; });
+    if (count) count.textContent = String(n);
+  }));
+</script>

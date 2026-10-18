@@ -1,0 +1,32 @@
+---
+/** hero:main — главная: оффер слева, изображение справа, логотипы клиентов снизу */
+import Section, { type Theme } from '../Section.astro';
+import Placeholder from '../Placeholder.astro';
+import { badgeVariants } from '@/components/ui/badge';
+import { buttonVariants } from '@/components/ui/button';
+import { homeHero, type PageCtx } from '@/data/content';
+import { url } from '@/lib/url';
+
+interface Props { ctx: PageCtx; theme?: Theme }
+const { theme = 'light' } = Astro.props;
+---
+<Section id="hero" variant="main" {theme} class="pt-12 md:pt-20">
+  <div class="grid items-center gap-12 lg:grid-cols-2">
+    <div>
+      <span class={badgeVariants({ variant: 'secondary' })}>{homeHero.badge}</span>
+      <h1 class="mt-5 text-4xl font-semibold tracking-tight text-balance sm:text-5xl lg:text-6xl">{homeHero.title}</h1>
+      <p class="mt-6 max-w-xl text-lg text-muted-foreground text-pretty">{homeHero.lead}</p>
+      <div class="mt-8 flex flex-wrap gap-3">
+        <a class={buttonVariants({ size: 'lg' })} href="#cta-form">{homeHero.primary}</a>
+        <a class={buttonVariants({ size: 'lg', variant: 'outline' })} href={url('/keisy/')}>{homeHero.secondary}</a>
+      </div>
+    </div>
+    <Placeholder class="aspect-[4/3]" label="визуал первого экрана" />
+  </div>
+  <div class="mt-16 border-t pt-8">
+    <p class="text-sm text-muted-foreground">Нам доверяют</p>
+    <div class="mt-4 grid grid-cols-3 gap-4 sm:grid-cols-6">
+      {Array.from({ length: 6 }, () => <div class="h-8 rounded bg-muted"></div>)}
+    </div>
+  </div>
+</Section>

@@ -1,0 +1,31 @@
+---
+/** cta:form — финальная форма заявки на тёмном фоне. Последний блок перед подвалом. */
+import Section, { type Theme } from '../Section.astro';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { buttonVariants } from '@/components/ui/button';
+import type { PageCtx } from '@/data/content';
+
+interface Props { ctx: PageCtx; theme?: Theme }
+const { theme = 'dark' } = Astro.props;
+---
+<Section id="cta" variant="form" {theme}>
+  <div class="grid gap-12 lg:grid-cols-2 lg:items-center">
+    <div>
+      <h2 class="text-3xl font-semibold tracking-tight text-balance md:text-5xl">Расскажите о задаче</h2>
+      <p class="mt-4 text-lg text-muted-foreground">Ответим в течение рабочего дня. Первая консультация — бесплатно.</p>
+      <div class="mt-8 flex flex-wrap gap-3">
+        {['Telegram', 'MAX', 'Позвонить'].map((m) => <a class={buttonVariants({ variant: 'outline' })} href="#">{m}</a>)}
+      </div>
+    </div>
+    <form class="grid gap-3 rounded-xl border bg-card p-6 md:p-8" onsubmit="return false">
+      <div class="grid gap-3 sm:grid-cols-2">
+        <Input placeholder="Имя" />
+        <Input placeholder="Телефон или Telegram" />
+      </div>
+      <Textarea placeholder="Коротко о задаче" rows={4} />
+      <label class="flex items-center gap-2 text-xs text-muted-foreground"><input type="checkbox" /> Согласен с политикой обработки данных</label>
+      <button class={buttonVariants({ size: 'lg' })} type="submit">Отправить</button>
+    </form>
+  </div>
+</Section>

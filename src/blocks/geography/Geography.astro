@@ -1,0 +1,29 @@
+---
+/**
+ * geography — города, где работаем. Блок главной, отдельного раздела нет.
+ * Только реальные города (список ждём от заказчика).
+ */
+import Section, { type Theme } from '../Section.astro';
+import SectionHead from '../SectionHead.astro';
+import Placeholder from '../Placeholder.astro';
+import { regions } from '@/data/sitemap';
+import type { PageCtx } from '@/data/content';
+
+interface Props { ctx: PageCtx; theme?: Theme }
+const { theme = 'light' } = Astro.props;
+---
+<Section id="geography" {theme}>
+  <SectionHead eyebrow="География" title="Где мы работаем" lead="Нет вашего города? Работаем удалённо по всей России." />
+  <div class="grid gap-10 lg:grid-cols-[1fr_1.2fr]">
+    <ul class="divide-y border-y">
+      {regions.map((r) => (
+        <li class="flex items-center justify-between py-4">
+          <span class="font-medium">{r.title}</span>
+          <span class="text-sm text-muted-foreground">офис / X проектов</span>
+        </li>
+      ))}
+    </ul>
+    <Placeholder class="min-h-64" label="карта с городами" />
+  </div>
+  <p class="mt-4 font-mono text-xs text-draft">города-примеры — ждём список от заказчика</p>
+</Section>

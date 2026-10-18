@@ -1,0 +1,48 @@
+---
+/**
+ * hero:case — первый экран кейса (по образцу business-up):
+ * заголовок, подзаголовок с результатом, паспорт проекта, карточки «Было / Стало».
+ */
+import Section, { type Theme } from '../Section.astro';
+import Breadcrumbs from '@/components/wire/Breadcrumbs.astro';
+import { badgeVariants } from '@/components/ui/badge';
+import { caseStudy as cs, type PageCtx } from '@/data/content';
+
+interface Props { ctx: PageCtx; theme?: Theme }
+const { ctx, theme = 'light' } = Astro.props;
+---
+<Section id="hero" variant="case" {theme} class="pt-10 md:pt-14">
+  {ctx.crumbs && <Breadcrumbs items={ctx.crumbs} />}
+  <span class:list={[badgeVariants({ variant: 'secondary' }), 'mt-6']}>{cs.tag}</span>
+  <h1 class="mt-4 max-w-4xl text-4xl font-semibold tracking-tight text-balance md:text-5xl">{ctx.title}</h1>
+  <p class="mt-5 max-w-2xl text-lg text-muted-foreground">{cs.subtitle}</p>
+
+  <dl class="mt-10 grid grid-cols-2 border-y md:grid-cols-5 md:divide-x">
+    {cs.passport.map(([k, v]) => (
+      <div class="py-4 md:px-6 md:first:pl-0">
+        <dt class="text-xs text-muted-foreground">{k}</dt>
+        <dd class="mt-1 font-medium">{v}</dd>
+      </div>
+    ))}
+    <div class="py-4 md:px-6">
+      <dt class="text-xs text-muted-foreground">Клиент</dt>
+      <dd class="mt-1 h-6 w-28 rounded bg-muted" aria-label="логотип клиента"></dd>
+    </div>
+  </dl>
+
+  <div class="mt-8 grid gap-4 md:grid-cols-2">
+    {[{ t: 'Было', rows: cs.before, dark: false }, { t: 'Стало', rows: cs.after, dark: true }].map((col) => (
+      <div class:list={['rounded-xl border p-6 md:p-8', col.dark ? 'bg-primary text-primary-foreground' : 'bg-card']}>
+        <p class="text-sm font-medium uppercase tracking-wider opacity-70">{col.t}</p>
+        <dl class="mt-6 grid grid-cols-3 gap-4">
+          {col.rows.map(([k, v]) => (
+            <div>
+              <dd class="text-3xl font-semibold tracking-tight md:text-4xl">{v}</dd>
+              <dt class="mt-1 text-xs opacity-70">{k}</dt>
+            </div>
+          ))}
+        </dl>
+      </div>
+    ))}
+  </div>
+</Section>

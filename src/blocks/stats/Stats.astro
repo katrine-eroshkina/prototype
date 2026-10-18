@@ -1,0 +1,19 @@
+---
+/** stats — цифры одной строкой с разделителями. Правило: всегда с базой или периодом. */
+import Section, { type Theme } from '../Section.astro';
+import { stats, type PageCtx } from '@/data/content';
+
+interface Props { ctx: PageCtx; theme?: Theme }
+const { theme = 'light' } = Astro.props;
+---
+<Section id="stats" {theme} class="py-12 md:py-16">
+  <dl class="grid grid-cols-2 gap-y-8 lg:grid-cols-4 lg:divide-x">
+    {stats.map((s) => (
+      <div class="lg:px-8 lg:first:pl-0">
+        <dd class="text-4xl font-semibold tracking-tight md:text-5xl">{s.v}</dd>
+        <dt class="mt-2 text-sm text-muted-foreground">{s.l}</dt>
+      </div>
+    ))}
+  </dl>
+  <p class="mt-6 font-mono text-xs text-draft">цифры-заглушки — ждём данные заказчика</p>
+</Section>

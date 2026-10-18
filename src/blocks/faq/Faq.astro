@@ -1,0 +1,18 @@
+---
+/** faq — заголовок слева, аккордеон shadcn справа (React-остров) */
+import Section, { type Theme } from '../Section.astro';
+import FaqAccordion from '@/components/islands/FaqAccordion';
+import { faq, type PageCtx } from '@/data/content';
+
+interface Props { ctx: PageCtx; theme?: Theme }
+const { ctx, theme = 'light' } = Astro.props;
+---
+<Section id="faq" {theme}>
+  <div class="grid gap-10 lg:grid-cols-[1fr_1.4fr] lg:gap-16">
+    <div>
+      <h2 class="text-3xl font-semibold tracking-tight md:text-4xl">Частые вопросы</h2>
+      <p class="mt-4 text-muted-foreground">Не нашли ответ? <a class="underline underline-offset-4" href="#cta-form">Спросите нас</a>.</p>
+    </div>
+    <FaqAccordion client:visible items={faq(ctx)} />
+  </div>
+</Section>

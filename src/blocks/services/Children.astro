@@ -1,0 +1,29 @@
+---
+/** services:children — услуги внутри категории, карточками. Обязателен на странице категории. */
+import Section, { type Theme } from '../Section.astro';
+import SectionHead from '../SectionHead.astro';
+import type { PageCtx } from '@/data/content';
+import { url } from '@/lib/url';
+
+interface Props { ctx: PageCtx; theme?: Theme }
+const { ctx, theme = 'light' } = Astro.props;
+const items = ctx.children ?? [];
+const cards = items.length ? items : [1, 2, 3].map(() => ({ href: '', title: 'Услуга категории' }));
+---
+<Section id="services" variant="children" {theme}>
+  <SectionHead eyebrow={ctx.title} title="Что входит в направление" />
+  <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    {cards.map((s) => {
+      const Tag = s.href ? 'a' : 'div';
+      return (
+        <Tag href={s.href ? url(s.href) : undefined} class="group flex flex-col rounded-xl border bg-card p-6 shadow-sm transition hover:shadow-md">
+          <span class="size-10 rounded-lg bg-muted"></span>
+          <span class="mt-5 font-semibold">{s.title}</span>
+          <span class="mt-2 text-sm text-muted-foreground">Результат услуги в одной строке.</span>
+          <span class="mt-6 text-sm font-medium">от XX 000 ₽ <span class="inline-block transition group-hover:translate-x-1">→</span></span>
+        </Tag>
+      );
+    })}
+  </div>
+  {!items.length && <p class="mt-4 font-mono text-xs text-draft">перечень услуг категории ждём от заказчика</p>}
+</Section>

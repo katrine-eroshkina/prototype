@@ -1,0 +1,61 @@
+---
+/**
+ * cards:includes — состав работ.
+ * Разделы с конкретными пунктами (как у business-up) + «что получите на выходе»
+ * + срок/формат/цена и «что не входит» — для прозрачности.
+ */
+import Section, { type Theme } from '../Section.astro';
+import { includes, type PageCtx } from '@/data/content';
+
+interface Props { ctx: PageCtx; theme?: Theme }
+const { ctx, theme = 'light' } = Astro.props;
+const data = includes(ctx);
+---
+<Section id="cards" variant="includes" {theme}>
+  <div class="mb-10 flex flex-col gap-8 md:mb-14 lg:flex-row lg:items-end lg:justify-between">
+    <div class="max-w-2xl">
+      <h2 class="text-3xl font-semibold tracking-tight text-balance md:text-4xl">Что входит в работу</h2>
+      <p class="mt-4 text-lg text-muted-foreground">Состав фиксируем в договоре — без «по ситуации».</p>
+    </div>
+    <dl class="grid grid-cols-3 divide-x rounded-xl border bg-card shadow-sm">
+      {data.meta.map((m) => (
+        <div class="px-5 py-3">
+          <dt class="text-xs text-muted-foreground">{m.l}</dt>
+          <dd class="mt-0.5 whitespace-nowrap font-semibold">{m.v}</dd>
+        </div>
+      ))}
+    </dl>
+  </div>
+
+  <div class="grid gap-px overflow-hidden rounded-xl border bg-border sm:grid-cols-2 lg:grid-cols-3">
+    {data.groups.map((g, i) => (
+      <div class="bg-card p-6 md:p-8">
+        <span class="font-mono text-sm text-muted-foreground">{String(i + 1).padStart(2, '0')}</span>
+        <h3 class="mt-3 text-lg font-semibold">{g.t}</h3>
+        <ul class="mt-4 grid gap-2 text-sm text-muted-foreground">
+          {g.items.map((item) => (
+            <li class="flex gap-2"><span class="text-foreground" aria-hidden="true">✓</span>{item}</li>
+          ))}
+        </ul>
+      </div>
+    ))}
+  </div>
+
+  <div class="mt-6 rounded-xl bg-muted p-6 md:p-8">
+    <h3 class="text-lg font-semibold">Что вы получаете на выходе</h3>
+    <div class="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      {data.deliverables.map((d) => (
+        <div>
+          <span class="block size-9 rounded-lg border bg-background"></span>
+          <p class="mt-3 font-medium">{d.t}</p>
+          <p class="mt-1 text-sm text-muted-foreground">{d.d}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <div class="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm text-muted-foreground">
+    <span class="font-medium text-foreground">Не входит:</span>
+    {data.notIncluded.map((n) => <span class="flex gap-1.5"><span aria-hidden="true">✕</span>{n}</span>)}
+  </div>
+</Section>

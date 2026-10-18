@@ -1,19 +1,15 @@
 ---
-import { url } from '../../lib/url';
+import { url } from '@/lib/url';
 
 interface Props { items: { href?: string; title: string }[] }
 const { items } = Astro.props;
 ---
-<nav class="crumbs" aria-label="Хлебные крошки">
-  <a href={url('/')}>Главная</a>
+<nav aria-label="Хлебные крошки" class="flex flex-wrap items-center gap-1.5 text-sm text-muted-foreground">
+  <a class="hover:text-foreground" href={url('/')}>Главная</a>
   {items.map((item) => (
     <>
       <span aria-hidden="true">/</span>
-      {item.href ? <a href={url(item.href)}>{item.title}</a> : <span>{item.title}</span>}
+      {item.href ? <a class="hover:text-foreground" href={url(item.href)}>{item.title}</a> : <span class="text-foreground">{item.title}</span>}
     </>
   ))}
 </nav>
-
-<style>
-  .crumbs { display: flex; flex-wrap: wrap; gap: var(--space-2); font-size: var(--text-sm); color: var(--color-text-muted); padding-top: var(--space-6); }
-</style>

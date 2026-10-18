@@ -1,0 +1,23 @@
+---
+/** cases:problems — «Что мы обнаружили»: найденные проблемы до начала работ */
+import Section, { type Theme } from '../Section.astro';
+import SectionHead from '../SectionHead.astro';
+import { caseStudy as cs, type PageCtx } from '@/data/content';
+
+interface Props { ctx: PageCtx; theme?: Theme }
+const { theme = 'light' } = Astro.props;
+---
+<Section id="cases" variant="problems" {theme}>
+  <SectionHead eyebrow="Аудит" title="Что мы обнаружили" lead="Ключевые проблемы, которые мешали сайту расти." />
+  <div class="grid gap-4 md:grid-cols-2">
+    {cs.problems.map((p, i) => (
+      <div class="rounded-xl border bg-card p-6 shadow-sm">
+        <div class="flex items-center gap-3">
+          <span class="grid size-8 place-items-center rounded-full bg-muted font-mono text-sm">{i + 1}</span>
+          <h3 class="font-semibold">{p.t}</h3>
+        </div>
+        <p class="mt-3 text-muted-foreground">{p.d}</p>
+      </div>
+    ))}
+  </div>
+</Section>

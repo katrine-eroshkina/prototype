@@ -1,0 +1,26 @@
+---
+/** cards:situations — «узнаёте себя?»: заголовок слева, нумерованный список справа */
+import Section, { type Theme } from '../Section.astro';
+import { buttonVariants } from '@/components/ui/button';
+import { situations, type PageCtx } from '@/data/content';
+
+interface Props { ctx: PageCtx; theme?: Theme }
+const { ctx, theme = 'light' } = Astro.props;
+---
+<Section id="cards" variant="situations" {theme}>
+  <div class="grid gap-10 lg:grid-cols-[1fr_1.4fr] lg:gap-16">
+    <div class="lg:sticky lg:top-24 lg:self-start">
+      <h2 class="text-3xl font-semibold tracking-tight text-balance md:text-4xl">Узнаёте свою ситуацию?</h2>
+      <p class="mt-4 text-lg text-muted-foreground">Если да — предложим решение за 2 дня.</p>
+      <a class:list={[buttonVariants({ variant: 'outline' }), 'mt-6']} href="#cta-form">Рассказать о задаче</a>
+    </div>
+    <ol class="divide-y border-y">
+      {situations(ctx).map((s, i) => (
+        <li class="flex items-baseline gap-6 py-5">
+          <span class="font-mono text-sm text-muted-foreground">{String(i + 1).padStart(2, '0')}</span>
+          <span class="text-lg font-medium">{s}</span>
+        </li>
+      ))}
+    </ol>
+  </div>
+</Section>

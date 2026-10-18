@@ -1,0 +1,22 @@
+---
+/** logos:documents — сертификаты и партнёрства */
+import Section, { type Theme } from '../Section.astro';
+import SectionHead from '../SectionHead.astro';
+import Placeholder from '../Placeholder.astro';
+import type { PageCtx } from '@/data/content';
+
+interface Props { ctx: PageCtx; theme?: Theme }
+const { theme = 'light' } = Astro.props;
+const docs = ['Яндекс Директ', 'Яндекс Метрика', 'VK Реклама', 'Рейтинг / премия'];
+---
+<Section id="logos" variant="documents" {theme}>
+  <SectionHead eyebrow="Документы" title="Награды, рейтинги и сертификаты" />
+  <div class="grid grid-cols-2 gap-6 md:grid-cols-4">
+    {docs.map((d) => (
+      <div>
+        <Placeholder class="aspect-[3/4]" label="документ" />
+        <p class="mt-3 text-sm font-medium">{d}</p>
+      </div>
+    ))}
+  </div>
+</Section>

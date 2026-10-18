@@ -1,0 +1,20 @@
+---
+/** cards:audience — для кого: три карточки сегментов */
+import Section, { type Theme } from '../Section.astro';
+import SectionHead from '../SectionHead.astro';
+import { audience, type PageCtx } from '@/data/content';
+
+interface Props { ctx: PageCtx; theme?: Theme }
+const { theme = 'light' } = Astro.props;
+---
+<Section id="cards" variant="audience" {theme}>
+  <SectionHead title="Для кого" />
+  <div class="grid gap-4 md:grid-cols-3">
+    {audience.map((a) => (
+      <div class="rounded-xl border bg-card p-6 shadow-sm">
+        <h3 class="font-semibold">{a.t}</h3>
+        <p class="mt-2 text-sm text-muted-foreground">{a.d}</p>
+      </div>
+    ))}
+  </div>
+</Section>

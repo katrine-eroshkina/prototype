@@ -1,0 +1,21 @@
+---
+/** cards:benefits — преимущества: иконка + заголовок + строка, без рамок */
+import Section, { type Theme } from '../Section.astro';
+import SectionHead from '../SectionHead.astro';
+import { benefits, type PageCtx } from '@/data/content';
+
+interface Props { ctx: PageCtx; theme?: Theme }
+const { theme = 'light' } = Astro.props;
+---
+<Section id="cards" variant="benefits" {theme}>
+  <SectionHead title="Почему с нами проще" />
+  <div class="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
+    {benefits.map((b) => (
+      <div>
+        <span class="block size-10 rounded-lg bg-muted"></span>
+        <h3 class="mt-5 font-semibold">{b.t}</h3>
+        <p class="mt-2 text-sm text-muted-foreground">{b.d}</p>
+      </div>
+    ))}
+  </div>
+</Section>
