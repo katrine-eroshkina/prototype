@@ -1,7 +1,7 @@
 ---
 /**
  * Логотип (этап 4), итерация 3: направление «Слэш».
- * Курсор — анимация части после слэша: в шапке исчезает (А) или становится точкой (Б).
+ * Курсор — анимация части после слэша: в шапке набирает слово один раз и исчезает.
  * Шрифты — Google Fonts с кириллицей; display=block, чтобы ширина не прыгала при подмене шрифта.
  */
 import { url } from '../lib/url';
@@ -10,15 +10,14 @@ import { url } from '../lib/url';
 const slash = (size: string, path = '') =>
   `<span class="l-slash ${size}">burkov<b>/</b>${path ? `<em>${path}</em>` : ''}</span>`;
 
-/** Анимированный знак: «agency» печатается после слэша, курсор мигает */
 /**
+ * Анимированный знак: «agency» печатается после слэша.
  * mode: loop — набор/стирание по кругу (видео, презентации);
- *       fade — один раз набрать, курсор исчезает (шапка, вариант А);
- *       dot  — один раз набрать, курсор превращается в точку (шапка, вариант Б).
+ *       fade — один раз набрать, курсор исчезает (шапка).
  * Ширину держит невидимый «призрак» слова + постоянный отступ под курсор;
  * сам курсор позиционирован абсолютно и на ширину не влияет.
  */
-const slashTyped = (size: string, mode: 'loop' | 'fade' | 'dot' = 'loop', word = 'agency') =>
+const slashTyped = (size: string, mode: 'loop' | 'fade' = 'loop', word = 'agency') =>
   `<span class="l-slash ${size}" aria-label="burkov/${word}">burkov<b>/</b><em class="typed"><span class="typed__ghost">${word}</span><span class="typed__live"><span data-type="${word}" data-mode="${mode}">${mode === 'loop' ? word : ''}</span><i class="caret"></i></span></em></span>`;
 
 const favSlash = `<svg viewBox="0 0 32 32"><rect width="32" height="32" rx="7" fill="#0e0e0e"/><text x="16" y="21.5" text-anchor="middle" font-family="Unbounded" font-weight="700" font-size="14" letter-spacing="-1" fill="#fff">b<tspan fill="#d6ff3a">/</tspan></text></svg>`;
@@ -78,21 +77,10 @@ const favSlash = `<svg viewBox="0 0 32 32"><rect width="32" height="32" rx="7" f
         <h3 id="header">В шапке и фавиконке</h3>
         <div class="usage">
           <div class="usage__variants">
-            <div class="usage__variant">
-              <span class="usage__label">А · курсор исчезает</span>
-              <div class="usage__header">
-                <span class="usage__logo"><Fragment set:html={slashTyped('sm', 'fade')} /></span>
-                <nav><span>Услуги</span><span>Кейсы</span><span>Цены</span><span>Контакты</span></nav>
-                <span class="usage__btn">Обсудить</span>
-              </div>
-            </div>
-            <div class="usage__variant">
-              <span class="usage__label">Б · курсор превращается в точку</span>
-              <div class="usage__header">
-                <span class="usage__logo"><Fragment set:html={slashTyped('sm', 'dot')} /></span>
-                <nav><span>Услуги</span><span>Кейсы</span><span>Цены</span><span>Контакты</span></nav>
-                <span class="usage__btn">Обсудить</span>
-              </div>
+            <div class="usage__header">
+              <span class="usage__logo"><Fragment set:html={slashTyped('sm', 'fade')} /></span>
+              <nav><span>Услуги</span><span>Кейсы</span><span>Цены</span><span>Контакты</span></nav>
+              <span class="usage__btn">Обсудить</span>
             </div>
             <button class="usage__replay" type="button" data-replay>↻ Повторить</button>
           </div>
@@ -110,28 +98,27 @@ const favSlash = `<svg viewBox="0 0 32 32"><rect width="32" height="32" rx="7" f
     <script>
       const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-      // Шапка: один раз набрать слово, затем курсор исчезает (fade) или становится точкой (dot).
+      // Шапка: один раз набрать слово, затем курсор плавно исчезает.
       const timers = new WeakMap<HTMLElement, number[]>();
       const typeOnce = (el: HTMLElement) => {
         const word = el.dataset.type ?? '';
-        const endClass = el.dataset.mode === 'dot' ? 'caret--dot' : 'caret--off';
         const caret = el.nextElementSibling as HTMLElement | null;
         (timers.get(el) ?? []).forEach(clearTimeout);
         const queue: number[] = [];
         timers.set(el, queue);
-        caret?.classList.remove('caret--off', 'caret--dot');
-        if (reduce) { el.textContent = word; caret?.classList.add(endClass); return; }
+        caret?.classList.remove('caret--off');
+        if (reduce) { el.textContent = word; caret?.classList.add('caret--off'); return; }
         let i = 0;
         el.textContent = '';
         const tick = () => {
           i += 1;
           el.textContent = word.slice(0, i);
           if (i < word.length) queue.push(setTimeout(tick, 110));
-          else queue.push(setTimeout(() => caret?.classList.add(endClass), 450));
+          else queue.push(setTimeout(() => caret?.classList.add('caret--off'), 450));
         };
         queue.push(setTimeout(tick, 600));
       };
-      const onceEls = document.querySelectorAll<HTMLElement>('[data-mode="fade"], [data-mode="dot"]');
+      const onceEls = document.querySelectorAll<HTMLElement>('[data-mode="fade"]');
       onceEls.forEach(typeOnce);
       document.querySelector('[data-replay]')?.addEventListener('click', () => onceEls.forEach(typeOnce));
 
@@ -229,28 +216,17 @@ const favSlash = `<svg viewBox="0 0 32 32"><rect width="32" height="32" rx="7" f
   .cell--dark .caret { background: var(--lime); }
   @keyframes blink { 0%, 60% { opacity: 1; } 61%, 100% { opacity: 0; } }
 
-  /* Вариант А: курсор плавно исчезает */
+  /* Шапка: после набора курсор плавно исчезает */
   .caret.caret--off { animation: none; opacity: 0; transition: opacity 0.35s ease; }
 
-  /* Вариант Б: курсор сжимается в точку на базовой линии и остаётся */
-  .caret.caret--dot {
-    animation: none; opacity: 1;
-    top: 0.6em; width: 0.2em; height: 0.2em; margin-left: 0.06em; border-radius: 50%;
-    transition: top 0.4s cubic-bezier(0.6, 0, 0.2, 1), width 0.4s cubic-bezier(0.6, 0, 0.2, 1),
-      height 0.4s cubic-bezier(0.6, 0, 0.2, 1), border-radius 0.4s ease 0.1s, margin 0.4s ease;
-  }
-
   .usage__variants { flex: 1 1 560px; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
-  .usage__variant { display: flex; flex-direction: column; gap: 6px; }
-  .usage__variant .usage__header { flex: none; }
-  .usage__label { font-size: 12px; color: var(--muted); }
+  .usage__variants .usage__header { flex: none; }
   .usage__logo { flex: none; }
   .usage__replay { align-self: flex-start; padding: 8px 16px; border: 0; border-radius: 12px; background: #fff; color: var(--muted); font: 500 13px 'Onest', sans-serif; cursor: pointer; }
   .usage__replay:hover { color: var(--ink); }
   .usage__fav { align-self: flex-start; }
 
   @media (prefers-reduced-motion: reduce) {
-    .caret { animation: none; transition: none; }
-    .caret:not(.caret--dot) { display: none; }
+    .caret { display: none; }
   }
 </style>
