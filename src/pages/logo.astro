@@ -1,82 +1,28 @@
 ---
 /**
- * Варианты логотипа (этап 4). Самостоятельная страница со своими стилями:
- * концепции показываем вне вайрфрейм-оформления.
+ * Логотип (этап 4), итерация 2.
+ * Выбраны направления 01 «Слэш» и 03 «Курсор»; 02 и 04 отклонены.
+ * Задача итерации: показать, что это компания, а не фрилансер.
  * Шрифты — Google Fonts с кириллицей; в финале знак переводится в кривые.
  */
 import { url } from '../lib/url';
 
-const concepts = [
-  {
-    id: 'slash',
-    num: '01',
-    name: 'Слэш',
-    idea: 'Эволюция старого «BURKOV_ONLINE»: нижнее подчёркивание превращается в слэш — символ пути, URL, digital. Строчные буквы снимают пафос, акцент держит один знак.',
-    pros: ['Прямая связь со старым логотипом', 'Слэш — готовый графический элемент для сайта (разделители, буллеты, курсор)', 'Монограмма b/ отлично читается в фавиконке'],
-    cons: ['Слэш в айдентике встречается у IT-компаний — нужна сильная подача цветом'],
-  },
-  {
-    id: 'stamp',
-    num: '02',
-    name: 'Печать 2.0',
-    idea: 'Сохраняем «печать» и слоган «Only the truth», но выносим их из логотипа в отдельный бейдж-стикер. Основной логотип — жёсткий плотный шрифт, бейдж живёт на сайте как вращающаяся пломба «проверено».',
-    pros: ['Сохраняет узнаваемость и слоган', 'Бейдж — готовый провокационный элемент для блоков и кейсов', 'Двуязычный слоган с первого дня'],
-    cons: ['Две сущности (логотип + бейдж) — сложнее соблюдать правила использования'],
-  },
-  {
-    id: 'cursor',
-    num: '03',
-    name: 'Курсор / цензура',
-    idea: 'Буква «O» заменена сплошным блоком: это одновременно мигающий курсор (digital) и цензурная плашка (честность: «скажем то, что другие закрашивают»). Самый провокационный вариант.',
-    pros: ['Максимально отличается от рынка', 'Блок можно анимировать: мигание, «снятие цензуры»', 'Фавиконка — просто чёрный блок, узнаётся мгновенно'],
-    cons: ['Требует смелого заказчика', 'При смене названия приём придётся пересобирать'],
-  },
-  {
-    id: 'halves',
-    num: '04',
-    name: 'Две половины',
-    idea: 'Знак B из двух частей: верхняя сплошная — консалтинг (стратегия, фундамент), нижняя контурная — digital (каналы, движение). Логотип прямо рассказывает, что агентство объединяет два направления.',
-    pros: ['Объясняет позиционирование без слов', 'Знак независим от названия — переживёт ребрендинг', 'Самый «солидный» — комфортен для консалтинга'],
-    cons: ['Наименее провокационный из четырёх'],
-  },
-];
+/** Слэш: основа + необязательный «путь» после слэша */
+const slash = (size: string, path = '') =>
+  `<span class="l-slash ${size}">burkov<b>/</b>${path ? `<em>${path}</em>` : ''}</span>`;
 
-/** Знак B из двух половин (концепт 04): верх сплошной, низ контурный */
-const halvesMark = `<svg viewBox="0 0 64 64" aria-hidden="true"><rect x="8" y="4" width="12" height="56" fill="currentColor"/><path d="M20 4h12a14 14 0 0 1 0 28H20z" fill="currentColor"/><path d="M23 35h14a11 11 0 0 1 0 22H23z" fill="none" stroke="currentColor" stroke-width="6"/></svg>`;
+/** Курсор: блок вместо «O» + необязательный дескриптор под словом */
+const cursor = (size: string, desc = '', font = 'grotesk') =>
+  `<span class="l-cursor l-cursor--${font} ${size}"><span class="l-cursor__word">BURK<i></i>V</span>${desc ? `<span class="l-cursor__desc">${desc}</span>` : ''}</span>`;
 
-const stampBadge = `<svg class="l-stamp__badge" viewBox="0 0 100 100" aria-hidden="true"><defs><path id="ring" d="M50 50m-38 0a38 38 0 1 1 76 0a38 38 0 1 1-76 0"/></defs><text><textPath href="#ring">ONLY THE TRUTH • ТОЛЬКО ПРАВДА • </textPath></text><circle class="core" cx="50" cy="50" r="20"/></svg>`;
+const favSlash = `<svg viewBox="0 0 32 32"><rect width="32" height="32" rx="7" fill="#0e0e0e"/><text x="16" y="21.5" text-anchor="middle" font-family="Unbounded" font-weight="700" font-size="14" letter-spacing="-1" fill="#fff">b<tspan fill="#d6ff3a">/</tspan></text></svg>`;
+const favCursor = `<svg viewBox="0 0 32 32"><rect width="32" height="32" rx="6" fill="#0e0e0e"/><rect x="10" y="9" width="12" height="14" fill="#d6ff3a"/></svg>`;
 
-function logoHtml(id: string, size: 'lg' | 'sm'): string {
-  switch (id) {
-    case 'slash':
-      return `<span class="l-slash ${size}">burkov<b>/</b></span>`;
-    case 'stamp':
-      return `<span class="l-stamp ${size}"><span class="l-stamp__word">BURKOV</span>${stampBadge}</span>`;
-    case 'cursor':
-      return `<span class="l-cursor ${size}">BURK<i></i>V</span>`;
-    default:
-      return `<span class="l-halves ${size}">${halvesMark}<span class="l-halves__text"><span class="l-halves__word">Burkov</span><span class="l-halves__desc">consulting · digital</span></span></span>`;
-  }
-}
-
-function favHtml(id: string): string {
-  switch (id) {
-    case 'slash':
-      return `<svg viewBox="0 0 32 32"><rect width="32" height="32" rx="7" fill="#0e0e0e"/><text x="16" y="21.5" text-anchor="middle" font-family="Unbounded" font-weight="700" font-size="14" letter-spacing="-1" fill="#fff">b<tspan fill="#d6ff3a">/</tspan></text></svg>`;
-    case 'stamp':
-      return `<svg viewBox="0 0 32 32"><circle cx="16" cy="16" r="16" fill="#2d2dff"/><text x="16" y="22" text-anchor="middle" font-family="Dela Gothic One" font-size="17" fill="#fff">B</text></svg>`;
-    case 'cursor':
-      return `<svg viewBox="0 0 32 32"><rect width="32" height="32" rx="6" fill="#0e0e0e"/><rect x="11" y="7" width="10" height="18" fill="#d6ff3a"/></svg>`;
-    default:
-      return `<svg viewBox="0 0 64 64" style="color:#0e0e0e"><rect x="8" y="4" width="12" height="56" fill="currentColor"/><path d="M20 4h12a14 14 0 0 1 0 28H20z" fill="currentColor"/><path d="M23 35h14a11 11 0 0 1 0 22H23z" fill="none" stroke="currentColor" stroke-width="6"/></svg>`;
-  }
-}
-
-const names = [
-  { name: 'Burkov', note: 'Рекомендую. Личный бренд основателя — главный актив в консалтинге. Читается одинаково на RU и EN. Убираем хвосты .PRO / _ONLINE.' },
-  { name: 'Burkov & Co.', note: 'Тот же личный бренд, но звучит как команда, а не фрилансер. Хорошо для США.' },
-  { name: 'Правда / Truth', note: 'Слоган становится названием. Очень провокационно, но слово перегружено смыслами и плохо защищается как товарный знак.' },
-  { name: 'Факт / Fact', note: 'Короткое, переводится, связано с идеей честных цифр. Нужно проверять занятость домена и знака.' },
+const companyNames = [
+  { name: 'Burkov', note: 'Без изменений. «Компанейность» даём дескриптором и системой суббрендов (см. ниже). Так называются McKinsey, Ogilvy, Saatchi — фамилия в названии сама по себе не делает компанию фрилансером.' },
+  { name: 'Burkov Group', note: 'Наследие: в брифе «группа компаний Burkov.PRO». Прямо говорит «нас много», хорошо для консалтинга. Минус — «group» в РФ иногда звучит как холдинг/стройка.' },
+  { name: 'Burkov Agency', note: 'Самое понятное «это агентство». Нейтрально, хорошо для США.' },
+  { name: 'Burkov & Co.', note: 'Классика консалтинга (McKinsey & Company). Солидно, но менее дерзко.' },
 ];
 ---
 <!doctype html>
@@ -85,88 +31,152 @@ const names = [
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="noindex" />
-    <title>Логотип — варианты</title>
+    <title>Логотип — итерация 2</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
       rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=JetBrains+Mono:wght@800&family=Onest:wght@400;500;600;700&family=Unbounded:wght@700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@800&family=Onest:wght@400;500;600;700&family=Unbounded:wght@400;500;700;800&display=swap"
     />
   </head>
   <body>
     <header class="top">
       <a href={url('/')}>← прототип</a>
-      <span>Этап 4 · логотип · черновик 18.10.2026</span>
+      <span>Этап 4 · логотип · итерация 2 · 18.10.2026</span>
     </header>
 
     <main>
-      <section class="intro">
-        <h1>Логотип: четыре направления</h1>
-        <div class="old">
-          <img src={url('/logo-old.png')} alt="Старый логотип BURKOV_ONLINE" width="140" height="136" />
-          <div>
-            <h2>Что сейчас</h2>
-            <ul>
-              <li><b>Растровая картинка внутри SVG</b> — не масштабируется, весит 316 КБ, в фавиконке превращается в кашу.</li>
-              <li><b>Название расходится:</b> на знаке BURKOV_ONLINE, в брифе Burkov.PRO.</li>
-              <li><b>Круглая печать с текстом по кругу</b> — частый шаблон, в шапке сайта нечитаема.</li>
-              <li><b>Что ценно и стоит сохранить:</b> слоган <i>Only the truth</i> (готовое ядро позиционирования «честный маркетинг»), монограмма B, подчёркивание как digital-жест.</li>
-            </ul>
+      <h1>Логотип: два направления</h1>
+
+      <section class="status">
+        <div><b>В работе:</b> 01 «Слэш», 03 «Курсор»</div>
+        <div class="status__off"><b>Отклонены:</b> 02 «Печать» — слоган «Only the truth» был под курсы, устарел · 04 «Две половины»</div>
+      </section>
+
+      <!-- ============ Компания, а не фрилансер ============ -->
+      <section class="company">
+        <h2>Как показать, что это компания</h2>
+        <p>Ощущение «фрилансер» создаёт не фамилия, а подача: логотип-подпись, «я» в текстах, одно лицо на всех фото. Поэтому решаем на трёх уровнях:</p>
+        <ol>
+          <li><b>Дескриптор в логотипе</b> — короткое слово рядом со знаком: agency / group. Самый прямой способ.</li>
+          <li><b>Система суббрендов</b> — у агентства два направления, и логотип это показывает: <code>burkov/consulting</code>, <code>burkov/digital</code>. Структура = компания.</li>
+          <li><b>Сайт</b> — «мы» в текстах, блок команды, цифры о команде (сколько специалистов, сколько проектов одновременно). Это уже в блочной системе.</li>
+        </ol>
+      </section>
+
+      <!-- ============ 01 Слэш ============ -->
+      <section class="concept" id="slash">
+        <div class="concept__head"><span class="concept__num">01</span><h2>Слэш</h2></div>
+        <p class="concept__idea">Слэш работает как путь в адресе: после него естественно встаёт то, <i>что</i> это — агентство или конкретное направление. Логотип превращается в систему.</p>
+
+        <h3>Основной знак</h3>
+        <div class="stage">
+          <div class="cell cell--light"><Fragment set:html={slash('lg')} /></div>
+          <div class="cell cell--dark"><Fragment set:html={slash('lg')} /></div>
+        </div>
+
+        <h3>С дескриптором — «это компания»</h3>
+        <div class="stage">
+          <div class="cell cell--light cell--md"><Fragment set:html={slash('md', 'agency')} /></div>
+          <div class="cell cell--light cell--md"><Fragment set:html={slash('md', 'group')} /></div>
+        </div>
+
+        <h3>Суббренды направлений</h3>
+        <div class="stage">
+          <div class="cell cell--dark cell--md"><Fragment set:html={slash('md', 'consulting')} /></div>
+          <div class="cell cell--dark cell--md"><Fragment set:html={slash('md', 'digital')} /></div>
+        </div>
+        <p class="hint">Суббренды — в шапках разделов, на презентациях, в подписях писем. Главный логотип сайта остаётся <code>burkov/</code> или <code>burkov/agency</code>.</p>
+
+        <h3>В шапке и фавиконке</h3>
+        <div class="usage">
+          <div class="usage__header">
+            <Fragment set:html={slash('sm', 'agency')} />
+            <nav><span>Услуги</span><span>Кейсы</span><span>Цены</span><span>Контакты</span></nav>
+            <span class="usage__btn">Обсудить</span>
+          </div>
+          <div class="usage__fav">
+            <span class="fav fav--32"><Fragment set:html={favSlash} /></span>
+            <span class="fav fav--16"><Fragment set:html={favSlash} /></span>
+            <span class="usage__cap">32 / 16 px</span>
           </div>
         </div>
       </section>
 
-      {concepts.map((c) => (
-        <section class="concept" id={c.id}>
-          <div class="concept__head">
-            <span class="concept__num">{c.num}</span>
-            <h2>{c.name}</h2>
-          </div>
-          <p class="concept__idea">{c.idea}</p>
+      <!-- ============ 03 Курсор ============ -->
+      <section class="concept" id="cursor">
+        <div class="concept__head"><span class="concept__num">03</span><h2>Курсор</h2></div>
+        <p class="concept__idea">Блок вместо «O» — мигающий курсор: агентство, которое «пишет» результат. Вне анимации читается как цензурная плашка — провокационный слой остаётся.</p>
 
-          <div class="stage">
-            <div class="stage__cell stage__cell--light">
-              <Fragment set:html={logoHtml(c.id, 'lg')} />
-            </div>
-            <div class="stage__cell stage__cell--dark">
-              <Fragment set:html={logoHtml(c.id, 'lg')} />
-            </div>
+        <h3>Исправление: шрифт</h3>
+        <p class="hint">В первой версии был моноширинный шрифт: одинаковые узкие буквы с вертикальными штрихами на малом размере сливаются в «заборчик». Меняем на широкий гротеск (тот же, что в 01 — направления становятся одной семьёй).</p>
+        <div class="compare">
+          <div class="compare__item">
+            <span class="compare__tag compare__tag--bad">было · моно</span>
+            <Fragment set:html={cursor('sm', '', 'mono')} />
           </div>
-
-          <div class="usage">
-            <div class="usage__header">
-              <Fragment set:html={logoHtml(c.id, 'sm')} />
-              <nav><span>Услуги</span><span>Кейсы</span><span>Цены</span><span>Контакты</span></nav>
-              <span class="usage__btn">Обсудить</span>
-            </div>
-            <div class="usage__fav">
-              <span class="fav fav--32"><Fragment set:html={favHtml(c.id)} /></span>
-              <span class="fav fav--16"><Fragment set:html={favHtml(c.id)} /></span>
-              <span class="usage__cap">32 / 16 px</span>
-            </div>
+          <div class="compare__item">
+            <span class="compare__tag compare__tag--good">стало · гротеск</span>
+            <Fragment set:html={cursor('sm')} />
           </div>
+        </div>
 
-          <div class="procon">
-            <ul class="pros">{c.pros.map((p) => <li>{p}</li>)}</ul>
-            <ul class="cons">{c.cons.map((p) => <li>{p}</li>)}</ul>
+        <h3>Основной знак</h3>
+        <div class="stage">
+          <div class="cell cell--light"><Fragment set:html={cursor('lg')} /></div>
+          <div class="cell cell--dark"><Fragment set:html={cursor('lg')} /></div>
+        </div>
+
+        <h3>С дескриптором — «это компания»</h3>
+        <div class="stage">
+          <div class="cell cell--light cell--md"><Fragment set:html={cursor('md', 'agency')} /></div>
+          <div class="cell cell--light cell--md"><Fragment set:html={cursor('md', 'consulting · digital')} /></div>
+        </div>
+
+        <h3>В шапке и фавиконке</h3>
+        <div class="usage">
+          <div class="usage__header">
+            <Fragment set:html={cursor('sm')} />
+            <nav><span>Услуги</span><span>Кейсы</span><span>Цены</span><span>Контакты</span></nav>
+            <span class="usage__btn">Обсудить</span>
           </div>
-        </section>
-      ))}
+          <div class="usage__fav">
+            <span class="fav fav--32"><Fragment set:html={favCursor} /></span>
+            <span class="fav fav--16"><Fragment set:html={favCursor} /></span>
+            <span class="usage__cap">32 / 16 px</span>
+          </div>
+        </div>
+      </section>
 
+      <!-- ============ Гибрид ============ -->
+      <section class="concept" id="hybrid">
+        <div class="concept__head"><span class="concept__num">01+03</span><h2>Гибрид: идея на обсуждение</h2></div>
+        <p class="concept__idea">Оба направления в одном шрифте — их можно совместить: <b>слэш — постоянная часть логотипа</b>, <b>курсор — живой элемент сайта</b> (мигает в заголовках, «печатает» текст в первом экране, отмечает активный пункт меню).</p>
+        <div class="stage">
+          <div class="cell cell--dark">
+            <span class="l-slash lg">burkov<b>/</b><i class="caret"></i></span>
+          </div>
+          <div class="cell cell--light">
+            <p class="demo-head">Маркетинг без&nbsp;воды<i class="caret caret--ink"></i></p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ Название ============ -->
       <section class="naming">
-        <h2>Название: варианты для обсуждения</h2>
-        <p>Логотипы выше собраны на текущем имени. Приёмы 01 и 04 переносятся на любое название, 02 и 03 — частично.</p>
+        <h2>Название и дескриптор</h2>
         <dl>
-          {names.map((n) => (
+          {companyNames.map((n) => (
             <>
               <dt>{n.name}</dt>
               <dd>{n.note}</dd>
             </>
           ))}
         </dl>
+        <p class="hint">Рекомендация: оставить <b>Burkov</b> в названии, а в логотипе использовать дескриптор <b>agency</b> (или group, если заказчику важна преемственность «группы компаний»).</p>
       </section>
 
-      <p class="note">Шрифты в концептах подключены из Google Fonts (кириллица + латиница). После выбора направления знак дорабатывается вручную и переводится в кривые.</p>
+      <p class="note">Шрифты подключены из Google Fonts (Unbounded, кириллица + латиница). После выбора знак дорабатывается вручную и переводится в кривые.</p>
     </main>
   </body>
 </html>
@@ -179,35 +189,40 @@ const names = [
     --line: #dcdad4;
     --lime: #d6ff3a;
     --ultra: #2d2dff;
-    --violet: #7b5cff;
   }
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--paper); color: var(--ink); font: 16px/1.5 'Onest', system-ui, sans-serif; }
   main { max-width: 1200px; margin: 0 auto; padding: 0 16px 80px; }
   a { color: inherit; }
+  code { font: 600 0.92em 'JetBrains Mono', monospace; background: #fff; padding: 1px 6px; border-radius: 4px; }
 
   .top { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; max-width: 1200px; margin: 0 auto; padding: 20px 16px; font-size: 14px; color: var(--muted); }
-
-  h1 { font-size: clamp(32px, 5vw, 56px); line-height: 1.05; margin: 24px 0 32px; letter-spacing: -0.02em; }
+  h1 { font-size: clamp(32px, 5vw, 56px); line-height: 1.05; margin: 24px 0 24px; letter-spacing: -0.02em; }
   h2 { margin: 0; font-size: 24px; letter-spacing: -0.01em; }
+  h3 { margin: 32px 0 12px; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); }
 
-  .old { display: flex; gap: 32px; align-items: flex-start; padding: 24px; background: #fff; border-radius: 16px; flex-wrap: wrap; }
-  .old img { width: 140px; height: auto; flex: none; }
-  .old > div { flex: 1 1 320px; }
-  .old ul { margin: 12px 0 0; padding-left: 20px; }
-  .old li + li { margin-top: 6px; }
+  .status { display: flex; flex-direction: column; gap: 4px; padding: 16px 20px; background: #fff; border-radius: 12px; font-size: 15px; }
+  .status__off { color: var(--muted); }
+
+  .company { margin-top: 24px; padding: 28px 24px; background: var(--ink); color: #fff; border-radius: 16px; }
+  .company p { max-width: 760px; color: #cfcfcf; }
+  .company ol { margin: 12px 0 0; padding-left: 22px; max-width: 820px; }
+  .company li + li { margin-top: 8px; }
+  .company code { background: #2a2a2a; color: var(--lime); }
 
   .concept { margin-top: 64px; padding-top: 32px; border-top: 1px solid var(--line); }
   .concept__head { display: flex; align-items: baseline; gap: 16px; }
   .concept__num { font: 800 14px 'JetBrains Mono', monospace; color: var(--muted); }
-  .concept__idea { max-width: 760px; margin: 12px 0 24px; color: #2b2a27; }
+  .concept__idea { max-width: 760px; margin: 12px 0 0; color: #2b2a27; }
+  .hint { max-width: 760px; margin: 12px 0 0; font-size: 14px; color: var(--muted); }
 
   .stage { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; }
-  .stage__cell { display: grid; place-items: center; min-height: 280px; padding: 32px 16px; border-radius: 16px; overflow: hidden; }
-  .stage__cell--light { background: #fff; color: var(--ink); }
-  .stage__cell--dark { background: var(--ink); color: #fff; }
+  .cell { display: grid; place-items: center; min-height: 260px; padding: 32px 16px; border-radius: 16px; overflow: hidden; }
+  .cell--md { min-height: 180px; }
+  .cell--light { background: #fff; color: var(--ink); }
+  .cell--dark { background: var(--ink); color: #fff; }
 
-  .usage { display: flex; gap: 12px; margin-top: 12px; flex-wrap: wrap; }
+  .usage { display: flex; gap: 12px; flex-wrap: wrap; }
   .usage__header { flex: 1 1 520px; display: flex; align-items: center; gap: 28px; padding: 14px 20px; background: #fff; border-radius: 12px; font-size: 14px; min-width: 0; }
   .usage__header nav { display: flex; gap: 20px; color: var(--muted); }
   .usage__btn { margin-left: auto; padding: 8px 14px; border-radius: 999px; background: var(--ink); color: #fff; white-space: nowrap; }
@@ -218,10 +233,11 @@ const names = [
   .fav--32 { width: 32px; height: 32px; }
   .fav--16 { width: 16px; height: 16px; }
 
-  .procon { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; margin-top: 16px; font-size: 14px; }
-  .procon ul { margin: 0; padding: 16px 20px 16px 36px; border-radius: 12px; background: #fff; }
-  .pros li::marker { content: '+  '; color: #2f9e44; font-weight: 700; }
-  .cons li::marker { content: '−  '; color: #c2410c; font-weight: 700; }
+  .compare { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; margin-top: 16px; }
+  .compare__item { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; padding: 18px 20px; background: #fff; border-radius: 12px; }
+  .compare__tag { font: 600 12px 'Onest', sans-serif; padding: 2px 8px; border-radius: 999px; }
+  .compare__tag--bad { background: #fde8e0; color: #b4380a; }
+  .compare__tag--good { background: #e6f6dc; color: #2b7a12; }
 
   .naming { margin-top: 80px; padding: 32px 24px; background: #fff; border-radius: 16px; }
   .naming dl { display: grid; grid-template-columns: max-content 1fr; gap: 12px 24px; margin: 20px 0 0; }
@@ -235,44 +251,35 @@ const names = [
   .note { margin-top: 32px; font-size: 13px; color: var(--muted); }
 
   /* ---------- 01 Слэш ---------- */
-  .l-slash { font: 700 1em/1 'Unbounded', sans-serif; letter-spacing: -0.04em; white-space: nowrap; }
+  .l-slash { display: inline-flex; align-items: baseline; font: 700 1em/1 'Unbounded', sans-serif; letter-spacing: -0.04em; white-space: nowrap; }
   .l-slash b { font-weight: 700; color: var(--ultra); }
-  .stage__cell--dark .l-slash b { color: var(--lime); }
+  .cell--dark .l-slash b { color: var(--lime); }
+  .l-slash em { font-style: normal; font-weight: 400; letter-spacing: -0.02em; opacity: 0.55; }
   .lg.l-slash { font-size: clamp(44px, 7vw, 72px); }
-  .sm.l-slash { font-size: 22px; }
-
-  /* ---------- 02 Печать 2.0 ---------- */
-  .l-stamp { display: flex; align-items: center; gap: 0.35em; white-space: nowrap; }
-  .l-stamp__word { font: 400 1em/1 'Dela Gothic One', sans-serif; letter-spacing: 0.01em; }
-  .l-stamp__badge { width: 1.6em; height: 1.6em; flex: none; animation: spin 14s linear infinite; }
-  .l-stamp__badge text { font: 800 9px 'JetBrains Mono', monospace; letter-spacing: 1.6px; fill: currentColor; }
-  .l-stamp__badge .core { fill: var(--ultra); }
-  .stage__cell--dark .l-stamp__badge .core { fill: var(--lime); }
-  .lg.l-stamp { font-size: clamp(40px, 6.4vw, 64px); }
-  .sm.l-stamp { font-size: 22px; }
-  .sm .l-stamp__badge { display: none; }
+  .md.l-slash { font-size: clamp(28px, 4vw, 40px); }
+  .sm.l-slash { font-size: 20px; }
 
   /* ---------- 03 Курсор ---------- */
-  .l-cursor { font: 800 1em/1 'JetBrains Mono', monospace; letter-spacing: -0.02em; white-space: nowrap; display: inline-flex; align-items: center; }
-  .l-cursor i { display: inline-block; width: 0.6em; height: 0.74em; margin: 0 0.02em; background: currentColor; animation: blink 2.4s infinite; }
-  .sm .l-cursor i, .sm.l-cursor i { animation: none; }
-  .lg.l-cursor { font-size: clamp(44px, 7.6vw, 80px); }
-  .sm.l-cursor { font-size: 22px; }
+  .l-cursor { display: inline-flex; flex-direction: column; align-items: flex-start; white-space: nowrap; }
+  .l-cursor__word { display: inline-flex; align-items: baseline; font: 800 1em/1 'Unbounded', sans-serif; letter-spacing: 0.01em; }
+  .l-cursor__word i { display: inline-block; width: 0.78em; height: 0.72em; margin: 0 0.05em; background: currentColor; animation: blink 2.4s infinite; }
+  .l-cursor--mono .l-cursor__word { font-family: 'JetBrains Mono', monospace; letter-spacing: -0.02em; }
+  .l-cursor--mono .l-cursor__word i { width: 0.6em; height: 0.74em; margin: 0 0.02em; }
+  .l-cursor__desc { font: 500 0.22em/1 'Unbounded', sans-serif; letter-spacing: 0.32em; text-transform: uppercase; margin-top: 0.7em; opacity: 0.6; }
+  .lg.l-cursor { font-size: clamp(44px, 7.4vw, 76px); }
+  .md.l-cursor { font-size: clamp(32px, 4.6vw, 48px); }
+  .md .l-cursor__desc { font-size: 0.26em; }
+  .sm.l-cursor { font-size: 20px; }
+  .sm .l-cursor__word i { animation: none; }
 
-  /* ---------- 04 Две половины ---------- */
-  .l-halves { display: flex; align-items: center; gap: 0.32em; white-space: nowrap; }
-  .l-halves svg { width: 1.15em; height: 1.15em; flex: none; }
-  .l-halves__text { display: flex; flex-direction: column; }
-  .l-halves__word { font: 700 1em/1 'Onest', sans-serif; letter-spacing: -0.03em; }
-  .l-halves__desc { font: 500 0.24em/1 'Onest', sans-serif; letter-spacing: 0.18em; text-transform: uppercase; margin-top: 0.45em; opacity: 0.6; }
-  .lg.l-halves { font-size: clamp(48px, 7.6vw, 80px); }
-  .sm.l-halves { font-size: 24px; }
-  .sm .l-halves__desc { display: none; }
+  /* ---------- Гибрид ---------- */
+  .caret { display: inline-block; width: 0.5em; height: 0.72em; margin-left: 0.08em; background: var(--lime); animation: blink 1.2s infinite; }
+  .caret--ink { background: var(--ink); }
+  .demo-head { margin: 0; font: 800 clamp(28px, 4vw, 44px)/1.1 'Unbounded', sans-serif; letter-spacing: -0.02em; text-align: center; }
 
-  @keyframes spin { to { transform: rotate(360deg); } }
   /* Блок виден большую часть цикла, «моргает» коротко — как курсор */
   @keyframes blink { 0%, 78% { opacity: 1; } 80%, 96% { opacity: 0; } 98%, 100% { opacity: 1; } }
   @media (prefers-reduced-motion: reduce) {
-    .l-stamp__badge, .l-cursor i { animation: none; }
+    .l-cursor__word i, .caret { animation: none; }
   }
 </style>
