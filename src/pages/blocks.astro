@@ -1,0 +1,27 @@
+---
+/** Каталог блоков и инструкция по компоновке. Пока — перечень блоков и схем страниц. */
+import Base from '../layouts/Base.astro';
+import WireBlock from '../components/wire/WireBlock.astro';
+import { blockInfo, recipes } from '../data/recipes';
+---
+<Base title="Каталог блоков" template="system" crumbs={[{ title: 'Каталог блоков' }]}>
+  <p>Здесь будут все блоки со всеми вариантами и правила компоновки. Пока — черновой состав.</p>
+
+  <h2>Схемы страниц</h2>
+  <dl class="recipes">
+    {Object.entries(recipes).map(([key, ids]) => (
+      <>
+        <dt><code>{key}</code></dt>
+        <dd>{ids.join(' → ')}</dd>
+      </>
+    ))}
+  </dl>
+
+  <h2>Блоки</h2>
+  {Object.keys(blockInfo).map((id) => <WireBlock id={id} />)}
+</Base>
+
+<style>
+  .recipes { display: grid; grid-template-columns: max-content 1fr; gap: var(--space-2) var(--space-6); font-size: var(--text-sm); }
+  .recipes dd { margin: 0; font-family: var(--font-mono); overflow-wrap: anywhere; }
+</style>

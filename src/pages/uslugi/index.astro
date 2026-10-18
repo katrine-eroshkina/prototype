@@ -1,0 +1,16 @@
+---
+import Base from '../../layouts/Base.astro';
+import LinkList from '../../components/wire/LinkList.astro';
+import { directions } from '../../data/sitemap';
+---
+<Base title="Услуги" template="listing" recipe="catalog" crumbs={[{ title: 'Услуги' }]}>
+  {directions.map((dir) => (
+    <LinkList
+      title={dir.title}
+      items={[
+        { href: `/uslugi/${dir.slug}/`, title: `Всё направление «${dir.title}»` },
+        ...dir.items.map((i) => ({ href: `/uslugi/${i.slug}/`, title: i.title })),
+      ]}
+    />
+  ))}
+</Base>

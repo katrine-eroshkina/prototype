@@ -1,0 +1,26 @@
+---
+import { mainNav } from '../../data/sitemap';
+import { url } from '../../lib/url';
+---
+<header class="header">
+  <div class="container header__inner">
+    <a class="header__logo" href={url('/')}>LOGO</a>
+    <nav class="header__nav" aria-label="Основное меню">
+      {mainNav.map((item) => (
+        <a href={url(item.href)} class:list={{ draft: item.draft }}>{item.title}</a>
+      ))}
+    </nav>
+    <span class="header__lang">RU / EN</span>
+  </div>
+</header>
+
+<style>
+  .header { border-bottom: 1px solid var(--color-line); background: var(--color-surface); }
+  .header__inner { display: flex; align-items: center; gap: var(--space-8); min-height: 64px; flex-wrap: wrap; }
+  .header__logo { font-weight: 800; letter-spacing: 0.08em; text-decoration: none; }
+  .header__nav { display: flex; gap: var(--space-6); flex-wrap: wrap; font-size: var(--text-sm); }
+  .header__nav a { text-decoration: none; }
+  .header__nav a:hover { text-decoration: underline; }
+  .header__nav .draft { color: var(--color-draft); }
+  .header__lang { margin-left: auto; font-size: var(--text-sm); color: var(--color-text-muted); }
+</style>

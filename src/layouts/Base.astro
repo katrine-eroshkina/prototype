@@ -1,0 +1,58 @@
+---
+import '../styles/global.css';
+import Header from '../components/global/Header.astro';
+import Footer from '../components/global/Footer.astro';
+import Breadcrumbs from '../components/wire/Breadcrumbs.astro';
+import WireBlock from '../components/wire/WireBlock.astro';
+import { recipes, type RecipeKey } from '../data/recipes';
+import type { Template } from '../data/sitemap';
+
+interface Props {
+  title: string;
+  /** Шаблон T1–T6 из docs/01 */
+  template: Template;
+  /** Схема блоков из recipes.ts */
+  recipe?: RecipeKey;
+  crumbs?: { href?: string; title: string }[];
+  draft?: boolean;
+}
+
+const { title, template, recipe, crumbs, draft } = Astro.props;
+const templateLabel: Record<Template, string> = {
+  home: 'T1 · Главная',
+  listing: 'T2 · Листинг',
+  detail: 'T3 · Детальная',
+  contacts: 'T4 · Контакты',
+  text: 'T5 · Текстовая',
+  system: 'T6 · Системная',
+};
+---
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>{title} — прототип</title>
+  </head>
+  <body>
+    <Header />
+    <main class="container">
+      {crumbs && <Breadcrumbs items={crumbs} />}
+      <div class="page-meta">
+        <span>{templateLabel[template]}</span>
+        {draft && <span class="page-meta__draft">под вопросом</span>}
+      </div>
+      <h1>{title}</h1>
+      <slot />
+      {recipe && recipes[recipe].map((id) => <WireBlock id={id} />)}
+    </main>
+    <Footer />
+  </body>
+</html>
+
+<style>
+  h1 { margin: var(--space-2) 0 var(--space-6); font-size: var(--text-xl); line-height: 1.1; }
+  .page-meta { display: flex; gap: var(--space-3); margin-top: var(--space-6); font: var(--text-sm) var(--font-mono); color: var(--color-text-muted); }
+  .page-meta__draft { color: var(--color-draft); }
+</style>

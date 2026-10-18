@@ -1,0 +1,11 @@
+---
+import Base from '../../layouts/Base.astro';
+import { cases } from '../../data/sitemap';
+
+export function getStaticPaths() {
+  return cases.map((c) => ({ params: { slug: c.slug }, props: c }));
+}
+
+const { title } = Astro.props;
+---
+<Base {title} template="detail" recipe="case" crumbs={[{ href: '/keisy/', title: 'Кейсы' }, { title }]} />
