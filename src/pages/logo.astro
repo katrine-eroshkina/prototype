@@ -11,8 +11,8 @@ const slash = (size: string, path = '') =>
   `<span class="l-slash ${size}">burkov<b>/</b>${path ? `<em>${path}</em>` : ''}</span>`;
 
 /** Анимированный знак: «agency» печатается после слэша, курсор мигает */
-const slashTyped = (size: string, word = 'agency') =>
-  `<span class="l-slash ${size}" aria-label="burkov/${word}">burkov<b>/</b><em class="typed"><span class="typed__ghost">${word}</span><span class="typed__live"><span data-type="${word}">${word}</span><i class="caret"></i></span></em></span>`;
+const slashTyped = (size: string, mode: 'loop' | 'once' = 'loop', word = 'agency') =>
+  `<span class="l-slash ${size}" aria-label="burkov/${word}">burkov<b>/</b><em class="typed"><span class="typed__ghost">${word}</span><span class="typed__live"><span data-type="${word}" data-mode="${mode}">${mode === 'once' ? '' : word}</span><i class="caret"></i></span></em></span>`;
 
 const favSlash = `<svg viewBox="0 0 32 32"><rect width="32" height="32" rx="7" fill="#0e0e0e"/><text x="16" y="21.5" text-anchor="middle" font-family="Unbounded" font-weight="700" font-size="14" letter-spacing="-1" fill="#fff">b<tspan fill="#d6ff3a">/</tspan></text></svg>`;
 ---
@@ -62,7 +62,7 @@ const favSlash = `<svg viewBox="0 0 32 32"><rect width="32" height="32" rx="7" f
         <p class="hint">Суббренды — в шапках разделов, на презентациях, в подписях писем. Главный логотип сайта — <code>burkov/agency</code>.</p>
 
         <h3>Анимация: курсор</h3>
-        <p class="hint">Часть после слэша «печатается», в конце мигает курсор. Используется в шапке при загрузке, на первом экране и в видео/презентациях. В статике (печать, документы, при отключённой анимации) — обычный <code>burkov/agency</code> без курсора.</p>
+        <p class="hint">Часть после слэша «печатается» курсором. В видео и презентациях — в цикле, как ниже. В шапке сайта — один раз при загрузке: надпись появляется, курсор исчезает (пример в шапке ниже). В статике и при отключённой анимации — обычный <code>burkov/agency</code> без курсора.</p>
         <div class="stage">
           <div class="cell cell--dark"><Fragment set:html={slashTyped('anim')} /></div>
           <div class="cell cell--light"><Fragment set:html={slashTyped('anim')} /></div>
@@ -71,10 +71,11 @@ const favSlash = `<svg viewBox="0 0 32 32"><rect width="32" height="32" rx="7" f
         <h3>В шапке и фавиконке</h3>
         <div class="usage">
           <div class="usage__header">
-            <Fragment set:html={slashTyped('sm')} />
+            <Fragment set:html={slashTyped('sm', 'once')} />
             <nav><span>Услуги</span><span>Кейсы</span><span>Цены</span><span>Контакты</span></nav>
             <span class="usage__btn">Обсудить</span>
           </div>
+          <button class="usage__replay" type="button" data-replay>↻ Повторить</button>
           <div class="usage__fav">
             <span class="fav fav--32"><Fragment set:html={favSlash} /></span>
             <span class="fav fav--16"><Fragment set:html={favSlash} /></span>
@@ -83,13 +84,35 @@ const favSlash = `<svg viewBox="0 0 32 32"><rect width="32" height="32" rx="7" f
         </div>
       </section>
 
-      <p class="note">Шрифт Unbounded (Google Fonts, кириллица + латиница). После утверждения знак дорабатывается вручную и переводится в кривые.</p>
+      <p class="note">Шрифт Unbounded (Google Fonts, кириллица + латиница).</p>
     </main>
 
     <script>
-      // «Печать» слова после слэша: набрать → подержать → стереть → повторить
       const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      document.querySelectorAll<HTMLElement>('[data-type]').forEach((el) => {
+
+      // Шапка: один раз набрать слово, затем курсор плавно исчезает.
+      // Ширина слова зарезервирована «призраком», поэтому меню не сдвигается.
+      const typeOnce = (el: HTMLElement) => {
+        const word = el.dataset.type ?? '';
+        const caret = el.nextElementSibling as HTMLElement | null;
+        caret?.classList.remove('caret--off');
+        if (reduce) { el.textContent = word; caret?.classList.add('caret--off'); return; }
+        let i = 0;
+        el.textContent = '';
+        const tick = () => {
+          i += 1;
+          el.textContent = word.slice(0, i);
+          if (i < word.length) setTimeout(tick, 110);
+          else setTimeout(() => caret?.classList.add('caret--off'), 400);
+        };
+        setTimeout(tick, 600);
+      };
+      const onceEls = document.querySelectorAll<HTMLElement>('[data-mode="once"]');
+      onceEls.forEach(typeOnce);
+      document.querySelector('[data-replay]')?.addEventListener('click', () => onceEls.forEach(typeOnce));
+
+      // Видео / презентации: набрать → подержать → стереть → повторить
+      document.querySelectorAll<HTMLElement>('[data-mode="loop"]').forEach((el) => {
         if (reduce) return;
         const word = el.dataset.type ?? '';
         let i = word.length;
@@ -171,6 +194,10 @@ const favSlash = `<svg viewBox="0 0 32 32"><rect width="32" height="32" rx="7" f
   /* Курсор: в цвете слэша, мигает коротко */
   .caret { display: inline-block; align-self: center; width: 0.42em; height: 0.78em; margin-left: 0.08em; background: var(--ultra); animation: blink 1.1s infinite; }
   .cell--dark .caret { background: var(--lime); }
+  /* Курсор уходит: анимация мигания снимается, остаётся плавное исчезновение */
+  .caret.caret--off { animation: none; opacity: 0; transition: opacity 0.35s ease; }
   @keyframes blink { 0%, 60% { opacity: 1; } 61%, 100% { opacity: 0; } }
+  .usage__replay { padding: 0 16px; border: 0; border-radius: 12px; background: #fff; color: var(--muted); font: 500 13px 'Onest', sans-serif; cursor: pointer; }
+  .usage__replay:hover { color: var(--ink); }
   @media (prefers-reduced-motion: reduce) { .caret { display: none; } }
 </style>
