@@ -5,11 +5,11 @@
  */
 
 export const recipes = {
-  home: ['hero-main', 'directions', 'manifesto', 'stats', 'cases', 'process', 'clients', 'testimonials', 'cta-form'],
+  home: ['hero-main', 'directions', 'manifesto', 'stats', 'cases', 'process', 'expert', 'clients', 'testimonials', 'cta-form'],
   catalog: ['hero-page', 'directions', 'services-grid', 'cases', 'cta-form'],
-  direction: ['hero-page', 'services-grid', 'benefits', 'cases', 'faq', 'cta-form'],
-  category: ['hero-page', 'services-grid', 'audience', 'process', 'pricing', 'cases', 'faq', 'cta-form'],
-  service: ['hero-split', 'audience', 'includes', 'process', 'pricing', 'case-metrics', 'faq', 'cta-form'],
+  direction: ['hero-page', 'services-grid', 'situations', 'comparison', 'cases', 'lead-magnet', 'faq', 'cta-form'],
+  category: ['hero-page', 'services-grid', 'situations', 'process', 'pricing', 'cases', 'cross-sell', 'faq', 'cta-form'],
+  service: ['hero-split', 'situations', 'includes', 'process', 'pricing', 'case-metrics', 'cross-sell', 'faq', 'cta-form'],
   casesList: ['hero-page', 'cases', 'clients', 'cta-banner'],
   case: ['hero-page', 'case-story', 'case-metrics', 'text-media', 'testimonials', 'cases', 'cta-banner'],
   about: ['hero-page', 'manifesto', 'stats', 'team', 'documents', 'testimonials', 'cta-form'],
@@ -30,6 +30,10 @@ export const blockInfo: Record<string, string> = {
   directions: 'Два направления · Консалтинг / Digital',
   'services-grid': 'Карточки услуг',
   audience: 'Для кого',
+  situations: 'Когда это нужно · ситуации и боли, самоквалификация',
+  'cross-sell': 'Связанная услуга из другого направления',
+  'lead-magnet': 'Бесплатный аудит / чек-лист',
+  expert: 'Эксперт · фото и цитата',
   benefits: 'Преимущества',
   stats: 'Цифры',
   includes: 'Что входит',
