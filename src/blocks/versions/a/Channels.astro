@@ -33,7 +33,7 @@ const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
           <th class="w-[34%] py-5 pr-6 text-sm font-normal leading-5 text-[#878787]">Что входит</th>
           {list.map((p) => (
             <th class:list={['relative border-l border-[#ececea] px-6 py-5 align-top font-normal', p.featured && 'cmp-hl']}>
-              {p.featured && <span class="absolute left-6 top-0 flex h-6 -translate-y-1/2 items-center rounded-md bg-brand px-2 text-xs font-medium text-white">Чаще выбирают</span>}
+              {p.featured && <span class="absolute left-1/2 top-0 flex h-6 -translate-x-1/2 -translate-y-1/2 items-center whitespace-nowrap rounded-md bg-brand px-2 text-xs font-medium text-white">Чаще выбирают</span>}
               <span class="cmp-h block text-xl leading-7">{p.name}</span>
               <span class="mt-1 block text-sm leading-5 text-[#878787]">от {split(p.price).v}{split(p.price).per && ' /мес'}</span>
             </th>

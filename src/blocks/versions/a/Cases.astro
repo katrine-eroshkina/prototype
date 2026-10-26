@@ -100,11 +100,12 @@ const total = String(items.length).padStart(2, '0');
   .cs-roll { display: block; overflow: hidden; position: relative; }
   /* Все варианты в одной ячейке: высота окошка = самый высокий вариант. Сдвиг = (свой номер − текущий) × своя высота */
   .cs-stack { display: grid; }
-  .cs-stack > * { grid-area: 1 / 1; transform: translateY(calc((var(--j) - var(--i)) * 100%));
+  /* Соседние варианты стоят с запасом 8px за краем окошка — иначе при дробном масштабе экрана от них просвечивает полоска */
+  .cs-stack > * { grid-area: 1 / 1; transform: translateY(calc((var(--j) - var(--i)) * (100% + 8px)));
     /* Пружина как у Brandigo: 0,5 с до места, перелёт ~1,5 %, к 1 с — покой */
     transition: transform 1s linear(0, 0.15 8.6%, 0.5 17.9%, 0.78 27.3%, 0.93 36.6%, 0.995 46%, 1.015 55.5%, 1.013 64.8%, 1.008 74.1%, 1.003 83.5%, 1.001 92.8%, 1); }
   /* Соседние строки едут навстречу друг другу: счётчик вверх, «Клиент» вниз, описание вверх, теги вниз… */
-  .cs-stack.cs-rev > * { transform: translateY(calc((var(--i) - var(--j)) * 100%)); }
+  .cs-stack.cs-rev > * { transform: translateY(calc((var(--i) - var(--j)) * (100% + 8px))); }
   .cs-photo { background: radial-gradient(120% 90% at 30% 20%, #5b6b80 0%, #2a323d 55%, #121519 100%); }
   /* Стрелки — светло-серые квадраты 32px; на краю списка — полупрозрачная и неактивная */
   .cs-btn { display: grid; place-items: center; width: 32px; height: 32px; background: #f4f4f2; color: #0c0d0f; transition: background-color .2s, color .2s, opacity .3s; }
