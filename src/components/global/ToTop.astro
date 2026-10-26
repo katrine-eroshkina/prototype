@@ -2,6 +2,7 @@
 /**
  * Кнопка «Наверх» — справа внизу, как плашка-иконка у кнопок А: чёрный квадрат 40, скругление 5, стрелка вверх.
  * Появляется, когда прокрутили больше экрана; по клику — плавно наверх (через Lenis, если запущен).
+ * У низа страницы останавливается над линией строки с ИНН/ОГРН в подвале, чтобы не закрывать переключатель «RU».
  */
 import { ArrowUp } from 'lucide-react';
 ---
@@ -19,8 +20,17 @@ import { ArrowUp } from 'lucide-react';
 
 <script>
   const btn = document.querySelector<HTMLButtonElement>('[data-to-top]')!;
-  const sync = () => btn.classList.toggle('is-on', scrollY > innerHeight);
+  // Внизу страницы кнопка не опускается ниже линии над строкой с ИНН/ОГРН в подвале — останавливается над ней (зазор 16), не закрывая «RU»
+  const legal = document.querySelector<HTMLElement>('.ft-legal');
+  const sync = () => {
+    btn.classList.toggle('is-on', scrollY > innerHeight);
+    if (!legal) return;
+    const bottom = parseFloat(getComputedStyle(btn).bottom) || 0;
+    const lift = Math.max(0, innerHeight - bottom - (legal.getBoundingClientRect().top - 16));
+    btn.style.translate = lift ? `0 ${-lift}px` : '';
+  };
   addEventListener('scroll', sync, { passive: true });
+  addEventListener('resize', sync);
   sync();
   btn.addEventListener('click', () => {
     const lenis = (window as any).lenis;
