@@ -1,0 +1,28 @@
+---
+/**
+ * А · hero:main — по макету в Figma (файл EQKIauZQ0T9oU9YligoxlV, узел 226:1206).
+ * Ровно один экран (шапка плавает поверх), содержимое — по центру экрана:
+ * подпись «/ Консалтинг и Digital услуги» (синий слэш, как в логотипе) → заголовок 64/64 → 16px → описание → 32px → кнопка.
+ * Фон — как у Router: размытые полосы, зерно, огромное размытое «burkov/» с аурой и переливом (HeroBg).
+ */
+import Section from '../../Section.astro';
+import Btn from './Btn.astro';
+import HeroBg from './HeroBg.astro';
+import Eyebrow from './Eyebrow.astro';
+import { homeHero } from '@/data/content';
+---
+<Section id="hero" variant="main" noTag class="flex h-[100svh] min-h-[600px] flex-col justify-center py-0 pt-16 md:py-0" bg="overflow-hidden border-b-0">
+  <HeroBg />
+
+  <div class="relative flex flex-col items-center text-center">
+    <Eyebrow>Консалтинг и Digital услуги</Eyebrow>
+    <h1 class="hero-h1 max-w-[656px] text-balance font-display text-[40px] leading-[1] md:text-[64px] md:leading-[64px]">{homeHero.title}</h1>
+    <p class="mt-4 max-w-[512px] text-base leading-6 text-foreground/80">{homeHero.lead.replace(/\.$/, '')}</p>
+    <Btn class="mt-8" href="#cta-form">{homeHero.primary}</Btn>
+  </div>
+</Section>
+
+<style>
+  /* 64/64, вес 400, трекинг −1 %; без лигатур, чтобы буквы не слипались */
+  .hero-h1 { font-weight: 400; letter-spacing: -0.02em; font-variant-ligatures: none; font-feature-settings: "liga" 0, "clig" 0, "calt" 0; }
+</style>

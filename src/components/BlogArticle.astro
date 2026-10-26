@@ -1,0 +1,73 @@
+---
+/**
+ * Страница статьи блога — по Primefold (/blog/...): колонка 800px по центру.
+ * Заголовок 48/56 → тонкая линия → автор (аватар, имя, должность) и «Обновлено: дата» справа →
+ * обложка 16:9 со скруглением 16 → текст 18/28, подзаголовки 40/48, ссылки акцентом, картинки внутри текста →
+ * под статьёй — «Читайте также» и форма заявки (pages/blog/[slug]).
+ */
+import Breadcrumbs from './wire/Breadcrumbs.astro';
+import { url } from '@/lib/url';
+interface Props { title: string; rubric: string }
+const { title, rubric } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+<article class="mx-auto max-w-[800px] pb-24 pt-10 md:pt-14">
+  <Breadcrumbs items={[{ href: '/blog/', title: 'Блог' }, { title }]} />
+  <p class="mt-10 flex items-center gap-3 text-sm leading-5 text-[#878787]"><span class="flex h-6 items-center rounded-md bg-brand px-2 text-xs font-medium text-white">{rubric}</span>5 мин чтения</p>
+  <h1 class="post-h1 mt-4 text-balance text-[32px] leading-10 md:text-5xl md:leading-[56px]">{title}</h1>
+
+  <div class="mt-8 flex items-end justify-between gap-4 border-t pt-6">
+    <div class="flex items-center gap-3">
+      <img class="size-10 shrink-0 rounded-full bg-[#fafaf9] object-cover" src={`${base}/team/1.jpg`} alt="" width="80" height="80" />
+      <span>
+        <span class="block text-base font-medium leading-6">Андрей Соколов</span>
+        <span class="block text-sm leading-5 text-muted-foreground">Основатель burkov/agency</span>
+      </span>
+    </div>
+    <time class="text-sm leading-5 text-muted-foreground" datetime="2026-10-12">Обновлено: 12 октября 2026</time>
+  </div>
+
+  <!-- Мягкая заглушка, как у карточки статьи в списке, до настоящей обложки -->
+  <div class="post-cover mt-12 aspect-[16/9] rounded-2xl"></div>
+
+  <div class="post-body mt-10">
+    <p>Вводный абзац: с какой ситуацией сталкивается читатель. Например — бюджет на маркетинг растёт, отчёты подрядчиков выглядят хорошо, а заявок и выручки больше не становится.</p>
+    <p>Второй абзац раскрывает проблему: почему так происходит и чем это грозит бизнесу. Коротко, без воды, 2–3 предложения.</p>
+    <p>Третий абзац — что читатель получит из статьи.</p>
+
+    <h2>Подзаголовок первого раздела</h2>
+    <p>Текст раздела. Здесь можно сослаться на источник — <a href="#">ссылка выделяется акцентным цветом</a> — и привести цифры: было, стало, за какой срок.</p>
+    <p>Ещё абзац раздела. Важное можно выделить <strong>жирным</strong>, но не злоупотреблять.</p>
+
+    <h2>Подзаголовок второго раздела</h2>
+    <p>Текст раздела. Если в разделе есть шаги или признаки — их удобно дать списком:</p>
+    <ul>
+      <li>первый признак или шаг;</li>
+      <li>второй признак или шаг;</li>
+      <li>третий признак или шаг.</li>
+    </ul>
+    <div class="post-cover post-cover-2 my-10 aspect-[16/9] rounded-2xl"></div>
+    <p>Абзац после иллюстрации — что на ней показано и какой вывод из этого следует.</p>
+
+    <h2>Что делать дальше</h2>
+    <p>Итог статьи и следующий шаг для читателя: что проверить у себя прямо сейчас и когда стоит обратиться к нам.</p>
+    <p><a href={url('/kontakty/')}>Записаться на бесплатную консультацию</a></p>
+  </div>
+</article>
+
+
+<style>
+  .post-h1 { font-family: var(--font-display); font-weight: 400; letter-spacing: -0.02em; color: #2c2c2c; font-variant-ligatures: none; }
+  .post-cover { background: radial-gradient(80% 90% at 75% 30%, color-mix(in oklab, var(--brand) 22%, transparent), transparent 70%), #f2f4f7; }
+  .post-cover-2 { background: radial-gradient(70% 80% at 25% 75%, color-mix(in oklab, var(--brand) 14%, transparent), transparent 70%), #f5f5f3; }
+  .post-body { font-size: 18px; line-height: 28px; color: #2c2c2c; }
+  .post-body :global(p) { margin-top: 20px; }
+  .post-body :global(p:first-child) { margin-top: 0; }
+  .post-body :global(h2) { margin-top: 56px; margin-bottom: 4px; font-family: var(--font-display); font-weight: 400; font-size: 32px; line-height: 40px; letter-spacing: -0.02em; color: #2c2c2c; }
+  @media (min-width: 768px) { .post-body :global(h2) { font-size: 40px; line-height: 48px; } }
+  .post-body :global(a) { color: var(--brand); transition: opacity .2s; }
+  .post-body :global(a:hover) { opacity: .75; }
+  .post-body :global(strong) { font-weight: 600; }
+  .post-body :global(ul) { margin-top: 16px; padding-left: 24px; list-style: disc; }
+  .post-body :global(li + li) { margin-top: 8px; }
+</style>

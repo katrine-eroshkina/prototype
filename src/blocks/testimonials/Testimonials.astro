@@ -1,23 +1,57 @@
 ---
-/** testimonials — отзывы карточками с цитатой и автором */
+/**
+ * testimonials — отзывы.
+ * Раскладка по Rulebase: один крупный отзыв на тёмной плашке, фото автора, переключение стрелками.
+ */
 import Section, { type Theme } from '../Section.astro';
-import SectionHead from '../SectionHead.astro';
+import Placeholder from '../Placeholder.astro';
 import type { PageCtx } from '@/data/content';
 
 interface Props { ctx: PageCtx; theme?: Theme }
 const { theme = 'light' } = Astro.props;
+const list = [
+  { q: 'Отзыв в 2–3 предложения: какая была задача, что изменилось и одна цифра результата.', n: 'Имя Фамилия', r: 'Коммерческий директор, компания' },
+  { q: 'Второй отзыв: например, про прозрачные отчёты и то, что команда сама предлагала, что улучшить.', n: 'Имя Фамилия', r: 'Основатель, компания' },
+  { q: 'Третий отзыв: про скорость запуска и стоимость заявки до и после.', n: 'Имя Фамилия', r: 'Маркетолог, компания' },
+];
 ---
 <Section id="testimonials" {theme}>
-  <SectionHead eyebrow="Отзывы" title="Что говорят клиенты" />
-  <div class="grid gap-4 md:grid-cols-3">
-    {[1, 2, 3].map(() => (
-      <figure class="flex flex-col justify-between rounded-xl border bg-card p-6 shadow-sm">
-        <blockquote class="text-pretty">«Отзыв в 2–3 предложения: задача, что изменилось и одна цифра.»</blockquote>
-        <figcaption class="mt-6 flex items-center gap-3">
-          <span class="size-10 rounded-full bg-muted"></span>
-          <span><span class="block text-sm font-semibold">Имя Фамилия</span><span class="block text-xs text-muted-foreground">Должность, компания</span></span>
-        </figcaption>
+  <div class="dark rounded-sm bg-background p-6 text-foreground md:p-12" data-slider>
+    <div class="flex items-center justify-between">
+      <span class="eyebrow">Отзывы клиентов</span>
+      <div class="flex items-center gap-4 text-sm text-muted-foreground">
+        <span><span data-i>01</span> / 0{list.length}</span>
+        <button type="button" class="grid size-10 place-items-center rounded-full border transition hover:border-foreground hover:text-foreground" data-prev aria-label="Предыдущий">←</button>
+        <button type="button" class="grid size-10 place-items-center rounded-full border transition hover:border-foreground hover:text-foreground" data-next aria-label="Следующий">→</button>
+      </div>
+    </div>
+    {list.map((t, i) => (
+      <figure class="mt-12 grid gap-8 md:mt-16 md:grid-cols-[160px_1fr] md:gap-12" data-slide hidden={i > 0}>
+        <Placeholder class="aspect-square w-28 md:w-40" label="фото" />
+        <div>
+          <blockquote class="display text-3xl leading-[1.15] md:text-[2.75rem]">«{t.q}»</blockquote>
+          <figcaption class="mt-10 flex flex-wrap items-center gap-x-4 gap-y-1">
+            <span class="font-medium">{t.n}</span>
+            <span class="text-muted-foreground">{t.r}</span>
+            <span class="ml-auto hidden h-8 w-24 rounded-sm bg-foreground/10 sm:block" title="логотип компании"></span>
+          </figcaption>
+        </div>
       </figure>
     ))}
   </div>
 </Section>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-slider]').forEach((root) => {
+    const slides = root.querySelectorAll<HTMLElement>('[data-slide]');
+    const idx = root.querySelector<HTMLElement>('[data-i]')!;
+    let cur = 0;
+    const go = (d: number) => {
+      cur = (cur + d + slides.length) % slides.length;
+      slides.forEach((s, i) => (s.hidden = i !== cur));
+      idx.textContent = String(cur + 1).padStart(2, '0');
+    };
+    root.querySelector('[data-prev]')!.addEventListener('click', () => go(-1));
+    root.querySelector('[data-next]')!.addEventListener('click', () => go(1));
+  });
+</script>

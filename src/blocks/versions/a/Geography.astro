@@ -1,0 +1,50 @@
+---
+/**
+ * А · geography — устроен как блок «Контакты»: заголовок блока сверху, ниже сетка 1fr / 1.4fr.
+ * Слева города без подложек, через 24: название шрифтом заголовков 20/28, под ним серым «Офис · XX проектов».
+ * Справа карта — статичный снимок OpenStreetMap (public/geo/map.jpg), обесцвеченный CSS, метки офисов цветом бренда.
+ * На десктопе карта по высоте списка: снимок 4:3 по центру, лишнее срезается сверху и снизу, метки едут вместе со снимком.
+ */
+import Section from '../../Section.astro';
+import SectionHead from './SectionHead.astro';
+import { regions } from '@/data/sitemap';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+// Города-примеры без офиса (реальный список ждём от заказчика)
+const remote = ['Екатеринбург', 'Казань', 'Новосибирск'];
+const cities = [
+  ...regions.map((r) => ({ t: r.title, d: 'Офис · XX проектов' })),
+  ...remote.map((t) => ({ t, d: 'Удалённо · XX проектов' })),
+  { t: 'Вся Россия', d: 'Удалённо' },
+];
+// Положение меток на снимке карты, % от ширины/высоты
+const pins = [{ t: 'Москва', x: 62.7, y: 68.3 }, { t: 'Санкт-Петербург', x: 37.3, y: 31.6 }];
+---
+<Section id="geography">
+  <SectionHead eyebrow="География">Где мы работаем</SectionHead>
+  <div class="mt-12 grid gap-10 lg:grid-cols-[1fr_1.4fr] lg:gap-8">
+    <ul class="flex flex-col gap-6">
+      {cities.map((c) => (
+        <li>
+          <p class="geo-v text-xl leading-7">{c.t}</p>
+          <p class="mt-1 text-sm leading-5 text-[#878787]">{c.d}</p>
+        </li>
+      ))}
+    </ul>
+    <div class="relative aspect-[4/3] overflow-hidden rounded-2xl bg-[#fafaf9] lg:aspect-auto">
+      <div class="absolute inset-x-0 top-1/2 aspect-[4/3] -translate-y-1/2">
+        <img class="absolute inset-0 size-full object-cover opacity-60 grayscale contrast-[0.8]" src={`${base}/geo/map.jpg`} alt="Карта: Москва и Санкт-Петербург" width="1304" height="976" loading="lazy" />
+        {pins.map((p) => (
+          <div class="absolute flex -translate-x-1/2 -translate-y-[6px] flex-col items-center" style={`left:${p.x}%;top:${p.y}%`}>
+            <span class="size-3 rounded-full border-2 border-white bg-brand shadow-[0_0_0_6px_color-mix(in_oklch,var(--brand)_18%,transparent)]"></span>
+            <span class="mt-2 rounded-lg bg-white px-3 py-1 text-sm leading-5 text-[#2c2c2c] shadow-[0_1px_2px_rgb(0_0_0/0.08)]">{p.t}</span>
+          </div>
+        ))}
+      </div>
+      <span class="absolute bottom-2 right-3 text-[10px] leading-4 text-[#878787]">© OpenStreetMap</span>
+    </div>
+  </div>
+</Section>
+
+<style>
+  .geo-v { font-family: var(--font-display); font-weight: 400; letter-spacing: -0.02em; color: #0c0d0f; font-variant-ligatures: none; }
+</style>

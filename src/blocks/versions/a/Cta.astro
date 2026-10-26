@@ -1,0 +1,55 @@
+---
+/**
+ * А · cta:form — по центру заголовок в одну строку и короткая форма (имя, телефон, согласие на обработку данных). Скругление 16.
+ * Фон — как на первом экране (HeroBg: размытые голубые полосы, зерно) без слова и без плывущего пятна.
+ * Вместо него — два световых пятна по углам (сверху слева и снизу справа), мерцают по очереди.
+ */
+import Section from '../../Section.astro';
+import Btn from './Btn.astro';
+import HeroBg from './HeroBg.astro';
+import { url } from '@/lib/url';
+const field = 'w-full border-0 border-b border-[#0c0d0f] bg-transparent px-0 py-3 text-center text-base text-[#0c0d0f] outline-none placeholder:text-[#0c0d0f]';
+---
+<Section id="cta" variant="form">
+  <div class="relative overflow-hidden rounded-2xl px-6 py-16 md:px-10 md:py-24">
+    <HeroBg word={false} fade={false} light={false} />
+    <span class="cta-glow -left-[10%] -top-[30%]" aria-hidden="true"></span>
+    <span class="cta-glow cta-glow-2 -bottom-[30%] -right-[10%]" aria-hidden="true"></span>
+
+    <div class="relative flex flex-col items-center text-center">
+      <h2 class="cta-h text-[32px] leading-10 md:whitespace-nowrap text-[#0c0d0f] md:text-5xl md:leading-[56px]">Не знаете, с чего начать?</h2>
+      <p class="mt-2 max-w-[400px] text-base leading-6 text-[#0c0d0f]">Расскажите о задаче. Ответим в течение рабочего дня, первая консультация — бесплатно</p>
+      <form class="mt-8 grid w-full max-w-sm gap-4" data-lead-form data-consent-form>
+        <input class={field} placeholder="Имя" />
+        <input class={field} placeholder="Телефон или Telegram" />
+        <Btn as="button" type="submit" full class="mt-4" disabled data-consent-submit>Отправить</Btn>
+        <label class="mt-2 flex cursor-pointer items-start gap-3 text-left text-sm leading-5 text-[#0c0d0f]">
+          <input class="mt-0.5 size-4 shrink-0 cursor-pointer accent-[#0c0d0f]" type="checkbox" required data-consent />
+          <span>Согласен на обработку <a class="underline underline-offset-4" href={url('/soglasie/')}>персональных данных</a><br class="hidden sm:block" /> и&nbsp;с <a class="underline underline-offset-4" href={url('/politika/')}>политикой конфиденциальности</a></span>
+        </label>
+      </form>
+    </div>
+
+  </div>
+</Section>
+
+<script>
+  // Кнопка «Отправить» активна только с отмеченным согласием
+  document.querySelectorAll<HTMLFormElement>('[data-consent-form]').forEach((f) => {
+    const box = f.querySelector<HTMLInputElement>('[data-consent]');
+    const btn = f.querySelector<HTMLButtonElement>('[data-consent-submit]');
+    if (!box || !btn) return;
+    const sync = () => { btn.disabled = !box.checked; };
+    box.addEventListener('change', sync); sync();
+  });
+</script>
+
+<style>
+  .cta-h { font-family: var(--font-display); font-weight: 400; letter-spacing: -0.02em; font-variant-ligatures: none; text-wrap: balance; }
+  .cta-glow { position: absolute; z-index: 3; width: 45%; aspect-ratio: 1; border-radius: 50%; pointer-events: none;
+    background: radial-gradient(closest-side, #fff 0%, rgba(255,255,255,0) 100%); filter: blur(60px); mix-blend-mode: plus-lighter;
+    opacity: 0; animation: cta-glow 8s ease-in-out infinite; }
+  .cta-glow-2 { animation-delay: -4s; }
+  @keyframes cta-glow { 0%, 100% { opacity: 0; transform: scale(.9); } 50% { opacity: .3; transform: scale(1); } }
+  @media (prefers-reduced-motion: reduce) { .cta-glow { animation: none; opacity: .3; } }
+</style>

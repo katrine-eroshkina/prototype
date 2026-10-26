@@ -1,0 +1,73 @@
+---
+/**
+ * А · cases:grid.
+ * Внутренние страницы (анонс): заголовок блока А со ссылкой «Все кейсы ›» и три карточки кейса (CaseCard).
+ * /keisy/ (список): фильтр по услугам и счётчик, сетка из тех же карточек, «Показать ещё» (основная кнопка, как по всему сайту).
+ */
+import Section from '../../Section.astro';
+import SectionHead from './SectionHead.astro';
+import CaseCard from './CaseCard.astro';
+import Btn from './Btn.astro';
+import { listCases, sampleCases, type PageCtx } from '@/data/content';
+import { cases as caseLinks } from '@/data/sitemap';
+import { url } from '@/lib/url';
+interface Props { ctx: PageCtx }
+const { ctx } = Astro.props;
+const isList = ctx.kind === 'casesList';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+// Обложки кейсов: файл и точка кадрирования. Пока — три примера от дизайнера, в списке повторяются по кругу
+const covers = [
+  { src: `${base}/cases/1.png`, pos: '76% 50%' },
+  { src: `${base}/cases/2.png`, pos: '25% 50%' },
+  { src: `${base}/cases/3.png`, pos: '50% 50%' },
+];
+const href = (i: number) => url(`/keisy/${caseLinks[i % caseLinks.length].slug}/`);
+const filters = ['Все', ...new Set(listCases.map((c) => c.tag))];
+---
+{isList ? (
+  <Section id="cases" variant="grid" class="pt-10 md:pt-12">
+    <div class="flex flex-wrap items-center justify-between gap-4">
+      <div class="flex flex-wrap gap-1" role="group" aria-label="Фильтр по услугам">
+        {filters.map((f, i) => (
+          <button type="button" data-filter={f} aria-pressed={i === 0 ? 'true' : 'false'}
+            class="h-8 rounded-md bg-[#fafaf9] px-3 text-sm font-medium text-[#0c0d0f] transition hover:bg-[#f0f0ee] aria-pressed:bg-[#0c0d0f] aria-pressed:text-white">{f}</button>
+        ))}
+      </div>
+      <span class="text-sm leading-5 text-[#878787]"><span data-count>{listCases.length}</span> проектов</span>
+    </div>
+    <div class="mt-8 grid gap-x-3 gap-y-10 md:grid-cols-2 lg:grid-cols-3">
+      {listCases.map((c, i) => (
+        <CaseCard href={href(i)} tag={c.tag} filterTag={c.tag} from={c.from} to={c.to} unit={c.unit}
+          caption={c.title.includes(' за ') ? c.title : `${c.title} за ${c.period}`} cover={covers[i % covers.length]} />
+      ))}
+    </div>
+    <div class="mt-12 flex justify-center">
+      <Btn as="button" type="button" noIcon>Показать ещё</Btn>
+    </div>
+  </Section>
+) : (
+  <Section id="cases" variant="grid">
+    <SectionHead eyebrow="Кейсы" link={{ href: '/keisy/', label: ctx.kind === 'case' ? 'Больше кейсов' : 'Все кейсы' }}>
+      {ctx.kind === 'case' ? 'Подобрали для вас' : 'Результаты в цифрах'}
+    </SectionHead>
+    <div class="mt-12 grid gap-x-3 gap-y-10 md:grid-cols-2 lg:grid-cols-3">
+      {sampleCases.map((c, i) => (
+        <CaseCard href={href(i)} tag={c.tag} from={c.from} to={c.to} unit={c.unit} caption={`${c.title} за ${c.period}`} cover={covers[i]} />
+      ))}
+    </div>
+  </Section>
+)}
+
+<script>
+  // Фильтр кейсов по услуге (только на /keisy/)
+  const btns = document.querySelectorAll<HTMLButtonElement>('.only-a [data-filter]');
+  const cards = document.querySelectorAll<HTMLElement>('.only-a a[data-tag]');
+  const count = document.querySelector<HTMLElement>('.only-a [data-count]');
+  btns.forEach((b) => b.addEventListener('click', () => {
+    const f = b.dataset.filter;
+    btns.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    let n = 0;
+    cards.forEach((c) => { const show = f === 'Все' || c.dataset.tag === f; c.hidden = !show; if (show) n++; });
+    if (count) count.textContent = String(n);
+  }));
+</script>

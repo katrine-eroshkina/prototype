@@ -1,7 +1,10 @@
 ---
 import '../styles/global.css';
-import Header from '../components/global/Header.astro';
+import HeaderA from '../components/global/HeaderA.astro';
 import Footer from '../components/global/Footer.astro';
+import SmoothScroll from '../components/global/SmoothScroll.astro';
+import ToTop from '../components/global/ToTop.astro';
+import LeadForms from '../components/global/LeadForms.astro';
 import Breadcrumbs from '../components/wire/Breadcrumbs.astro';
 import Block from '../blocks/Block.astro';
 import { recipes, type RecipeKey } from '../data/recipes';
@@ -18,9 +21,11 @@ interface Props {
   ctx?: Partial<PageCtx>;
   crumbs?: { href?: string; title: string }[];
   draft?: boolean;
+  /** Страница сама рисует заголовок (например, статья блога) — без стандартной шапки с h1 */
+  noTitle?: boolean;
 }
 
-const { title, template, recipe, crumbs, draft } = Astro.props;
+const { title, template, recipe, crumbs, draft, noTitle } = Astro.props;
 const ctx: PageCtx = { kind: recipe ?? 'system', title, crumbs, ...Astro.props.ctx } as PageCtx;
 const blocks = recipe ? recipes[recipe] : [];
 const hasHero = blocks.some((id) => id.startsWith('hero'));
@@ -35,26 +40,23 @@ const templateLabel: Record<Template, string> = {
 };
 ---
 <!doctype html>
-<html lang="ru">
+<html lang="ru" data-style="a">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="noindex" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
-    <title>{title} — прототип</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" />
+    <title>{title} — burkov/agency</title>
   </head>
   <body>
-    <Header />
-    <div class="border-b bg-amber-50 font-mono text-[11px] text-muted-foreground">
-      <div class="container-x flex gap-3 py-1.5">
-        <span>{templateLabel[template]}{recipe && ` · схема «${recipe}»`}</span>
-        {draft && <span class="text-draft">под вопросом</span>}
-      </div>
-    </div>
+    <HeaderA />
+    <SmoothScroll />
+    <ToTop />
+    <LeadForms />
     <main class="min-h-[50vh]">
-      {!hasHero && (
+      {!hasHero && !noTitle && (
         <div class="container-x py-10">
           {crumbs && <Breadcrumbs items={crumbs} />}
           <h1 class="mt-6 text-4xl font-semibold tracking-tight">{title}</h1>
@@ -62,6 +64,8 @@ const templateLabel: Record<Template, string> = {
       )}
       {blocks.map((id, index) => <Block {id} {ctx} {index} />)}
       <div class="container-x"><slot /></div>
+      <!-- Блоки после содержимого страницы — со своим контейнером (например, «Читайте также» и форма под статьёй) -->
+      <slot name="after" />
     </main>
     <Footer />
   </body>

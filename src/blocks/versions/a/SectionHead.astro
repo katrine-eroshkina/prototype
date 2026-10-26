@@ -1,0 +1,26 @@
+---
+/**
+ * А · заголовок блока — по макету блока услуг в Figma (и системе Primefold):
+ * мини-заголовок «/ Название» 16/24 (Eyebrow) → 8px → заголовок 48/56 обычным начертанием, ширина до 620px (длинный уходит в 2 строки)
+ * → 8px → описание 16/24 серым, по необходимости (проп lead или слот lead). Справа — ссылка-переход по центру заголовка: чёрная, при наведении текст перекатывается (.roll).
+ * Заголовок — в слоте, одним цветом.
+ */
+import { url } from '@/lib/url';
+import Eyebrow from './Eyebrow.astro';
+interface Props { eyebrow?: string; lead?: string; link?: { href: string; label: string }; center?: boolean; class?: string }
+const { eyebrow, lead, link, center, class: className } = Astro.props;
+const hasLead = !!lead || Astro.slots.has('lead');
+---
+<div class:list={[center && 'text-center', className]}>
+  {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
+  <div class:list={['flex flex-wrap items-center gap-x-6 gap-y-4', eyebrow && 'mt-2', center ? 'justify-center' : 'justify-between']}>
+    <h2 class:list={['sec-h2 max-w-[620px] text-balance text-[32px] leading-10 md:text-5xl md:leading-[56px]', center && 'mx-auto']}><slot /></h2>
+    {link && <a class="text-sm font-medium text-[#0c0d0f]" href={url(link.href)}><span class="roll"><span>{link.label} ›</span><span aria-hidden="true">{link.label} ›</span></span></a>}
+  </div>
+  {hasLead && <p class:list={['mt-2 max-w-[620px] text-base leading-6 text-[#878787]', center && 'mx-auto']}>{lead}<slot name="lead" /></p>}
+</div>
+
+<style>
+  /* 48/56, вес 400, цвет #2c2c2c; трекинг под Inter (в А заголовки тоже Inter), без лигатур */
+  .sec-h2 { font-family: var(--font-display); font-weight: 400; color: #2c2c2c; letter-spacing: -0.02em; font-variant-ligatures: none; font-feature-settings: "liga" 0, "clig" 0, "calt" 0; }
+</style>

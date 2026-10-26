@@ -1,0 +1,54 @@
+---
+/**
+ * А · кнопка — по wearedirect.co (раздел «03 / Selected work», кнопка View More), как и кнопка в шапке:
+ * две плашки через зазор 2px — текст и квадрат с иконкой «стрелка в круге», скругление 5px, высота 40.
+ * При наведении цвет плашек не меняется: текст перекатывается (уезжает вверх, снизу въезжает копия), стрелка ↗ поворачивается в →, у «скачать» стрелка опускается.
+ * Варианты: dark — чёрные плашки (основная); outline — вторичная: одна плашка с обводкой 1,5px, без заливки и без иконки,
+ * при наведении обводка темнеет; light — серая плашка текста и чёрная иконка.
+ * as — a | button | span (span — когда вся карточка уже ссылка). full — текстовая плашка растягивается. noIcon — без плашки с иконкой. icon="download" — иконка «скачать».
+ */
+import type { HTMLAttributes } from 'astro/types';
+type Props = HTMLAttributes<'a'> & HTMLAttributes<'button'> & {
+  as?: 'a' | 'button' | 'span';
+  variant?: 'dark' | 'light' | 'outline';
+  full?: boolean;
+  /** Без плашки с иконкой (например, «Показать ещё») */
+  noIcon?: boolean;
+  /** Иконка во второй плашке: arrow — стрелка в круге (по умолчанию, поворачивается при наведении), download — скачать */
+  icon?: 'arrow' | 'download';
+  class?: string;
+};
+const { as = 'a', variant = 'dark', full = false, noIcon = false, icon: iconName = 'arrow', class: className, ...rest } = Astro.props;
+const Tag = as;
+const txt = {
+  dark: 'bg-foreground text-background',
+  light: 'bg-black/[0.07] text-[#0c0d0f]',
+  outline: 'text-[#0c0d0f] shadow-[inset_0_0_0_1.5px_rgb(12_13_15/0.3)]',
+}[variant];
+const ic = {
+  dark: 'bg-foreground text-background',
+  light: 'bg-foreground text-background',
+  outline: '',
+}[variant];
+const icon = variant !== 'outline' && !noIcon;
+// Текст дважды — для перекатки при наведении (.roll в global.css)
+const label = await Astro.slots.render('default');
+---
+<Tag class:list={['btn-a group/btn inline-flex gap-[2px] text-sm font-medium', full && 'flex w-full', className]} {...rest}>
+  <span class:list={['flex h-10 items-center justify-center whitespace-nowrap rounded-[5px] px-4 transition-colors duration-200', txt, full && 'flex-1']}><span class="roll"><span set:html={label} /><span aria-hidden="true" set:html={label} /></span></span>
+  {icon && <span class:list={['grid size-10 shrink-0 place-items-center rounded-[5px] transition-colors duration-200', ic]} aria-hidden="true">
+    {iconName === 'download'
+      ? <svg class="btn-a-dl size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11M7 10l5 5 5-5M5 20h14" /></svg>
+      : <svg class="btn-a-ic size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9" /><path d="M9.5 14.5l5-5M10 9.5h4.5V14" /></svg>}
+  </span>}
+</Tag>
+
+<style>
+  .btn-a-ic { transition: transform .2s ease; }
+  .btn-a:hover .btn-a-ic, :global(a:hover) > .btn-a .btn-a-ic, :global(a:hover) .btn-a .btn-a-ic { transform: rotate(45deg); }
+  /* скачать: при наведении стрелка чуть опускается */
+  .btn-a-dl { transition: transform .2s ease; }
+  .btn-a:hover .btn-a-dl { transform: translateY(2px); }
+  .btn-a:disabled { cursor: not-allowed; opacity: .3; }
+  .btn-a:disabled .btn-a-ic { transform: none; }
+</style>

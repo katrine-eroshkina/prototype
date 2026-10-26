@@ -1,6 +1,6 @@
 ---
 /**
- * cases:posts — карточки статей (блог под вопросом).
+ * cases:posts — карточки статей блога, ведут на страницу статьи /blog/<slug>/.
  * На странице /blog/ — сразу после первого экрана, без заголовка блока: сетка + «Показать ещё».
  * На других страницах — анонс: заголовок + 3 статьи.
  */
@@ -9,31 +9,20 @@ import SectionHead from '../SectionHead.astro';
 import Placeholder from '../Placeholder.astro';
 import { badgeVariants } from '@/components/ui/badge';
 import { buttonVariants } from '@/components/ui/button';
-import type { PageCtx } from '@/data/content';
+import { blogPosts as posts, type PageCtx } from '@/data/content';
 import { cn } from '@/lib/utils';
 import { url } from '@/lib/url';
 
 interface Props { ctx: PageCtx; theme?: Theme }
 const { ctx, theme = 'light' } = Astro.props;
 const isBlog = ctx.kind === 'blog';
-const posts = [
-  { t: 'Как понять, что маркетинг не работает', r: 'Консалтинг' },
-  { t: 'SEO в эпоху нейросетей: что изменилось', r: 'SEO' },
-  { t: 'Сколько должен стоить клиент', r: 'Консалтинг' },
-  { t: 'Avito для услуг: 5 ошибок в объявлениях', r: 'Avito' },
-  { t: 'Как проверить подрядчика по рекламе', r: 'Реклама' },
-  { t: 'Зачем бизнесу маркетолог на аутсорсе', r: 'Консалтинг' },
-  { t: 'Как попасть в ответы ChatGPT', r: 'Нейросети' },
-  { t: 'Соцсети, которые продают: с чего начать', r: 'SMM' },
-  { t: 'Сквозная аналитика за один день', r: 'Аналитика' },
-];
 const list = isBlog ? posts : posts.slice(0, 3);
 ---
 <Section id="cases" variant="posts" theme={isBlog ? 'light' : theme} class={isBlog ? 'pt-8 md:pt-10' : ''}>
   {!isBlog && <SectionHead eyebrow="Блог" title="Статьи" action={{ href: '/blog/', label: 'Все статьи' }} />}
   <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
     {list.map((p) => (
-      <a href="#" class="group flex flex-col overflow-hidden rounded-xl border bg-card shadow-sm transition hover:shadow-md">
+      <a href={url(`/blog/${p.slug}/`)} class="group flex flex-col overflow-hidden rounded-xl border bg-card shadow-sm transition hover:shadow-md">
         <Placeholder class="aspect-[16/10] rounded-none border-0 border-b" label="обложка статьи" />
         <div class="flex flex-1 flex-col p-6">
           <div class="flex items-center gap-2 text-sm text-muted-foreground">
@@ -51,5 +40,4 @@ const list = isBlog ? posts : posts.slice(0, 3);
       <button type="button" class={cn(buttonVariants({ variant: 'outline', size: 'lg' }))}>Показать ещё</button>
     </div>
   )}
-  <p class="mt-6 font-mono text-xs text-draft">блог под вопросом</p>
 </Section>

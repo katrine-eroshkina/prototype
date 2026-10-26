@@ -3,28 +3,31 @@
  * Обёртка блока: фон на всю ширину, контейнер, метка «блок:вариант».
  * Тема: light — фон страницы, alt — приглушённый, dark — включает тёмные токены shadcn (.dark).
  * Якорь — «блок-вариант» (например, #cta-form).
+ * Отступы — внутри контейнера, чтобы вертикальные линии сетки шли без разрывов;
+ * class прокидывается туда же (pt-*, py-* блоков), bg — на саму секцию.
  */
 import { cn } from '@/lib/utils';
 
 export type Theme = 'light' | 'alt' | 'dark';
 
-interface Props { id: string; variant?: string; theme?: Theme; class?: string }
-const { id, variant, theme = 'light', class: className } = Astro.props;
+interface Props { id: string; variant?: string; theme?: Theme; class?: string; bg?: string; style?: string; /** не показывать служебную метку блока */ noTag?: boolean }
+const { id, variant, theme = 'light', class: className, bg, style, noTag } = Astro.props;
 const tag = variant ? `${id}:${variant}` : id;
 const anchor = variant ? `${id}-${variant}` : id;
 ---
 <section
   id={anchor}
   data-block={tag}
+  data-theme={theme}
+  style={style}
   class={cn(
-    'relative scroll-mt-16 py-16 md:py-24',
-    theme === 'alt' && 'bg-muted/60',
+    'relative scroll-mt-16 border-b',
+    theme === 'alt' && 'bg-muted/70',
     theme === 'dark' && 'dark bg-background text-foreground',
-    className,
+    bg,
   )}
 >
-  <span class="absolute left-2 top-2 rounded border bg-background/80 px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground">{tag}</span>
-  <div class="container-x">
+  <div class={cn('container-x py-16 md:py-24', className)}>
     <slot />
   </div>
 </section>

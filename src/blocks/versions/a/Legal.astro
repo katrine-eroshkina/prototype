@@ -1,0 +1,92 @@
+---
+/**
+ * А · text:article — юридический документ («Политика конфиденциальности», «Согласие на обработку ПД»).
+ * Сетка как у блоков главной (1fr / 1.4fr): слева оглавление, прилипает при прокрутке, текущий раздел — чёрным с синим слэшем;
+ * справа «Редакция от …», разделы с номером «/ 01» и текстом 18/28 (как в статье блога).
+ * Разделы — типовая структура документа; сам текст пишет юрист, здесь заглушки.
+ */
+import Section from '../../Section.astro';
+import type { PageCtx } from '@/data/content';
+interface Props { ctx: PageCtx }
+const { ctx } = Astro.props;
+const policy = [
+  'Общие положения',
+  'Какие данные мы собираем',
+  'Цели обработки',
+  'Правовые основания',
+  'Хранение и защита данных',
+  'Передача третьим лицам',
+  'Файлы cookie',
+  'Права пользователя',
+  'Контакты оператора',
+];
+const consent = [
+  'Кто даёт согласие',
+  'Оператор персональных данных',
+  'Какие данные обрабатываются',
+  'Цели обработки',
+  'Действия с данными',
+  'Срок действия и отзыв согласия',
+];
+const sections = ctx.title.startsWith('Согласие') ? consent : policy;
+---
+<Section id="text" variant="legal" class="pt-12 md:pt-14">
+  <div class="grid gap-10 lg:grid-cols-[1fr_1.4fr] lg:gap-16">
+    <nav class="hidden lg:block" aria-label="Разделы документа">
+      <ol class="sticky top-24 grid gap-2">
+        {sections.map((s, i) => (
+          <li><a class="lg-toc group flex gap-2 text-base leading-6 text-[#878787] transition-colors hover:text-[#0c0d0f]" href={`#doc-${i + 1}`} data-toc={i + 1}>
+            <span class="w-10 shrink-0 whitespace-nowrap tabular-nums"><span class="lg-slash font-extrabold text-transparent">/</span> {String(i + 1).padStart(2, '0')}</span>{s}
+          </a></li>
+        ))}
+      </ol>
+    </nav>
+    <div>
+      <p class="text-sm leading-5 text-[#878787]">Редакция от 12 октября 2026</p>
+      <div class="lg-body mt-8">
+        {sections.map((s, i) => (
+          <section class="lg-sec" id={`doc-${i + 1}`} data-doc={i + 1}>
+            <p class="text-base leading-6 tabular-nums text-[#878787]"><span class="font-extrabold text-brand">/</span> {String(i + 1).padStart(2, '0')}</p>
+            <h2 class="lg-h mt-2 text-2xl leading-8 md:text-[32px] md:leading-10">{s}</h2>
+            <p>Текст раздела — от юриста. Абзац 2–4 предложения: что именно здесь устанавливается и для кого.</p>
+            {i === 1 ? (
+              <ul>
+                <li>имя;</li>
+                <li>номер телефона или ник в мессенджере;</li>
+                <li>адрес электронной почты;</li>
+                <li>данные о посещении сайта (cookie, IP-адрес).</li>
+              </ul>
+            ) : <p>Второй абзац раздела. Условия, сроки, исключения — коротко и по пунктам, если их несколько.</p>}
+          </section>
+        ))}
+      </div>
+    </div>
+  </div>
+</Section>
+
+<style>
+  .lg-h { font-family: var(--font-display); font-weight: 400; letter-spacing: -0.02em; color: #2c2c2c; font-variant-ligatures: none; }
+  .lg-sec { scroll-margin-top: 96px; }
+  .lg-sec + .lg-sec { margin-top: 56px; }
+  .lg-body :global(p:not(:first-child)) { margin-top: 16px; font-size: 18px; line-height: 28px; color: #2c2c2c; }
+  .lg-body :global(h2 + p) { margin-top: 16px; }
+  .lg-body :global(ul) { margin-top: 16px; padding-left: 24px; list-style: disc; font-size: 18px; line-height: 28px; color: #2c2c2c; }
+  .lg-body :global(li + li) { margin-top: 8px; }
+  .lg-toc.is-on { color: #0c0d0f; }
+  .lg-toc.is-on .lg-slash { color: var(--brand); }
+</style>
+
+<script>
+  // Оглавление: подсвечиваем раздел, который сейчас у верха экрана
+  const links = [...document.querySelectorAll<HTMLAnchorElement>('.only-a [data-toc]')];
+  const secs = [...document.querySelectorAll<HTMLElement>('.only-a [data-doc]')];
+  if (links.length) {
+    const sync = () => {
+      let cur = secs[0]?.dataset.doc;
+      for (const s of secs) if (s.getBoundingClientRect().top < innerHeight * 0.35) cur = s.dataset.doc;
+      links.forEach((a) => a.classList.toggle('is-on', a.dataset.toc === cur));
+    };
+    addEventListener('scroll', sync, { passive: true });
+    sync();
+  }
+</script>

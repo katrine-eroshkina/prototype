@@ -1,32 +1,71 @@
 ---
-/** hero:main — главная: оффер слева, изображение справа, логотипы клиентов снизу */
+/**
+ * hero:main — главная.
+ * Раскладка по Thrad/Wonderful: огромный тонкий заголовок слева, лид и кнопки справа внизу;
+ * ниже — широкий визуал с карточкой-графиком (приём Rulebase: «маркетинг, который можно посчитать»);
+ * логотипы клиентов — в ячейках сетки.
+ */
 import Section, { type Theme } from '../Section.astro';
 import Placeholder from '../Placeholder.astro';
-import { badgeVariants } from '@/components/ui/badge';
 import { buttonVariants } from '@/components/ui/button';
 import { homeHero, type PageCtx } from '@/data/content';
+import { cn } from '@/lib/utils';
 import { url } from '@/lib/url';
 
 interface Props { ctx: PageCtx; theme?: Theme }
 const { theme = 'light' } = Astro.props;
+
+// Точки графика «заявки в месяц» (пример)
+const pts = [40, 44, 52, 58, 71, 84, 102, 125];
+const W = 320, H = 110;
+const xy = pts.map((v, i) => [Math.round((i / (pts.length - 1)) * W), Math.round(H - ((v - 30) / 100) * H)]);
+const line = xy.map((p) => p.join(',')).join(' ');
 ---
-<Section id="hero" variant="main" {theme} class="pt-12 md:pt-20">
-  <div class="grid items-center gap-12 lg:grid-cols-2">
-    <div>
-      <span class={badgeVariants({ variant: 'secondary' })}>{homeHero.badge}</span>
-      <h1 class="mt-5 text-4xl font-semibold tracking-tight text-balance sm:text-5xl lg:text-6xl">{homeHero.title}</h1>
-      <p class="mt-6 max-w-xl text-lg text-muted-foreground text-pretty">{homeHero.lead}</p>
+<Section id="hero" variant="main" {theme} class="pb-0 pt-14 md:pb-0 md:pt-24">
+  <span class="eyebrow">{homeHero.badge}</span>
+  <div class="mt-6 grid gap-10 lg:grid-cols-[1.6fr_1fr] lg:items-end lg:gap-16">
+    <h1 class="display text-5xl leading-[1] sm:text-6xl lg:text-[5.75rem]">{homeHero.title}</h1>
+    <div class="lg:pb-3">
+      <p class="text-pretty text-lg text-muted-foreground">{homeHero.lead}</p>
       <div class="mt-8 flex flex-wrap gap-3">
-        <a class={buttonVariants({ size: 'lg' })} href="#cta-form">{homeHero.primary}</a>
-        <a class={buttonVariants({ size: 'lg', variant: 'outline' })} href={url('/keisy/')}>{homeHero.secondary}</a>
+        <a class={cn(buttonVariants({ size: 'lg' }), 'h-12 px-6 text-base')} href="#cta-form">{homeHero.primary} <span aria-hidden="true">+</span></a>
+        <a class={cn(buttonVariants({ size: 'lg', variant: 'outline' }), 'h-12 px-6 text-base')} href={url('/keisy/')}>{homeHero.secondary}</a>
       </div>
     </div>
-    <Placeholder class="aspect-[4/3]" label="визуал первого экрана" />
   </div>
-  <div class="mt-16 border-t pt-8">
-    <p class="text-sm text-muted-foreground">Нам доверяют</p>
-    <div class="mt-4 grid grid-cols-3 gap-4 sm:grid-cols-6">
-      {Array.from({ length: 6 }, () => <div class="h-8 rounded bg-muted"></div>)}
+
+  <!-- Визуал: фото/видео команды + карточка с данными поверх -->
+  <div class="relative mt-14 md:mt-20">
+    <Placeholder class="aspect-[4/3] sm:aspect-[16/7]" label="фото команды в работе / видео" />
+    <figure class="mt-4 w-full rounded-sm border bg-card p-5 shadow-[0_20px_60px_-20px_rgb(0_0_0/0.25)] sm:absolute sm:bottom-8 sm:right-8 sm:mt-0 sm:w-[360px]">
+      <figcaption class="flex items-center justify-between text-xs text-muted-foreground">
+        <span>Заявки из поиска, в месяц</span><span>пример</span>
+      </figcaption>
+      <p class="mt-3 font-display text-4xl font-light tracking-tight">
+        <span class="text-brand">↑</span> 212 %
+      </p>
+      <svg class="mt-3 w-full" viewBox={`-6 -6 ${W + 12} ${H + 12}`} fill="none" aria-hidden="true">
+        {[0, 1, 2].map((r) => <line x1="0" x2={W} y1={(H / 2) * r} y2={(H / 2) * r} stroke="currentColor" stroke-opacity="0.1" />)}
+        <polyline points={line} stroke="var(--brand)" stroke-width="2" stroke-linejoin="round" />
+        {xy.map(([x, y], i) => <circle cx={x} cy={y} r={i === xy.length - 1 ? 5 : 2.5} fill="var(--brand)" />)}
+        <circle cx={xy.at(-1)![0]} cy={xy.at(-1)![1]} r="12" fill="var(--brand)" fill-opacity="0.15" />
+      </svg>
+      <p class="mt-3 border-t pt-3 text-sm">40 → 125 заявок за 8 месяцев · SEO, производство</p>
+    </figure>
+  </div>
+
+  <!-- Логотипы клиентов в ячейках -->
+  <div class="mt-14 grid border-t sm:grid-cols-[auto_1fr] lg:-mx-10">
+    <p class="flex items-center py-5 text-sm text-muted-foreground sm:border-r sm:pr-8 lg:px-10">Нам доверяют</p>
+    <!-- Ячейки: правая и нижняя границы, лишние срезаем overflow -->
+    <div class="overflow-hidden">
+      <div class="-mb-px -mr-px grid grid-cols-3 border-t sm:border-t-0 lg:grid-cols-6">
+        {Array.from({ length: 6 }, () => (
+          <div class="grid h-20 place-items-center border-b border-r">
+            <span class="h-5 w-16 rounded-sm bg-foreground/10 sm:w-20"></span>
+          </div>
+        ))}
+      </div>
     </div>
   </div>
 </Section>

@@ -1,0 +1,98 @@
+---
+/**
+ * А · фон первого экрана — повторяет устройство фона router.com/models (своими средствами):
+ *  1. Фон: сильно размытые вертикальные полосы — холодная голубая и тёплая розовато-коричневая
+ *     (у Router это размытая фотография; здесь — градиенты, фото не берём).
+ *  2. Зерно: статичный слой (12 %) + «живой» контрастный слой в overlay, дрожит шагами.
+ *  3. Слово «burkov/»: три копии с разным размытием и режимами наложения
+ *     (plus-lighter / luminosity + белое свечение) — на краях букв проступает голубая аура;
+ *     всё слово целиком ещё раз размыто и полупрозрачно.
+ *  4. Перелив: большое белое размытое пятно медленно едет по слову слева направо (14 с).
+ *  5. Внизу — переход в белый.
+ * Размеры — в долях ширины блока (cqw), как у оригинала, поэтому одинаково на любой ширине.
+ */
+// Зерно: шум из SVG-фильтра, серый, плитка 230 px
+const noise = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='230' height='230'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.95' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='230' height='230' filter='url(%23n)'/%3E%3C/svg%3E")`;
+interface Props { word?: boolean; fade?: boolean; light?: boolean }
+// word — огромное размытое «burkov/», fade — переход в белый снизу, light — плывущее световое пятно
+const { word: showWord = true, fade = true, light = true } = Astro.props;
+const word = 'burkov/';
+---
+<div class="hb pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+  <!-- 1. Размытый «фотографический» фон -->
+  <div class="hb-photo absolute -inset-[10%]"></div>
+  <!-- 2а. Статичное зерно -->
+  <div class="absolute inset-0 opacity-[0.12]" style={`background-image:${noise};background-size:230px`}></div>
+  <!-- мягкое тёплое свечение сверху (как у Router) -->
+  <div class="absolute left-[8%] top-[7%] h-[63%] w-[86%] opacity-20 mix-blend-plus-lighter blur-[47px] [background:radial-gradient(ellipse_50%_50%_at_50%_50%,#dad8d0_0%,rgba(218,216,208,0)_100%)]"></div>
+
+  <!-- 4. Световое пятно-перелив -->
+  {light && <span class="hb-light"></span>}
+
+  <!-- 3. Слово -->
+  {showWord && <div class="hb-word">
+    <p class="absolute left-0 top-[-5.42cqw] text-[oklch(0.93_0.004_90)] opacity-60 blur-[0.99cqw]">{word}</p>
+    <p class="absolute left-0 top-[-5.42cqw] text-[oklch(0.93_0.004_90)] opacity-60 mix-blend-luminosity blur-[1.69cqw]">{word}</p>
+    <p class="absolute left-0 top-[-5.42cqw] text-[oklch(0.97_0.003_90)] opacity-60 mix-blend-plus-lighter blur-[0.82cqw] [text-shadow:0_0_2.232cqw_white]">{word}</p>
+  </div>}
+
+  <!-- 5. Переход в белый снизу -->
+  {fade && <div class="absolute inset-x-0 bottom-0 z-[5] h-[8.4%] bg-gradient-to-b from-white/0 to-white"></div>}
+  <!-- 2б. Живое зерно поверх всего -->
+  <div class="hb-static" style={`background-image:${noise}`}></div>
+</div>
+
+<style>
+  .hb { container-type: size; isolation: isolate; }
+  /* Размытые полосы, как повёрнутое фото Router: сверху холодный серо-голубой,
+     светлее к центру, внизу — серо-сиреневый; тепло только справа внизу */
+  .hb-photo {
+    background:
+      radial-gradient(45% 35% at 45% 32%, oklch(0.86 0.03 228) 0%, transparent 75%),
+      radial-gradient(28% 30% at 10% 55%, oklch(0.84 0.025 225) 0%, transparent 75%),
+      radial-gradient(30% 32% at 88% 78%, oklch(0.84 0.02 35) 0%, transparent 75%),
+      radial-gradient(35% 30% at 62% 82%, oklch(0.66 0.025 320) 0%, transparent 75%),
+      linear-gradient(180deg,
+        oklch(0.73 0.032 245) 0%, oklch(0.8 0.032 236) 25%, oklch(0.82 0.028 232) 45%,
+        oklch(0.72 0.024 250) 62%, oklch(0.64 0.022 290) 82%, oklch(0.6 0.022 320) 100%);
+    filter: blur(40px);
+  }
+  .hb-word {
+    position: absolute; left: -2.083%; bottom: -4cqw; z-index: 4;
+    width: 105.8%; height: calc(24.75cqw + 10px);
+    font-family: Inter, 'Helvetica Neue', Arial, sans-serif; font-weight: 500;
+    font-size: 36cqw; line-height: 1; letter-spacing: -2.3cqw; white-space: nowrap;
+    mix-blend-mode: plus-lighter; opacity: .55; filter: blur(clamp(14px, 1.9cqw, 34px));
+    text-align: center;
+  }
+  .hb-word p { width: 100%; margin: 0; }
+  .hb-light {
+    --u: calc(100cqw / 1440);
+    position: absolute; top: 0; left: 0; z-index: 3;
+    width: calc(675 * var(--u)); height: calc(675 * var(--u)); border-radius: 50%;
+    background: radial-gradient(54.7% 54.7% at 45.3% 50%, #fff 0%, rgba(255,255,255,0) 100%);
+    opacity: .57; filter: blur(calc(54 * var(--u))); mix-blend-mode: plus-lighter;
+    transform: translate3d(calc(-650 * var(--u)), calc(100cqh - 570 * var(--u)), 0);
+    animation: hb-light 14s cubic-bezier(.42, 0, .58, 1) infinite; will-change: transform;
+  }
+  @keyframes hb-light {
+    56%, 100% { transform: translate3d(calc(1548 * var(--u)), calc(100cqh - 570 * var(--u)), 0); }
+  }
+  .hb-static {
+    position: absolute; inset: -12%; z-index: 6;
+    background-size: 230px; background-repeat: repeat;
+    opacity: .32; filter: contrast(2.15); mix-blend-mode: overlay;
+    animation: hb-static .32s steps(2) infinite; will-change: transform;
+  }
+  @keyframes hb-static {
+    0%, 100% { transform: translate(-2%, -1%); }
+    20% { transform: translate(1%, 2%); }
+    40% { transform: translate(2%, -2%); }
+    60% { transform: translate(-1%, 1%); }
+    80% { transform: translate(2%, 1%); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hb-light { opacity: 0; animation: none; }
+    .hb-static { animation: none; }
+  }
+</style>

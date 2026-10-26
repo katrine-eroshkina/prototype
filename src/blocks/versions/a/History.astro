@@ -1,0 +1,29 @@
+---
+/**
+ * А · process:history — «Как мы росли»: шкала времени в четыре колонки.
+ * Сверху тонкая серая линия через все колонки с синей точкой у каждого года; ниже год крупно шрифтом заголовков, событие и пояснение серым.
+ * Последняя точка (текущий год) — с ореолом, как метки на карте.
+ */
+import Section from '../../Section.astro';
+import SectionHead from './SectionHead.astro';
+import { history, type PageCtx } from '@/data/content';
+interface Props { ctx: PageCtx }
+---
+<Section id="process" variant="history">
+  <SectionHead eyebrow="История">Как мы росли</SectionHead>
+  <ol class="relative mt-12 grid gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
+    <span class="absolute inset-x-0 top-[5px] hidden h-px bg-[#e7e7e5] lg:block" aria-hidden="true"></span>
+    {history.map((h, i) => (
+      <li class="relative">
+        <span class:list={['block size-3 rounded-full border-2 border-white bg-brand', i === history.length - 1 && 'shadow-[0_0_0_6px_color-mix(in_oklch,var(--brand)_18%,transparent)]']} aria-hidden="true"></span>
+        <p class="ah-y mt-6 text-[40px] leading-[48px]">{h.y}</p>
+        <h3 class="mt-4 text-base font-medium leading-6 text-[#2c2c2c]">{h.t}</h3>
+        <p class="mt-1 text-base leading-6 text-[#878787]">{h.d.replace(/\.$/, '')}</p>
+      </li>
+    ))}
+  </ol>
+</Section>
+
+<style>
+  .ah-y { font-family: var(--font-display); font-weight: 400; letter-spacing: -0.02em; color: #0c0d0f; font-variant-ligatures: none; }
+</style>

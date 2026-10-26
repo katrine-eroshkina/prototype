@@ -1,14 +1,44 @@
 ---
-/** text:statement — манифест: крупное высказывание + «чего мы не делаем» */
+/**
+ * text:statement — манифест.
+ * Крупный текст по центру; слова «проявляются» по мере прокрутки (приём Wonderful).
+ * Ниже — «чего мы не делаем» в ячейках сетки.
+ */
 import Section, { type Theme } from '../Section.astro';
 import { manifesto, type PageCtx } from '@/data/content';
 
 interface Props { ctx: PageCtx; theme?: Theme }
-const { theme = 'dark' } = Astro.props;
+const { theme = 'light' } = Astro.props;
+const words = manifesto.title.split(' ');
 ---
-<Section id="text" variant="statement" {theme}>
-  <p class="max-w-4xl text-3xl font-semibold leading-tight tracking-tight text-balance md:text-5xl">{manifesto.title}</p>
-  <ul class="mt-12 grid gap-4 border-t pt-8 text-muted-foreground sm:grid-cols-2 lg:grid-cols-4">
-    {manifesto.not.map((n) => <li class="flex gap-2"><span aria-hidden="true">✕</span>{n}</li>)}
+<Section id="text" variant="statement" {theme} class="pb-0 md:pb-0 md:pt-32">
+  <p class="display mx-auto max-w-5xl text-center text-4xl leading-[1.1] md:text-6xl" data-reveal>
+    {words.map((w) => <span class="text-foreground/20 transition-colors duration-300">{w} </span>)}
+  </p>
+  <ul class="mt-20 grid border-t sm:grid-cols-2 lg:-mx-10 lg:grid-cols-4 md:mt-28">
+    {manifesto.not.map((n, i) => (
+      <li class="flex flex-col gap-6 border-b p-6 sm:border-r lg:border-b-0 lg:p-10 lg:last:border-r-0">
+        <span class="font-mono text-xs text-muted-foreground">0{i + 1}</span>
+        <span class="flex items-start gap-3 text-lg"><span class="text-brand" aria-hidden="true">✕</span>{n}</span>
+      </li>
+    ))}
   </ul>
 </Section>
+
+<script>
+  // Подсвечиваем слова по мере того, как абзац проходит середину экрана
+  document.querySelectorAll<HTMLElement>('[data-reveal]').forEach((el) => {
+    const words = [...el.children] as HTMLElement[];
+    let lit = 0; // проявленные слова больше не гаснут
+    const update = () => {
+      const r = el.getBoundingClientRect();
+      const vh = window.innerHeight;
+      const p = Math.min(1, Math.max(0, (vh * 0.85 - r.top) / (r.height + vh * 0.35)));
+      lit = Math.max(lit, Math.round(p * words.length));
+      words.forEach((w, i) => w.classList.toggle('text-foreground/20', i >= lit));
+    };
+    update();
+    addEventListener('scroll', update, { passive: true });
+    addEventListener('resize', update);
+  });
+</script>

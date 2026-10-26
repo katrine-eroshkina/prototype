@@ -1,0 +1,15 @@
+---
+/**
+ * Формы заявки (data-lead-form) в прототипе: настоящей отправки нет — по «Отправить» сразу открывается страница «Спасибо».
+ * На боевом сайте здесь будет отправка заявки и переход на /spasibo/ после успешного ответа (там же цель для Метрики).
+ */
+---
+<script>
+  const thanks = `${import.meta.env.BASE_URL.replace(/\/$/, '')}/spasibo/`;
+  document.addEventListener('submit', (e) => {
+    const form = (e.target as HTMLElement).closest('form[data-lead-form]');
+    if (!form) return;
+    e.preventDefault();
+    location.href = thanks;
+  });
+</script>

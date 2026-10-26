@@ -22,16 +22,22 @@ const teaser = [
   { dir: 'Digital', from: 'от XX 000 ₽/мес', note: 'SEO, реклама, Avito, SMM, таргет, нейросети' },
 ];
 ---
-<Section id="pricing" {theme}>
+<Section id="pricing" {theme} class={isHome ? "pb-0 md:pb-0" : ""}>
   {isHome ? (
     <>
-      <SectionHead eyebrow="Цены" title="Цены открыто" action={{ href: '/tseny/', label: 'Все пакеты' }} />
-      <div class="grid gap-4 md:grid-cols-2">
-        {teaser.map((t) => (
-          <a href={url('/tseny/')} class="group rounded-xl border bg-card p-8 shadow-sm transition hover:shadow-md">
-            <span class="text-sm text-muted-foreground">{t.dir}</span>
-            <span class="mt-2 block text-3xl font-semibold tracking-tight">{t.from}</span>
-            <span class="mt-3 block text-sm text-muted-foreground">{t.note}</span>
+      <SectionHead eyebrow="Цены" title="Цены открыто" lead="Пакеты и состав работ — на сайте. Точную смету даём после брифа." action={{ href: '/tseny/', label: 'Все пакеты' }} />
+      <!-- Две ячейки во всю ширину колонки -->
+      <div class="grid border-t md:grid-cols-2 lg:-mx-10">
+        {teaser.map((t, i) => (
+          <a href={url('/tseny/')} class={cn('group flex min-h-72 flex-col justify-between gap-10 border-b bg-card/60 p-6 transition hover:bg-card md:border-b-0 lg:p-10', i === 0 && 'md:border-r')}>
+            <div class="flex items-start justify-between">
+              <span class="eyebrow">{t.dir}</span>
+              <span class="grid size-10 place-items-center rounded-full border transition group-hover:border-brand group-hover:bg-brand group-hover:text-primary-foreground" aria-hidden="true">→</span>
+            </div>
+            <div>
+              <span class="block font-display text-5xl font-light tracking-tight md:text-6xl">{t.from}</span>
+              <span class="mt-4 block max-w-sm text-muted-foreground">{t.note}</span>
+            </div>
           </a>
         ))}
       </div>

@@ -1,0 +1,32 @@
+---
+/**
+ * А · карточка статьи — для списка /blog/ и «Читайте также» под статьёй.
+ * Обложка 16:10 (скругление 16) с синей меткой рубрики; пока обложек нет — светлая заглушка с мягким пятном, три оттенка по кругу.
+ * Под обложкой — «5 мин · 12 октября 2026» серым и заголовок 20/28 со стрелкой, как у карточки кейса.
+ * wide — крупная карточка первой статьи: обложка слева, текст справа (на телефоне — как обычная).
+ */
+interface Props { href: string; title: string; rubric: string; i?: number; wide?: boolean }
+const { href, title, rubric, i = 0, wide = false } = Astro.props;
+---
+<a class:list={['group grid content-start gap-4', wide && 'lg:grid-cols-[1.4fr_1fr] lg:items-center lg:gap-16']} href={href} data-tag={rubric}>
+  <div class="relative aspect-[16/10] overflow-hidden rounded-2xl bg-[#fafaf9]">
+    <div class:list={['pc-bg absolute inset-0 transition duration-500 group-hover:scale-[1.03]', `pc-bg-${i % 3}`]} aria-hidden="true"></div>
+    <span class="absolute left-5 top-5 flex h-6 items-center rounded-md bg-brand px-2 text-xs font-medium text-white">{rubric}</span>
+  </div>
+  <div>
+    <p class="text-sm leading-5 text-[#878787]">5 мин · 12 октября 2026</p>
+    <div class="mt-2 flex items-start justify-between gap-4">
+      <h3 class:list={['pc-h text-xl leading-7 text-[#2c2c2c]', wide && 'lg:text-[32px] lg:leading-10']}>{title}</h3>
+      <svg class="mt-1.5 size-4 shrink-0 text-[#878787] transition group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-brand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9" /></svg>
+    </div>
+    {wide && <p class="mt-4 hidden max-w-[440px] text-base leading-6 text-[#878787] lg:block">Короткий анонс статьи: о чём она и что читатель вынесет — две строки</p>}
+  </div>
+</a>
+
+<style>
+  .pc-h { font-family: var(--font-display); font-weight: 400; letter-spacing: -0.02em; font-variant-ligatures: none; }
+  /* Заглушки обложек — мягкие пятна на светлом, в тон фону первого экрана */
+  .pc-bg-0 { background: radial-gradient(80% 90% at 75% 30%, color-mix(in oklab, var(--brand) 22%, transparent), transparent 70%), #f2f4f7; }
+  .pc-bg-1 { background: radial-gradient(70% 80% at 25% 75%, color-mix(in oklab, var(--brand) 14%, transparent), transparent 70%), #f5f5f3; }
+  .pc-bg-2 { background: radial-gradient(90% 90% at 50% 0%, #dfe6ee, transparent 70%), #fafaf9; }
+</style>

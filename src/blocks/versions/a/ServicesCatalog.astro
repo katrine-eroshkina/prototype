@@ -1,0 +1,30 @@
+---
+/**
+ * А · services:groups на странице «Все услуги» (/uslugi/): карточки из макета, разделённые по структуре —
+ * группа (Консалтинг / Digital): мини-заголовок «/ 01», название и лид под ним → сетка карточек категорий (ServiceCard).
+ */
+import Section from '../../Section.astro';
+import Eyebrow from './Eyebrow.astro';
+import ServiceCard from './ServiceCard.astro';
+import { groups } from '@/data/sitemap';
+---
+<Section id="services" variant="groups" class="lg:border-x-0">
+  <div class="grid gap-20">
+    {groups.map((g, i) => {
+      return (
+        <div id={g.slug} class="scroll-mt-24">
+          <Eyebrow>{String(i + 1).padStart(2, '0')}</Eyebrow>
+          <h2 class="sec-h2 mt-2 text-[32px] leading-10 md:text-5xl md:leading-[56px]">{g.title}</h2>
+          <p class="mt-2 max-w-[620px] text-base leading-6 text-[#878787]">{g.lead.replace(/\.$/, '')}</p>
+          <div class="mt-10 grid auto-rows-fr gap-3 md:grid-cols-2 xl:grid-cols-3">
+            {g.categories.map((c) => <ServiceCard c={c} monthly={g.slug === 'digital'} />)}
+          </div>
+        </div>
+      );
+    })}
+  </div>
+</Section>
+
+<style>
+  .sec-h2 { font-family: var(--font-display); font-weight: 400; color: #2c2c2c; letter-spacing: -0.02em; font-variant-ligatures: none; }
+</style>

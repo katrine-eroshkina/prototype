@@ -1,0 +1,24 @@
+---
+/**
+ * Статья блога: /blog/<slug>/ — шаблон по Primefold (components/BlogArticle).
+ * В версии А под статьёй вместо тёмного баннера — «Читайте также» (три другие статьи) и форма заявки, как по всему сайту.
+ */
+import Base from '../../layouts/Base.astro';
+import BlogArticle from '../../components/BlogArticle.astro';
+import APosts from '../../blocks/versions/a/Posts.astro';
+import ACta from '../../blocks/versions/a/Cta.astro';
+import { blogPosts } from '../../data/content';
+
+export function getStaticPaths() {
+  return blogPosts.map((p) => ({ params: { slug: p.slug }, props: p }));
+}
+
+const { t, r, slug } = Astro.props;
+---
+<Base title={t} template="text" noTitle crumbs={[{ href: '/blog/', title: 'Блог' }, { title: t }]}>
+  <BlogArticle title={t} rubric={r} />
+  <div class="only-a" slot="after">
+    <APosts related={slug} />
+    <ACta />
+  </div>
+</Base>

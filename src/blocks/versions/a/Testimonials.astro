@@ -1,0 +1,22 @@
+---
+/**
+ * А · testimonials — раскладка из версии В (сетка 2×2, в каждой карточке цифра результата, цитата и автор),
+ * оформление А: светло-серые карточки #fafaf9 со скруглением 16, без плашки под логотип.
+ * Цифра — как в слайдере кейсов: «было (серым) → стало (чёрным)» 40/48 и подпись.
+ * Цитата до ~4 строк, внизу автор; напротив справа — компактная серая ссылка «иконка документа, Отзыв ↗» (письмо в PDF) без заливки на благодарственное письмо.
+ * Имена, цитаты и письма — временные примеры.
+ */
+import Section from '../../Section.astro';
+import SectionHead from './SectionHead.astro';
+import TestimonialCard from './TestimonialCard.astro';
+import { testimonialsA as list } from '@/data/content';
+---
+<Section id="testimonials">
+  <SectionHead eyebrow="Отзывы">
+    Реальный результат. Реальные клиенты
+  </SectionHead>
+  <div class="mt-12 grid gap-3 md:grid-cols-2">
+    {list.map((t) => <TestimonialCard {t} />)}
+  </div>
+</Section>
+

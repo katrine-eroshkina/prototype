@@ -1,0 +1,18 @@
+---
+/**
+ * А · список проблем («Подойдёт, если…») под описанием на первом экране категории и услуги.
+ * Заменяет отдельный блок «Узнаёте свою ситуацию?». Пункты — situations(ctx), у каждого — светло-серый грустный смайлик по центру строки (это проблемы клиента).
+ */
+import { Frown } from 'lucide-react';
+import { situations, type PageCtx } from '@/data/content';
+interface Props { ctx: PageCtx; class?: string }
+const { ctx, class: className } = Astro.props;
+---
+<div class={className}>
+  <p class="text-base leading-6 text-[#0c0d0f]">Подойдёт, если:</p>
+  <ul class="mt-3 grid max-w-[620px] gap-2">
+    {situations(ctx).map((s) => (
+      <li class="flex items-center gap-3 text-base leading-6 text-[#2c2c2c]"><Frown className="shrink-0 text-[#b4b4b2]" size={20} strokeWidth={1.5} aria-hidden="true" />{s}</li>
+    ))}
+  </ul>
+</div>

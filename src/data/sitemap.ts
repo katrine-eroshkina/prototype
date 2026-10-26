@@ -73,7 +73,7 @@ export const mainNav: { href: string; title: string; draft?: boolean }[] = [
   { href: '/keisy/', title: 'Кейсы' },
   { href: '/o-kompanii/', title: 'О компании' },
   { href: '/tseny/', title: 'Цены' },
-  { href: '/blog/', title: 'Блог', draft: true }, // под вопросом — в меню с пометкой (?)
+  { href: '/blog/', title: 'Блог' },
   { href: '/kontakty/', title: 'Контакты' },
 ];
 

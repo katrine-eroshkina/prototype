@@ -1,0 +1,51 @@
+---
+/**
+ * А · hero:page — внутренняя страница в стиле главной А: крошки, заголовок 48/56, лид серым под ним,
+ * одна кнопка «Обсудить задачу» (Btn, как по всему сайту). Кнопки «Цены» нет.
+ * У направления (категории) — сетка как у блоков главной (1fr / 1.4fr): слева ещё список «Подойдёт, если:» с грустными смайликами,
+ * справа кейс по теме направления — карточка из сетки кейсов на всю правую колонку, но низкая (обложка 2:1), по центру высоты левой части.
+ */
+import Section from '../../Section.astro';
+import Breadcrumbs from '@/components/wire/Breadcrumbs.astro';
+import Btn from './Btn.astro';
+import Problems from './Problems.astro';
+import CaseCard from './CaseCard.astro';
+import { heroLead, listCases, caseForCategory, type PageCtx } from '@/data/content';
+import { cases as caseLinks } from '@/data/sitemap';
+import { url } from '@/lib/url';
+interface Props { ctx: PageCtx }
+const { ctx } = Astro.props;
+const lead = heroLead(ctx);
+const showCta = !['text', 'system', 'blog', 'casesList', 'contacts'].includes(ctx.kind);
+const isCategory = ctx.kind === 'category';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+// Обложки — те же примеры, что в сетке кейсов
+const covers = [
+  { src: `${base}/cases/1.png`, pos: '76% 50%' },
+  { src: `${base}/cases/2.png`, pos: '25% 50%' },
+  { src: `${base}/cases/3.png`, pos: '50% 50%' },
+];
+const ci = isCategory ? caseForCategory[ctx.category?.slug ?? ''] : undefined;
+const c = ci !== undefined ? listCases[ci] : undefined;
+---
+<Section id="hero" variant="page" class="pb-0 pt-10 md:pb-0 md:pt-14">
+  {ctx.crumbs && <Breadcrumbs items={ctx.crumbs} />}
+  <div class:list={['mt-8', c && 'grid gap-10 lg:grid-cols-[1fr_1.4fr] lg:gap-16']}>
+    <div>
+      <h1 class="hp-h1 max-w-[760px] text-balance text-[32px] leading-10 md:text-5xl md:leading-[56px]">{ctx.title}</h1>
+      {lead && <p class="mt-4 max-w-[620px] text-base leading-6 text-[#878787]">{lead.replace(/\.$/, '')}</p>}
+      {isCategory && <Problems {ctx} class="mt-8" />}
+      {showCta && <Btn class="mt-8" href="#cta-form">Обсудить задачу</Btn>}
+    </div>
+    {c && ci !== undefined && (
+      <div class="self-center">
+        <CaseCard href={url(`/keisy/${caseLinks[ci % caseLinks.length].slug}/`)} tag={c.tag} from={c.from} to={c.to} unit={c.unit}
+          caption={c.title.includes(' за ') ? c.title : `${c.title} за ${c.period}`} cover={covers[ci % covers.length]} aspect="aspect-[2/1]" />
+      </div>
+    )}
+  </div>
+</Section>
+
+<style>
+  .hp-h1 { font-family: var(--font-display); font-weight: 400; letter-spacing: -0.02em; color: #2c2c2c; font-variant-ligatures: none; }
+</style>

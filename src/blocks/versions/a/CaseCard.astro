@@ -1,0 +1,52 @@
+---
+/**
+ * А · карточка кейса — общая для анонса кейсов (cases:grid) и списка /keisy/.
+ * Обложка 4:5 (скругление 16) с синей меткой услуги и результатом поверх: «было → стало», под ним подпись;
+ * снизу тёмный градиент, чтобы цифры читались на любом фото. Под обложкой — заголовок со стрелкой.
+ */
+interface Props {
+  href: string;
+  tag: string;
+  from: string;
+  to: string;
+  unit: string;
+  caption: string;
+  /** Обложка: файл и точка кадрирования; без неё — тёмная заглушка */
+  cover?: { src: string; pos: string };
+  /** Для фильтра на /keisy/ */
+  filterTag?: string;
+  /** Пропорции обложки: по умолчанию 4:5; на первом экране направления — низкая (2:1) */
+  aspect?: string;
+}
+const { href, tag, from, to, unit, caption, cover, filterTag, aspect = 'aspect-[4/5]' } = Astro.props;
+---
+<a class="group flex flex-col" href={href} data-tag={filterTag}>
+  <div class:list={['relative overflow-hidden rounded-2xl', aspect]}>
+    {cover ? (
+      <img class="absolute inset-0 size-full object-cover transition duration-500 group-hover:scale-[1.03]" src={cover.src} style={`object-position:${cover.pos}`} alt="" loading="lazy" />
+    ) : <div class="cc-bg absolute inset-0 transition duration-500 group-hover:scale-[1.03]"></div>}
+    <!-- Затемнение снизу: цифры читаются на любом фото (светлом, пёстром) -->
+    <div class="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/80 via-black/40 to-transparent" aria-hidden="true"></div>
+    <div class="absolute inset-0 flex flex-col justify-between p-6 text-white">
+      <span class="flex h-6 items-center self-start rounded-md bg-brand px-2 text-xs font-medium text-white">{tag}</span>
+      <div>
+        <p class="cc-kpi flex items-center gap-2 whitespace-nowrap text-[40px] leading-[48px]">
+          <span class="text-white/70">{from}</span>
+          <svg class="size-7 shrink-0 text-white/70" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-label="стало"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+          <span>{to}</span>
+        </p>
+        <p class="mt-1 text-sm leading-5 text-white/70">{unit}</p>
+      </div>
+    </div>
+  </div>
+  <div class="mt-4 flex items-start justify-between gap-4">
+    <p class="text-xl leading-7 text-[#2c2c2c]">{caption}</p>
+    <svg class="mt-1.5 size-4 shrink-0 text-[#878787] transition group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-brand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9" /></svg>
+  </div>
+</a>
+
+<style>
+  /* Заглушка обложки — как фото в слайдере кейсов на главной */
+  .cc-bg { background: radial-gradient(120% 90% at 30% 20%, #5b6b80 0%, #2a323d 55%, #121519 100%); }
+  .cc-kpi { font-family: var(--font-display); font-weight: 300; letter-spacing: -0.03em; font-variant-ligatures: none; }
+</style>

@@ -1,0 +1,52 @@
+---
+/**
+ * А · people:expert — слово основателя, сетка как у блоков главной (1fr / 1.4fr).
+ * Слева фото (скругление 16; пока то же стоковое, что у основателя в «Команде»), имя и роль.
+ * Справа мини-заголовок «/ Слово основателя», цитата шрифтом заголовков, абзац серым, регалии с синими галочками в две колонки
+ * и «Написать лично» — мессенджеры чёрными иконками без подложки, как в «Контактах». Тексты — заглушки.
+ */
+import Section from '../../Section.astro';
+import Eyebrow from './Eyebrow.astro';
+import Messenger from '@/components/icons/Messenger.astro';
+import { ArrowUpRight, Check } from 'lucide-react';
+import type { PageCtx } from '@/data/content';
+interface Props { ctx: PageCtx }
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const creds = ['XX лет в маркетинге', 'XXX проектов в B2B и B2C', 'Спикер отраслевых конференций', 'Сертификаты Яндекса и VK'];
+// Ссылки — заглушки, ждём от заказчика
+const messengers = [
+  { t: 'Telegram', icon: 'telegram' as const, href: 'https://t.me/' },
+  { t: 'MAX', icon: 'max' as const, href: '#' },
+];
+---
+<Section id="people" variant="expert">
+  <div class="grid gap-10 lg:grid-cols-[1fr_1.4fr] lg:gap-16">
+    <div>
+      <img class="aspect-[4/5] w-full max-w-[440px] rounded-2xl bg-[#fafaf9] object-cover" src={`${base}/team/1.jpg`} alt="" loading="lazy" width="640" height="800" />
+      <p class="mt-4 text-base font-medium leading-6 text-[#2c2c2c]">Андрей Соколов</p>
+      <p class="text-sm leading-5 text-[#878787]">Основатель burkov/agency</p>
+    </div>
+    <div class="lg:self-center">
+      <Eyebrow>Слово основателя</Eyebrow>
+      <blockquote class="ae-q mt-4 text-balance text-[28px] leading-9 md:text-[32px] md:leading-10">«Зачем мы существуем и чем отличаемся — 2–3 предложения от первого лица»</blockquote>
+      <p class="mt-4 max-w-[560px] text-base leading-6 text-[#878787]">Короткий абзац: как пришёл в маркетинг, почему собрал команду и за что отвечает лично</p>
+      <ul class="mt-8 grid gap-3 sm:grid-cols-2">
+        {creds.map((c) => (
+          <li class="flex gap-3 text-base leading-6 text-[#2c2c2c]"><span class="mt-0.5 grid size-5 shrink-0 place-items-center rounded-full bg-brand text-white" aria-hidden="true"><Check size={12} strokeWidth={3} /></span>{c}</li>
+        ))}
+      </ul>
+      <p class="mt-10 text-sm leading-5 text-[#878787]">Написать лично</p>
+      <div class="mt-2 flex flex-wrap gap-x-6 gap-y-2">
+        {messengers.map((m) => (
+          <a class="group flex h-8 items-center gap-2 text-base font-medium text-[#0c0d0f]" href={m.href} target="_blank" rel="noopener">
+            <Messenger name={m.icon} size={20} mono /><span class="roll"><span>{m.t}</span><span aria-hidden="true">{m.t}</span></span><ArrowUpRight size={14} strokeWidth={2} className="-ml-1 text-[#878787] transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+          </a>
+        ))}
+      </div>
+    </div>
+  </div>
+</Section>
+
+<style>
+  .ae-q { font-family: var(--font-display); font-weight: 400; letter-spacing: -0.02em; color: #2c2c2c; font-variant-ligatures: none; }
+</style>

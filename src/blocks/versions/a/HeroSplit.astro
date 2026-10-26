@@ -1,0 +1,86 @@
+---
+/**
+ * А · первый экран «заголовок + цифры» — общий для услуги (hero:form), кейса (hero:case) и «О компании» (hero:about).
+ * Сетка как у блоков главной (1fr / 1.4fr). Слева крошки, [синяя метка], заголовок 48/56, [текст серым], [список «Подойдёт, если»], [кнопка];
+ * справа факты светло-серыми карточками 2×2 (подпись серым, значение 24/32 шрифтом заголовков), по центру высоты левой части.
+ * У кейса ниже — широкая обложка 21:9.
+ *  услуга — список «Подойдёт, если» и «Получить расчёт» (ведёт на форму внизу), факты из состава работ;
+ *  кейс — метка услуги, итог серым, паспорт проекта, обложка;
+ *  «О компании» — текст, «Скачать презентацию» с иконкой «скачать», цифры компании (заглушки до данных от заказчика).
+ */
+import Section from '../../Section.astro';
+import Breadcrumbs from '@/components/wire/Breadcrumbs.astro';
+import Btn from './Btn.astro';
+import Problems from './Problems.astro';
+import { includes, caseStudy as cs, type PageCtx } from '@/data/content';
+interface Props { ctx: PageCtx; id?: string }
+const { ctx, id } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+type Hero = {
+  title: string;
+  tag?: string;
+  lead?: string;
+  list?: boolean;
+  btn?: { href: string; label: string; download?: boolean };
+  facts: { l: string; v: string }[];
+  cover?: string;
+};
+let h: Hero;
+if (id === 'hero:case') {
+  h = { title: ctx.title, tag: cs.tag, lead: cs.subtitle, facts: cs.passport.map(([l, v]) => ({ l, v })), cover: `${base}/cases/1.png` };
+} else if (id === 'hero:about') {
+  h = {
+    title: 'Команда, которая считает маркетинг в деньгах',
+    lead: 'Консалтинг и digital под одной крышей: сначала разбираемся в бизнесе, потом приводим клиентов',
+    btn: { href: '#', label: 'Скачать презентацию', download: true },
+    facts: [
+      { l: 'Специалистов в команде', v: 'XX' },
+      { l: 'Проектов с 20XX года', v: 'XXX' },
+      { l: 'Клиентов с нами дольше года', v: 'XX %' },
+      { l: 'Направления', v: 'Консалтинг и digital' },
+    ],
+  };
+} else {
+  // Услуга: факты из состава работ (срок, формат / старт, отчёт), цена — как «Стоимость», плюс договор с KPI
+  const meta = includes(ctx).meta;
+  const price = meta.find((m) => m.l === 'Цена');
+  h = {
+    title: ctx.title,
+    list: true,
+    btn: { href: '#cta-form', label: 'Получить расчёт' },
+    facts: [...(price ? [{ l: 'Стоимость', v: price.v }] : []), ...meta.filter((m) => m.l !== 'Цена'), { l: 'Договор', v: 'с KPI' }],
+  };
+}
+---
+<!-- Нижний отступ — как было у каждой страницы: у «О компании» обычный, у услуги и кейса нулевой -->
+<Section id="hero" variant="split" class={id === 'hero:about' ? 'pt-10 md:pt-14' : 'pb-0 pt-10 md:pb-0 md:pt-14'}>
+  {ctx.crumbs && <Breadcrumbs items={ctx.crumbs} />}
+  <div class="mt-8 grid gap-10 lg:grid-cols-[1fr_1.4fr] lg:gap-16">
+    <div>
+      {h.tag && <span class="mb-4 flex h-6 w-fit items-center rounded-md bg-brand px-2 text-xs font-medium text-white">{h.tag}</span>}
+      <h1 class="hs-h1 max-w-[620px] text-balance text-[32px] leading-10 md:text-5xl md:leading-[56px]">{h.title}</h1>
+      {h.lead && <p class="mt-4 max-w-[560px] text-base leading-6 text-[#878787]">{h.lead.replace(/\.$/, '')}</p>}
+      {h.list && <Problems {ctx} class="mt-8" />}
+      {h.btn && <Btn class="mt-8" href={h.btn.href} icon={h.btn.download ? 'download' : 'arrow'} download={h.btn.download}>{h.btn.label}</Btn>}
+    </div>
+    <dl class="grid grid-cols-2 gap-1 self-center">
+      {h.facts.map((f) => (
+        <div class="rounded-2xl bg-[#fafaf9] p-5 md:p-6">
+          <dt class="text-sm leading-5 text-[#878787]">{f.l}</dt>
+          <dd class="hs-v mt-2 text-xl leading-7 md:text-2xl md:leading-8">{f.v}</dd>
+        </div>
+      ))}
+    </dl>
+  </div>
+  {h.cover && (
+    <div class="mt-12 aspect-[21/9] overflow-hidden rounded-2xl bg-[#fafaf9]">
+      <img class="size-full object-cover" src={h.cover} style="object-position:76% 50%" alt="" />
+    </div>
+  )}
+</Section>
+
+<style>
+  .hs-h1 { font-family: var(--font-display); font-weight: 400; letter-spacing: -0.02em; color: #2c2c2c; font-variant-ligatures: none; }
+  .hs-v { font-family: var(--font-display); font-weight: 400; letter-spacing: -0.02em; color: #0c0d0f; font-variant-ligatures: none; }
+</style>

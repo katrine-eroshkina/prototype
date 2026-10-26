@@ -1,0 +1,66 @@
+---
+/**
+ * А · pricing — три пакета рядом: светло-серые карточки (#fafaf9, скругление 16).
+ * Название + формат серым, цена, список «что входит» с белыми галочками в синих кружках, кнопка «Обсудить задачу» внизу.
+ * Главная — три общих пакета (pricingA). Внутренние страницы — пакеты направления (packages), на «Ценах» — оба набора;
+ * у пакета «Чаще выбирают» — синяя метка.
+ */
+import Section from '../../Section.astro';
+import Btn from './Btn.astro';
+import SectionHead from './SectionHead.astro';
+import { Check } from 'lucide-react';
+import { pricingA, packages, type PageCtx } from '@/data/content';
+interface Props { ctx: PageCtx }
+const { ctx } = Astro.props;
+const isHome = ctx.kind === 'home';
+type Card = { name: string; note: string; price: string; items: string[]; featured?: boolean };
+const sets: { title: string; list: Card[] }[] = isHome
+  ? [{ title: 'Цены открыто', list: pricingA }]
+  : ctx.kind === 'prices'
+    ? [packages({ ...ctx, direction: 'konsalting' }), packages({ ...ctx, direction: 'digital' })]
+    : [packages(ctx)];
+// «XX 000 ₽/мес» → цена и «/мес» отдельно (мелким серым)
+const split = (p: string) => { const [v, per] = p.split('/'); return { v: v.trim(), per: per ? '/' + per : '' }; };
+---
+<Section id="pricing">
+  {sets.map((set, si) => (
+    <div class={si > 0 ? 'mt-20' : ''}>
+      {isHome ? (
+        <SectionHead eyebrow="Цены" lead="Без скрытых платежей и долгих договоров. Точную смету даём после брифа" link={{ href: '/tseny/', label: 'Все пакеты' }}>
+          Цены открыто
+        </SectionHead>
+      ) : (
+        <SectionHead eyebrow="Цены">{set.title}</SectionHead>
+      )}
+      <ul class="mt-12 grid gap-3 lg:grid-cols-3">
+        {set.list.map((t) => {
+          const pr = split(t.price);
+          return (
+            <li class="flex flex-col rounded-2xl bg-[#fafaf9] p-6 md:p-8">
+              <div class="flex items-start justify-between gap-4">
+                <p class="pr-name text-2xl leading-8">{t.name}</p>
+                {t.featured && <span class="flex h-6 shrink-0 items-center rounded-md bg-brand px-2 text-xs font-medium text-white">Чаще выбирают</span>}
+              </div>
+              <p class="mt-1 text-base leading-6 text-[#878787]">{t.note.charAt(0).toUpperCase() + t.note.slice(1)}</p>
+              <p class="pr-num mt-8">от {pr.v}{pr.per && <span class="pr-per"> {pr.per}</span>}</p>
+              <ul class="mt-8 grid gap-3 border-t border-[#ececea] pt-6">
+                {t.items.map((it) => (
+                  <li class="flex gap-3 text-base leading-6 text-[#2c2c2c]"><span class="mt-0.5 grid size-5 shrink-0 place-items-center rounded-full bg-brand text-white" aria-hidden="true"><Check size={12} strokeWidth={3} /></span>{it}</li>
+                ))}
+              </ul>
+              <div class="mt-auto pt-10">
+                <Btn full href="#cta-form">Обсудить задачу</Btn>
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  ))}
+</Section>
+
+<style>
+  .pr-name { font-family: var(--font-display); font-weight: 400; letter-spacing: -0.02em; color: #2c2c2c; font-variant-ligatures: none; }
+  .pr-per { font-family: 'Inter', sans-serif; font-size: 16px; line-height: 1; font-weight: 400; letter-spacing: 0; color: #878787; }
+  .pr-num { font-family: var(--font-display); font-size: 32px; line-height: 36px; font-weight: 500; letter-spacing: -0.05em; color: #000; font-variant-ligatures: none; }
+</style>

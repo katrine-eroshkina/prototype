@@ -1,0 +1,94 @@
+---
+/**
+ * А · table:channels — по рефу ploy.ai/pricing («Compare plans»).
+ * На «Ценах» — сначала сравнение пакетов (строки — что входит, колонки — пакеты; синяя галочка / серый прочерк,
+ * колонка «Чаще выбирают» подсвечена), затем «От чего зависит цена» (каналы) в той же сетке.
+ * На других страницах — только «Какой канал выбрать».
+ * Пункты пакетов вида «Всё из «Старта»» раскрываются: пакет получает всё из предыдущего.
+ */
+import Section from '../../Section.astro';
+import SectionHead from './SectionHead.astro';
+import { Check, Minus } from 'lucide-react';
+import { channelsTable, packages, type PageCtx } from '@/data/content';
+interface Props { ctx: PageCtx }
+const { ctx } = Astro.props;
+const isPrices = ctx.kind === 'prices';
+
+// Сравнение пакетов (digital): раскрываем «Всё из …»
+const list = packages({ ...ctx, direction: undefined } as PageCtx).list;
+const own = list.map((p) => p.items.filter((it) => !it.startsWith('Всё из')));
+const sets = own.map((_, i) => new Set(own.slice(0, i + 1).flat()));
+const features = [...new Set(own.flat())];
+const split = (price: string) => { const m = price.match(/^(.*?)(\/мес)?$/); return { v: m?.[1] ?? price, per: m?.[2] ?? '' }; };
+const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+---
+{isPrices && (
+<Section id="table" variant="compare">
+  <SectionHead eyebrow="Сравнение">Сравните пакеты</SectionHead>
+  <!-- pt-3: место над таблицей, чтобы бейдж на верхней границе колонки не обрезался прокруткой -->
+  <div class="mt-9 overflow-x-auto pt-3">
+    <table class="w-full min-w-[720px] table-fixed text-left">
+      <thead>
+        <tr class="border-y border-[#ececea]">
+          <th class="w-[34%] py-5 pr-6 text-sm font-normal leading-5 text-[#878787]">Что входит</th>
+          {list.map((p) => (
+            <th class:list={['relative border-l border-[#ececea] px-6 py-5 align-top font-normal', p.featured && 'cmp-hl']}>
+              {p.featured && <span class="absolute left-6 top-0 flex h-6 -translate-y-1/2 items-center rounded-md bg-brand px-2 text-xs font-medium text-white">Чаще выбирают</span>}
+              <span class="cmp-h block text-xl leading-7">{p.name}</span>
+              <span class="mt-1 block text-sm leading-5 text-[#878787]">от {split(p.price).v}{split(p.price).per && ' /мес'}</span>
+            </th>
+          ))}
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="border-b border-[#ececea]">
+          <th class="py-4 pr-6 text-base font-normal leading-6 text-[#0c0d0f]">Для кого</th>
+          {list.map((p) => <td class:list={['border-l border-[#ececea] px-6 py-4 text-base leading-6 text-[#0c0d0f]', p.featured && 'cmp-hl']}>{cap(p.note)}</td>)}
+        </tr>
+        {features.map((f) => (
+          <tr class="border-b border-[#ececea]">
+            <th class="py-4 pr-6 text-base font-normal leading-6 text-[#0c0d0f]">{f}</th>
+            {sets.map((s, i) => (
+              <td class:list={['border-l border-[#ececea] px-6 py-4', list[i].featured && 'cmp-hl']}>
+                {s.has(f)
+                  ? <span class="grid size-5 place-items-center rounded-full bg-brand text-white" aria-label="входит"><Check size={12} strokeWidth={3} /></span>
+                  : <span class="grid size-5 place-items-center rounded-full bg-[#e8e9ea] text-[#878787]" aria-label="не входит"><Minus size={12} strokeWidth={3} /></span>}
+              </td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</Section>
+)}
+
+<Section id="table" variant="channels">
+  <SectionHead eyebrow="Сравнение" lead={isPrices ? 'Цена зависит от канала: как быстро приходят заявки и как меняется их стоимость' : undefined}>
+    {isPrices ? 'От чего зависит цена' : 'Какой канал выбрать'}
+  </SectionHead>
+  <div class="mt-12 overflow-x-auto">
+    <table class="w-full min-w-[720px] table-fixed text-left">
+      <thead>
+        <tr class="border-y border-[#ececea]">
+          <th class="w-[24%] py-5 pr-6 text-sm font-normal leading-5 text-[#878787]">Канал</th>
+          {channelsTable.cols.map((c) => <th class="cmp-h border-l border-[#ececea] px-6 py-5 text-xl font-normal leading-7">{c}</th>)}
+        </tr>
+      </thead>
+      <tbody>
+        {channelsTable.rows.map((r) => (
+          <tr class="border-b border-[#ececea]">
+            <th class="py-4 pr-6 text-base font-normal leading-6 text-[#0c0d0f]">{r.label}</th>
+            {r.vals.map((v) => <td class="border-l border-[#ececea] px-6 py-4 text-base leading-6 text-[#0c0d0f]">{v}</td>)}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</Section>
+
+<style>
+  .cmp-h { font-family: var(--font-display); font-weight: 400; letter-spacing: -0.02em; color: #2c2c2c; font-variant-ligatures: none; }
+  /* подсветка колонки «Чаще выбирают» — лёгкий тон бренда, как плашка в ценах */
+  .cmp-hl { background: color-mix(in oklab, var(--brand) 5%, transparent); }
+</style>

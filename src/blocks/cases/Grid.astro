@@ -80,14 +80,23 @@ const [featured, ...rest] = listCases;
     {ctx.kind === 'case'
       ? <SectionHead eyebrow="Кейсы" title="Подобрали для вас" action={{ href: '/keisy/', label: 'Больше кейсов' }} />
       : <SectionHead eyebrow="Кейсы" title="Результаты в цифрах" action={{ href: '/keisy/', label: 'Все кейсы' }} />}
-    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+    <!-- Обложка с крупной цифрой поверх (Primefold, Clay), под ней заголовок со стрелкой (Thrad) -->
+    <div class="grid gap-x-6 gap-y-10 md:grid-cols-2 lg:grid-cols-3">
       {sampleCases.map((c, i) => (
-        <a class={cn('group flex flex-col overflow-hidden rounded-xl border bg-card shadow-sm transition hover:shadow-md')} href={href(i)}>
-          <Placeholder class="aspect-[16/10] rounded-none border-0 border-b" label="обложка кейса" />
-          <div class="flex flex-1 flex-col p-6">
-            <span class={cn(badgeVariants({ variant: 'secondary' }), 'self-start')}>{c.tag}</span>
-            <h3 class="mt-4 text-lg font-semibold group-hover:underline">{c.title}</h3>
-            <p class="mt-auto pt-4 text-sm text-muted-foreground">{c.from} → <b class="text-foreground">{c.to}</b> {c.unit} · {c.period}</p>
+        <a class="group flex flex-col" href={href(i)}>
+          <div class="relative overflow-hidden rounded-sm">
+            <Placeholder class="aspect-[4/5] rounded-sm border-0 transition duration-500 group-hover:scale-[1.03]" label="обложка кейса" />
+            <div class="absolute inset-0 flex flex-col justify-between bg-gradient-to-t from-black/75 via-black/10 to-transparent p-6 text-white">
+              <span class="self-start rounded-sm bg-white/90 px-2 py-0.5 text-xs text-black">{c.tag}</span>
+              <div>
+                <p class="font-display text-6xl font-light tracking-tight">{c.to}</p>
+                <p class="mt-1 text-sm text-white/80">было {c.from} · {c.unit}</p>
+              </div>
+            </div>
+          </div>
+          <div class="mt-4 flex items-start justify-between gap-4">
+            <h3 class="font-display text-xl font-light tracking-tight">{c.title}<span class="text-muted-foreground"> · за {c.period}</span></h3>
+            <span class="text-muted-foreground transition group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-brand" aria-hidden="true">↗</span>
           </div>
         </a>
       ))}

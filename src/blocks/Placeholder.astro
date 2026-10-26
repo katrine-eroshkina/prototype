@@ -1,13 +1,16 @@
 ---
-/** Плейсхолдер изображения для вайрфрейма */
+/** Плейсхолдер изображения: тёплая заливка с мелкой штриховкой, подпись по центру */
 import { cn } from '@/lib/utils';
 
 interface Props { label?: string; class?: string }
 const { label = 'изображение', class: className } = Astro.props;
 ---
-<div class={cn('grid place-items-center rounded-xl border bg-muted text-xs text-muted-foreground', className)}>
-  <span class="flex items-center gap-1.5">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></svg>
+<div
+  class={cn('grid place-items-center overflow-hidden rounded-sm border bg-muted text-xs text-muted-foreground', className)}
+  style="background-image: repeating-linear-gradient(135deg, transparent 0 11px, color-mix(in oklch, currentColor 9%, transparent) 11px 12px);"
+>
+  <span class="flex items-center gap-1.5 rounded-sm bg-background/80 px-2 py-1">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.1-3.1a2 2 0 0 0-2.8 0L6 21"/></svg>
     {label}
   </span>
 </div>

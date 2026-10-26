@@ -1,0 +1,228 @@
+---
+/**
+ * Шапка версии А.
+ * Плашка — по Direct (wearedirect.co/work), но белая: плавающая, с отступами от краёв и скруглением, мягкая тень и тонкая обводка,
+ *   логотип слева (синий слэш), меню чёрным по центру, справа чёрная кнопка + квадрат со стрелкой.
+ *   При прокрутке вниз прячется, при прокрутке вверх возвращается.
+ * Раскрытие «Услуг» — по Wonderful (wonderful.ai), в белой плашке:
+ *   колонки «название + короткое описание», справа карточка кейса; открывается при наведении.
+ * Десктоп (от 1024px) — «три острова»: логотип без фона слева, меню — стеклянная капсула по центру, телефон и кнопка справа;
+ *   между ними видна страница. После прокрутки телефон прячется. «Услуги» раскрываются белой панелью под капсулой, страница под ней слегка размывается.
+ * Логотип: «agency» печатается при первом заходе (один раз за визит), курсор цвета бренда гаснет.
+ * Мобильные: плашка с бургером, меню — белая панель под ней.
+ */
+import { groups, mainNav, catUrl } from '@/data/sitemap';
+import { categoryCard } from '@/data/content';
+import { url } from '@/lib/url';
+
+const navRest = mainNav.filter((i) => i.href !== '/uslugi/');
+const [konsalting, digital] = groups;
+const half = Math.ceil(digital.categories.length / 2);
+const digitalCols = [digital.categories.slice(0, half), digital.categories.slice(half)];
+const item = 'group/i block rounded-md py-3';
+/** Описания в меню — без точки в конце */
+const noDot = (s?: string) => s?.replace(/\.$/, '');
+---
+<header class="hdr-a fixed inset-x-0 top-0 z-50 border-b border-transparent px-3 py-2.5 sm:px-5" data-ha>
+  <!-- Под раскрытым меню «Услуги» страница слегка размывается; клик по ней закрывает меню -->
+  <div class="ha-scrim" aria-hidden="true" data-ha-scrim></div>
+  <div class="ha-bar relative rounded-md bg-white text-[#0c0d0f] shadow-[0_0_0_1px_rgb(12_13_15/0.06),0_4px_16px_rgb(12_13_15/0.06)]" data-ha-bar>
+    <div class="ha-row grid h-11 grid-cols-[1fr_auto] items-center px-3 lg:grid-cols-[1fr_auto_1fr]">
+      <a class="ha-logo justify-self-start whitespace-nowrap text-lg font-extrabold tracking-tight" href={url('/')}>burkov<span class="ha-slash text-brand">/</span><span class="ha-typed font-normal"><span class="ha-typed-ghost" aria-hidden="true">agency</span><span class="ha-typed-live"><span data-ha-type>agency</span><i class="ha-caret" aria-hidden="true"></i></span></span></a>
+      <script is:inline>(function(){try{if(sessionStorage.getItem("ha-typed"))return;}catch(e){}var el=document.querySelector("[data-ha-type]");if(el&&!matchMedia("(prefers-reduced-motion: reduce)").matches)el.textContent="";})();</script>
+
+      <nav class="ha-nav hidden items-center gap-7 text-[15px] font-medium lg:flex" aria-label="Основное меню">
+        <button type="button" class="flex items-center gap-1" aria-expanded="false" aria-controls="ha-mega" data-ha-toggle>
+          <span class="roll"><span>Услуги</span><span aria-hidden="true">Услуги</span></span> <svg class="size-3.5 transition [[aria-expanded=true]>&]:rotate-180" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+        {navRest.map((i) => (
+          <a href={url(i.href)}><span class="roll"><span>{i.title}</span><span aria-hidden="true">{i.title}</span></span>{i.draft && <sup class="ml-0.5 text-[#878787]" title="Под вопросом">(?)</sup>}</a>
+        ))}
+      </nav>
+
+      <div class="flex items-center gap-1 justify-self-end">
+        <a class="ha-tel mr-3 hidden whitespace-nowrap text-sm text-[#0c0d0f] xl:inline" href="tel:+70000000000">+7 XXX XXX-XX-XX</a>
+        <a class="ha-btn ha-cta hidden h-[30px] items-center rounded-[5px] bg-[#0c0d0f] px-3 text-sm font-medium text-white transition sm:inline-flex" href={url('/kontakty/')}><span class="roll"><span>Обсудить задачу</span><span aria-hidden="true">Обсудить задачу</span></span></a>
+        <a class="ha-btn ha-icon hidden size-[30px] place-items-center rounded-[5px] bg-[#0c0d0f] text-white transition sm:grid" href={url('/kontakty/')} aria-label="Связаться">
+          <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 14.5l5-5M10 9.5h4.5V14"/></svg>
+        </a>
+        <button type="button" class="ha-btn grid size-[30px] place-items-center rounded-[5px] bg-[#0c0d0f] text-white lg:hidden" aria-expanded="false" aria-controls="ha-mob" aria-label="Меню" data-ha-burger>
+          <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 8h16M4 16h16"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- ===== Раскрытие «Услуг» (Wonderful, в белом) ===== -->
+    <div class="ha-mega" id="ha-mega" data-ha-mega>
+      <div><div class="grid grid-cols-[1fr_2fr_minmax(0,320px)] gap-x-16 border-t border-[#ececea] px-6 pb-9 pt-8">
+        <!-- Колонка консалтинга: «Все услуги» прижата к низу — на уровне последнего описания в Digital -->
+        <div class="flex flex-col">
+          <p class="mb-3 text-sm text-[#878787]">{konsalting.title}</p>
+          {konsalting.categories.map((c, k) => (
+            <a class={item} href={url(catUrl(c))} style={`--d:${k}`}>
+              <span class="block text-base font-normal text-[#0c0d0f]"><span class="roll"><span>{c.title}</span><span aria-hidden="true">{c.title}</span></span></span>
+              <span class="mt-1 block text-sm font-normal text-[#878787]">{noDot(categoryCard[c.slug]?.what)}</span>
+            </a>
+          ))}
+          <!-- pb-3 = нижний отступ пункта: низ ссылки совпадает с низом текста описания -->
+          <a class="mt-auto self-start pb-3 text-sm font-medium leading-5 text-[#0c0d0f]" href={url('/uslugi/')} style="--d:9"><span class="roll"><span>Все услуги ›</span><span aria-hidden="true">Все услуги ›</span></span></a>
+        </div>
+        <div>
+          <p class="mb-3 text-sm text-[#878787]">{digital.title}</p>
+          <div class="grid grid-cols-2 gap-x-16">
+            {digitalCols.map((col, ci) => (
+              <div>
+                {col.map((c, k) => (
+                  <a class={item} href={url(catUrl(c))} style={`--d:${k + ci * 2 + 2}`}>
+                    <span class="block text-base font-normal text-[#0c0d0f]"><span class="roll"><span>{c.title}</span><span aria-hidden="true">{c.title}</span></span></span>
+                    <span class="mt-1 block text-sm font-normal text-[#878787]">{noDot(categoryCard[c.slug]?.what)}</span>
+                  </a>
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
+        <!-- Карточка кейса справа -->
+        <a class="group/c self-start" href={url('/keisy/primer-seo/')}>
+          <span class="grid aspect-[16/10] place-items-center overflow-hidden rounded-md bg-[linear-gradient(160deg,oklch(0.45_0.08_240),oklch(0.3_0.05_250))] text-xs text-[#878787]">обложка кейса</span>
+          <span class="mt-3 block text-base font-normal leading-snug text-[#2c2c2c]">Как производитель получил в 3 раза больше заявок из поиска за 8 месяцев</span>
+          <span class="mt-2 inline-block text-sm font-medium text-[#0c0d0f]"><span class="roll"><span>Читать кейс ›</span><span aria-hidden="true">Читать кейс ›</span></span></span>
+        </a>
+      </div></div>
+    </div>
+
+    <!-- ===== Мобильное меню ===== -->
+    <div class="max-h-[calc(100svh-80px)] overflow-y-auto border-t border-[#ececea] px-4 pb-6 lg:hidden" id="ha-mob" hidden data-ha-mob>
+      <details class="border-b border-[#ececea] py-3">
+        <summary class="flex cursor-pointer list-none items-center justify-between text-xl font-normal">Услуги <span class="text-[#878787]">+</span></summary>
+        {groups.map((g) => (
+          <div class="mt-4">
+            <p class="text-sm text-[#878787]">{g.title}</p>
+            {g.categories.map((c) => <a class="block py-2 font-normal text-[#2c2c2c]" href={url(catUrl(c))}>{c.title}</a>)}
+          </div>
+        ))}
+        <a class="mt-2 block py-2 text-sm text-[#878787] underline underline-offset-4" href={url('/uslugi/')}>Все услуги</a>
+      </details>
+      {navRest.map((i) => <a class="block border-b border-[#ececea] py-3 text-xl font-normal" href={url(i.href)}>{i.title}{i.draft && <sup class="ml-1 text-sm text-[#878787]">(?)</sup>}</a>)}
+      <div class="mt-6 flex flex-col items-start gap-3 text-sm text-[#878787]">
+        <a class="inline-flex h-10 items-center rounded-[5px] bg-[#0c0d0f] px-4 font-medium text-white" href={url('/kontakty/')}>Обсудить задачу</a>
+        <a class="text-base text-[#0c0d0f]" href="tel:+70000000000">+7 XXX XXX-XX-XX</a>
+        <span>Telegram · MAX</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<style>
+  /* Кнопка «Обсудить задачу» + иконка — как кнопки на страницах: при наведении на любую часть иконка поворачивается, обе плашки светлеют */
+  .ha-icon svg { transition: transform .2s ease; }
+  .ha-cta:hover + .ha-icon svg, .ha-icon:hover svg { transform: rotate(45deg); }
+  /* наведение на квадрат со стрелкой тоже перекатывает текст кнопки */
+  .ha-cta:has(+ .ha-icon:hover) .roll > :first-child { transform: translateY(-105%); }
+  .ha-cta:has(+ .ha-icon:hover) .roll > :last-child { transform: none; }
+  /* Раскрытие: плавно, пункты появляются лесенкой (как у Wonderful) */
+  .ha-mega { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .35s cubic-bezier(.2,.7,.2,1); }
+  .ha-mega > div { min-height: 0; overflow: hidden; }
+  .ha-mega a, .ha-mega p { opacity: 0; transform: translateY(6px); transition: opacity .25s, transform .25s; }
+  [data-ha][data-open] .ha-mega { grid-template-rows: 1fr; }
+  [data-ha][data-open] .ha-mega a, [data-ha][data-open] .ha-mega p { opacity: 1; transform: none; transition-delay: calc(80ms + var(--d, 0) * 35ms); }
+  @media (max-width: 1023px) { .ha-mega { display: none; } }
+
+  /* Плавное появление стекла после прокрутки */
+  [data-ha] { transition: background-color .2s cubic-bezier(0,0,.2,1), border-color .2s, box-shadow .2s; }
+  .ha-bar, .ha-bar .ha-dim, .ha-bar .ha-btn { transition: background-color .2s cubic-bezier(0,0,.2,1), color .2s, box-shadow .2s; }
+  /* Пункты меню — цвет задан явно и меняется одновременно с плашкой (если наследовать цвет, ссылки на миг остаются белыми на белом) */
+  .ha-bar nav > * { color: #0c0d0f; transition: color .2s cubic-bezier(0,0,.2,1); }
+  /* После прокрутки белая плавающая шапка не меняется: за ней (во всю ширину, с полями вокруг плашки) — полоса размытого стекла,
+     чтобы содержимое страницы не просвечивало вокруг шапки. Шапка не перекрашивается — меню «Услуги» всегда открывается в той же белой плашке. */
+  [data-ha][data-scrolled] {
+    background: rgb(255 255 255 / .6); -webkit-backdrop-filter: blur(12px) saturate(1.5); backdrop-filter: blur(12px) saturate(1.5); }
+
+
+  /* Логотип: «agency» печатается при первом заходе (один раз за визит), затем курсор плавно гаснет — как на странице логотипа.
+     Ширину держит невидимый «призрак» слова, поэтому меню не сдвигается */
+  .ha-typed { display: inline-grid; padding-right: .56em; }
+  .ha-typed > * { grid-area: 1 / 1; }
+  .ha-typed-ghost { visibility: hidden; }
+  .ha-typed-live { position: relative; justify-self: start; }
+  .ha-caret { position: absolute; left: 100%; top: .18em; width: .42em; height: .8em; margin-left: .08em; background: var(--brand); opacity: 0; }
+  .ha-caret.is-on { opacity: 1; animation: ha-blink 1.1s infinite; }
+  .ha-caret.is-off { opacity: 0; animation: none; transition: opacity .35s ease; }
+  @keyframes ha-blink { 0%, 60% { opacity: 1; } 61%, 100% { opacity: 0; } }
+  /* Размытие страницы под раскрытым меню */
+  .ha-scrim { position: fixed; inset: 0; z-index: -1; background: rgb(255 255 255 / .25); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+    opacity: 0; visibility: hidden; transition: opacity .3s ease, visibility .3s; }
+  [data-ha][data-open] .ha-scrim { opacity: 1; visibility: visible; }
+
+  /* ===== Десктоп: «три острова» ===== */
+  @media (min-width: 1024px) {
+    /* общая плашка прозрачная — видны только острова */
+    .ha-bar { background: transparent; box-shadow: none; }
+    /* меню — стеклянная капсула */
+    .ha-nav { height: 44px; padding-inline: 24px; border-radius: 999px;
+      background: rgb(255 255 255 / .7); -webkit-backdrop-filter: blur(14px) saturate(1.6); backdrop-filter: blur(14px) saturate(1.6);
+      box-shadow: 0 0 0 1px rgb(12 13 15 / .06), 0 4px 16px rgb(12 13 15 / .06); }
+    [data-ha][data-scrolled] .ha-tel { display: none; }
+    /* полосы стекла на всю ширину нет — между островами видна страница */
+    [data-ha][data-scrolled] { background: transparent; -webkit-backdrop-filter: none; backdrop-filter: none; }
+    /* раскрытие услуг — белая панель под островами */
+    .ha-mega > div > div { margin-top: 8px; border: 0; border-radius: 12px; background: #fff;
+      box-shadow: inset 0 0 0 1px rgb(12 13 15 / .06); }
+  }
+</style>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-ha]');
+  if (root) {
+    const toggle = root.querySelector<HTMLButtonElement>('[data-ha-toggle]')!;
+    const mega = root.querySelector<HTMLElement>('[data-ha-mega]')!;
+    let timer: number | undefined;
+    const setOpen = (open: boolean) => {
+      root.toggleAttribute('data-open', open);
+      toggle.setAttribute('aria-expanded', String(open));
+    };
+    // Наведение (как у Wonderful) + клик для тачпадов и клавиатуры
+    toggle.addEventListener('mouseenter', () => { clearTimeout(timer); setOpen(true); });
+    toggle.addEventListener('click', () => setOpen(!root.hasAttribute('data-open')));
+    [toggle, mega].forEach((el) => el.addEventListener('mouseleave', () => { timer = window.setTimeout(() => setOpen(false), 180); }));
+    mega.addEventListener('mouseenter', () => clearTimeout(timer));
+    root.querySelectorAll('nav a').forEach((a) => a.addEventListener('mouseenter', () => setOpen(false)));
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setOpen(false); });
+
+    // Мобильное меню
+    const burger = root.querySelector<HTMLButtonElement>('[data-ha-burger]')!;
+    const mob = root.querySelector<HTMLElement>('[data-ha-mob]')!;
+    burger.addEventListener('click', () => {
+      mob.hidden = !mob.hidden;
+      burger.setAttribute('aria-expanded', String(!mob.hidden));
+    });
+
+    // После прокрутки за шапкой появляется полоса размытого стекла
+    const onScroll = () => root.toggleAttribute('data-scrolled', scrollY > 20);
+    onScroll();
+    addEventListener('scroll', onScroll, { passive: true });
+
+    // Клик по размытому фону закрывает меню
+    root.querySelector('[data-ha-scrim]')?.addEventListener('click', () => setOpen(false));
+
+    // Логотип: печать «agency» один раз за визит
+    const typed = root.querySelector<HTMLElement>('[data-ha-type]');
+    const caret = root.querySelector<HTMLElement>('.ha-caret');
+    let seen = false;
+    try { seen = !!sessionStorage.getItem('ha-typed'); sessionStorage.setItem('ha-typed', '1'); } catch {}
+    if (typed && caret && !seen && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      const word = 'agency';
+      let i = 0;
+      caret.classList.add('is-on');
+      const tick = () => {
+        typed.textContent = word.slice(0, ++i);
+        if (i < word.length) setTimeout(tick, 110);
+        else setTimeout(() => { caret.classList.remove('is-on'); caret.classList.add('is-off'); }, 450);
+      };
+      setTimeout(tick, 600);
+    } else if (typed) typed.textContent = 'agency';
+
+    // Для показа: ?open=mega
+    if (new URLSearchParams(location.search).get('open') === 'mega') setOpen(true);
+  }
+</script>

@@ -1,0 +1,43 @@
+---
+/**
+ * А · cases:metrics — «было → стало» в стиле главной А: светло-серые карточки,
+ * цифры как в слайдере кейсов («было» серым → «стало» чёрным, 40/48) и подпись.
+ * На странице кейса — четыре метрики в ряд (пятая переносилась) и место под график. На странице услуги вместо цифр — блок кейсов (CasesGrid).
+ */
+import Section from '../../Section.astro';
+import SectionHead from './SectionHead.astro';
+import Placeholder from '../../Placeholder.astro';
+import CasesGrid from './CasesGrid.astro';
+import { caseStudy, sampleCases, type PageCtx } from '@/data/content';
+interface Props { ctx: PageCtx }
+const { ctx } = Astro.props;
+const isCase = ctx.kind === 'case';
+const items = isCase
+  ? caseStudy.results.slice(0, 4).map((r) => ({ label: r.l, from: r.from, to: r.to, note: r.note }))
+  : sampleCases.map((c) => ({ label: c.unit, from: c.from, to: c.to, note: `за ${c.period}` }));
+---
+{ctx.kind === 'service' ? <CasesGrid {ctx} /> : (
+<Section id="cases" variant="metrics">
+  <SectionHead eyebrow="Результаты" lead="Что изменилось для бизнеса: какие действия дали эффект и как это отразилось на выручке">
+    {ctx.kind === 'service' ? 'Пример результата' : 'Результаты'}
+  </SectionHead>
+  <div class:list={['mt-12 grid gap-3', isCase ? 'sm:grid-cols-2 lg:grid-cols-4' : 'md:grid-cols-3']}>
+    {items.map((m) => (
+      <div class="flex flex-col rounded-2xl bg-[#fafaf9] p-6 md:p-8">
+        <p class="text-sm leading-5 text-[#878787]">{m.label}</p>
+        <p class:list={['mt-6 flex flex-wrap items-center gap-x-2 mt-kpi', isCase ? 'text-[28px] leading-9' : 'text-[40px] leading-[48px]']}>
+          <span class="whitespace-nowrap text-[#878787]">{m.from}</span>
+          <svg class:list={['shrink-0 text-[#878787]', isCase ? 'size-5' : 'size-7']} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-label="стало"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+          <span class="whitespace-nowrap text-[#0c0d0f]">{m.to}</span>
+        </p>
+        <p class="mt-1 text-sm leading-5 text-[#878787]">{m.note}</p>
+      </div>
+    ))}
+  </div>
+  {isCase && <Placeholder class="mt-3 aspect-[21/8] rounded-2xl border-0 bg-[#fafaf9]" label="график из Метрики: визиты и заявки по месяцам" />}
+</Section>
+)}
+
+<style>
+  .mt-kpi { font-family: var(--font-display); font-weight: 300; letter-spacing: -0.03em; font-variant-ligatures: none; }
+</style>

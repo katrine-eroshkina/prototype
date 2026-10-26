@@ -1,0 +1,30 @@
+---
+/**
+ * Плавный скролл на всём сайте — Lenis (lenis.dev).
+ * Экземпляр доступен как window.lenis: через него прокручиваем к якорям (StyleSwitcher) и останавливаем скролл, пока открыто мобильное меню (Header).
+ * В открытом лайтбоксе (<dialog>) и в элементах с data-lenis-prevent прокрутка обычная.
+ */
+---
+<script>
+  import Lenis from 'lenis';
+  import 'lenis/dist/lenis.css';
+
+  const lenis = new Lenis({
+    autoRaf: true,
+    lerp: 0.1,
+    prevent: (node: HTMLElement) => !!node.closest('dialog'),
+  });
+  (window as any).lenis = lenis;
+
+  // Ссылки-якоря (#cta-form и т. п.) — плавно через Lenis; Lenis не учитывает scroll-margin-top — передаём его отступом
+  document.addEventListener('click', (e) => {
+    const a = (e.target as HTMLElement).closest<HTMLAnchorElement>('a[href^="#"]');
+    if (!a || a.getAttribute('href')!.length < 2) return;
+    const id = a.getAttribute('href')!.slice(1);
+    const target = [...document.querySelectorAll<HTMLElement>(`[id="${CSS.escape(id)}"]`)].find((el) => el.offsetParent !== null);
+    if (!target) return;
+    e.preventDefault();
+    lenis.scrollTo(target, { offset: -(parseFloat(getComputedStyle(target).scrollMarginTop) || 0) });
+    history.replaceState(null, '', `#${id}`);
+  });
+</script>

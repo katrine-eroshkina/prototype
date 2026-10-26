@@ -1,0 +1,77 @@
+---
+/**
+ * А · services:groups на главной — структура как в версии Б: слева заголовок блока и кнопка «Все услуги и цены»,
+ * справа раскрывающийся список категорий по группам Консалтинг / Digital.
+ * Оформление А: без линий, строки — светло-серые плашки #fafaf9 со скруглением 16;
+ * открыта одна строка (details с общим name). Название одним цветом. Внутри: что это, подуслуги, цена и две кнопки.
+ * Подробные карточки — на странице «Все услуги» (ServicesCatalog).
+ */
+import Section from '../../Section.astro';
+import Btn from './Btn.astro';
+import SectionHead from './SectionHead.astro';
+import { groups, catUrl, serviceUrl } from '@/data/sitemap';
+import { categoryAbout, serviceCardA } from '@/data/content';
+import { url } from '@/lib/url';
+const noDot = (s?: string) => s?.replace(/\.$/, '');
+---
+<Section id="services" variant="groups" class="lg:border-x-0">
+  <div class="grid gap-12 lg:grid-cols-[1fr_1.4fr] lg:gap-16">
+    <div class="lg:self-start">
+      <SectionHead eyebrow="Услуги">
+        Решения под вашу задачу
+        <Fragment slot="lead">Строим понятную цепочку: находим точки роста, подбираем инструменты и сами их запускаем</Fragment>
+      </SectionHead>
+      <Btn class="mt-8" href={url('/uslugi/')}>Все услуги и цены</Btn>
+    </div>
+
+    <div class="grid gap-10">
+      {groups.map((g) => (
+        <div>
+          <p class="mb-3 text-base leading-6 text-[#878787]">{g.title}</p>
+          <div class="grid gap-1">
+            {g.categories.map((c, k) => {
+              const t = serviceCardA[c.slug];
+              const about = categoryAbout[c.slug];
+              return (
+                <details name="svc-a" class="svc-row rounded-2xl bg-[#fafaf9]" open={g.slug === 'konsalting' && k === 0}>
+                  <summary class="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-5 md:px-6">
+                    <span class="svc-title text-xl leading-7 md:text-2xl md:leading-8">{t.accent}{t.rest.startsWith('-') ? '' : ' '}{t.rest}</span>
+                    <!-- «+» в кружке 24×24 (вместо плюса на белом круге); при раскрытии поворачивается в «×» -->
+                    <svg class="svc-plus size-6 shrink-0 text-[#66696f]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="11.25" /><path d="M12 7.5v9M7.5 12h9" /></svg>
+                  </summary>
+                  <div class="px-5 pb-6 md:px-6">
+                    {about && <p class="max-w-[600px] text-base leading-6 text-[#878787]">{noDot(about.what)}</p>}
+                    {c.children.length > 0 && (
+                      <div class="mt-3 flex flex-wrap gap-1">
+                        {c.children.map((s) => <a class="flex h-6 items-center rounded-md bg-brand px-2 text-xs font-medium text-white transition hover:bg-brand/85" href={url(serviceUrl(c, s))}>{s.title}</a>)}
+                      </div>
+                    )}
+                    <p class="svc-num mt-6">от XX 000 ₽{g.slug === 'digital' && <span class="svc-per"> /мес</span>}</p>
+                    <div class="mt-4 flex flex-wrap items-center gap-2">
+                      <Btn href="#cta-form">Обсудить</Btn>
+                      <a class="ml-4 text-sm font-medium text-[#0c0d0f]" href={url(catUrl(c))}><span class="roll"><span>Подробнее ›</span><span aria-hidden="true">Подробнее ›</span></span></a>
+                    </div>
+                  </div>
+                </details>
+              );
+            })}
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</Section>
+
+<style>
+  .svc-title { font-family: var(--font-display); font-weight: 500; letter-spacing: -0.02em; font-variant-ligatures: none; color: #0c0d0f; }
+  .svc-num { font-family: var(--font-display); font-size: 32px; line-height: 36px; font-weight: 500; letter-spacing: -0.05em; color: #000; font-variant-ligatures: none; }
+  .svc-per { font-family: 'Inter', sans-serif; font-size: 16px; font-weight: 400; letter-spacing: 0; color: #878787; }
+  .svc-row summary::-webkit-details-marker { display: none; }
+  .svc-plus { transition: transform .25s, color .2s; }
+  .svc-row summary:hover .svc-plus { color: var(--brand); }
+  .svc-row[open] .svc-plus { transform: rotate(45deg); }
+  /* Плавное раскрытие там, где браузер умеет */
+  .svc-row { interpolate-size: allow-keywords; }
+  .svc-row::details-content { block-size: 0; overflow: hidden; transition: block-size .3s ease, content-visibility .3s allow-discrete; }
+  .svc-row[open]::details-content { block-size: auto; }
+</style>

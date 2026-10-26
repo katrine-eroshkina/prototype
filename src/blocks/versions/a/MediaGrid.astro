@@ -1,0 +1,53 @@
+---
+/**
+ * А · сетка картинок с подписями — общая для «Команды» (people:team) и «Наград и сертификатов» (logos:documents).
+ * Без карточек: картинка 4:5 со скруглением 16 на светло-сером, под ней название 16/24 и подпись 14/20 серым, по желанию — ещё строка (стаж).
+ * 2 колонки на телефоне, 4 на десктопе, зазор 16.
+ *  команда — временные стоковые фото (заменить на фото команды); на главной справа ссылка «О компании ›», на самой странице «О компании» её нет;
+ *  сертификаты — пока иконка документа по центру вместо скана (сканы ждём от заказчика).
+ */
+import Section from '../../Section.astro';
+import SectionHead from './SectionHead.astro';
+import { FileBadge } from 'lucide-react';
+import type { PageCtx } from '@/data/content';
+interface Props { ctx?: PageCtx; id?: string }
+const { ctx, id } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const docs = id === 'logos:documents';
+
+type Item = { t: string; d: string; extra?: string; img?: string };
+// Имена и стаж — временные примеры под стоковые фото
+const team: Item[] = [
+  { t: 'Андрей Соколов', d: 'Основатель', extra: 'Опыт 15 лет' },
+  { t: 'Мария Белова', d: 'Директор по маркетингу', extra: 'Опыт 11 лет' },
+  { t: 'Дмитрий Орлов', d: 'Руководитель SEO', extra: 'Опыт 9 лет' },
+  { t: 'Артём Ковалёв', d: 'Руководитель рекламы', extra: 'Опыт 8 лет' },
+].map((m, i) => ({ ...m, img: `${base}/team/${i + 1}.jpg` }));
+const certificates: Item[] = [
+  { t: 'Яндекс Директ', d: 'Сертификат специалиста' },
+  { t: 'Яндекс Метрика', d: 'Сертификат специалиста' },
+  { t: 'VK Реклама', d: 'Сертификат специалиста' },
+  { t: 'Рейтинг / премия', d: 'Название и год' },
+];
+const items = docs ? certificates : team;
+const link = docs || ctx?.kind === 'about' ? undefined : { href: '/o-kompanii/', label: 'О компании' };
+---
+<Section id={docs ? 'logos' : 'people'} variant={docs ? 'documents' : 'team'}>
+  <SectionHead eyebrow={docs ? 'Документы' : 'Команда'} {link}>
+    {docs ? 'Награды и сертификаты' : 'Команда, которая ведёт ваш проект'}
+  </SectionHead>
+  <div class="mt-12 grid grid-cols-2 gap-4 lg:grid-cols-4">
+    {items.map((m) => (
+      <div>
+        {m.img
+          ? <img class="aspect-[4/5] w-full rounded-2xl bg-[#fafaf9] object-cover" src={m.img} alt="" loading="lazy" width="640" height="800" />
+          : <div class="grid aspect-[4/5] place-items-center rounded-2xl bg-[#fafaf9] text-[#c4c4c2]"><FileBadge size={40} strokeWidth={1.25} /></div>}
+        <div class="pt-4">
+          <p class="text-base font-medium leading-6 text-[#2c2c2c]">{m.t}</p>
+          <p class="text-sm leading-5 text-[#878787]">{m.d}</p>
+          {m.extra && <p class="mt-3 text-sm leading-5 text-[#878787]">{m.extra}</p>}
+        </div>
+      </div>
+    ))}
+  </div>
+</Section>

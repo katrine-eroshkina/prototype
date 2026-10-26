@@ -1,0 +1,89 @@
+---
+/**
+ * А · text:statement — манифест с зачёркиванием (главная).
+ * По общей сетке: мини-заголовок «/ Подход» и крупная фраза слева; всё управляется прокруткой:
+ *  1) проявляются слова «Мы не продаём «комплексный подход».»;
+ *  2) «комплексный подход» — цветом бренда, его зачёркивает линия того же цвета;
+ *  3) проявляется вторая строка «Мы продаём рост, который можно посчитать», затем «рост, который можно посчитать» подчёркивается линией бренда.
+ * Ниже — четыре строки «как обычно → у нас» на всю ширину, в колонках 1fr / 1.4fr, как у остальных блоков:
+ * в левой зачёркнуто серым, в правой — стрелка, обещание и серым у правого края, где это закреплено («в договоре», «до старта»…); строки появляются по очереди.
+ * Проявленное назад не гаснет. При «уменьшении движения» всё видно сразу.
+ */
+import Section from '../../Section.astro';
+import Eyebrow from './Eyebrow.astro';
+import { ArrowRight } from 'lucide-react';
+import { statementRowsA as rows } from '@/data/content';
+const lead = ['Мы', 'не', 'продаём'];
+const strike = '«комплексный подход»';
+const tail = ['Мы', 'продаём'];
+const under = 'рост, который можно посчитать'.split(' ');
+---
+<Section id="text" variant="statement">
+  <Eyebrow>Подход</Eyebrow>
+  <h2 class="mf-title mt-2 max-w-[920px] text-[32px] leading-10 md:text-[56px] md:leading-[64px]" data-mf>
+    {lead.map((w) => <span class="mf-w" data-mf-a>{w} </span>)}
+    <span class="mf-w whitespace-nowrap" data-mf-a><span class="mf-strike" data-mf-strike>{strike}</span>.</span>
+    <span class="block">{tail.map((w) => <span class="mf-w" data-mf-b>{w} </span>)}<span class="mf-under" data-mf-under>{under.map((w, i) => <span class="mf-w" data-mf-b>{i < under.length - 1 ? `${w} ` : w}</span>)}</span></span>
+  </h2>
+
+  <ul class="mt-16 border-b border-[#ececea] md:mt-20">
+    {rows.map((r, i) => (
+      <li class="mf-row grid items-center gap-y-1 border-t border-[#ececea] py-5 md:grid-cols-[1fr_1.4fr] md:gap-x-8 md:py-6 lg:gap-x-16" style={`--i:${i}`} data-mf-row>
+        <span class="text-base leading-6 text-[#878787] line-through decoration-[#878787]/60 md:text-xl md:leading-7">{r.was}</span>
+        <span class="flex items-center gap-4"><span class="hidden size-8 shrink-0 place-items-center rounded-lg bg-[#0c0d0f] text-white md:grid" aria-hidden="true"><ArrowRight size={16} strokeWidth={2} /></span><span class="mf-now flex-1 text-base leading-6 md:text-xl md:leading-7">{r.now}</span><span class="shrink-0 text-sm leading-5 text-[#878787] md:text-base md:leading-6">{r.where}</span></span>
+      </li>
+    ))}
+  </ul>
+</Section>
+
+<style>
+  .mf-title, .mf-now { font-family: var(--font-display); font-weight: 400; letter-spacing: -0.02em; color: #2c2c2c; font-variant-ligatures: none; }
+  .mf-now { color: #0c0d0f; }
+  /* Слово до проявления — бледное */
+  .mf-w { transition: color .3s; }
+  .mf-w.is-dim { color: rgb(44 44 44 / 0.2); }
+  /* Зачёркивание: синяя линия растёт слева направо по --s (0…1), зачёркнутое уходит в серый */
+  .mf-strike { --s: 0; background: linear-gradient(var(--brand), var(--brand)) no-repeat 0 58% / calc(var(--s) * 100%) 0.07em; }
+  .mf-w:not(.is-dim) > .mf-strike { color: var(--brand); }
+  /* Подчёркивание «рост, который можно посчитать» — линия бренда растёт по --u (0…1), на каждой строке своя */
+  .mf-under { --u: 0; background: linear-gradient(var(--brand), var(--brand)) no-repeat 0 96% / calc(var(--u) * 100%) 0.07em; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+  /* Строки «как обычно → у нас» — появляются по очереди */
+  .mf-row { opacity: 0; transform: translateY(12px); transition: opacity .5s ease, transform .5s ease; transition-delay: calc(var(--i) * 90ms); }
+  .mf-row.is-on { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) { .mf-row { opacity: 1; transform: none; transition: none; } }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('.only-a [data-mf]').forEach((el) => {
+    const a = [...el.querySelectorAll<HTMLElement>('[data-mf-a]')];
+    const b = [...el.querySelectorAll<HTMLElement>('[data-mf-b]')];
+    const st = el.querySelector<HTMLElement>('[data-mf-strike]')!;
+    const un = el.querySelector<HTMLElement>('[data-mf-under]');
+    const rows = [...el.closest('section')!.querySelectorAll<HTMLElement>('[data-mf-row]')];
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const clamp = (x: number) => Math.min(1, Math.max(0, x));
+    let max = reduce ? 1 : 0; // проявленное назад не гаснет
+    const render = () => {
+      // фазы: слова первой фразы 0–0.35, зачёркивание 0.35–0.5, вторая фраза 0.5–0.75, подчёркивание 0.75–0.9
+      const litA = Math.round(clamp(max / 0.35) * a.length);
+      a.forEach((w, i) => w.classList.toggle('is-dim', i >= litA));
+      const s = clamp((max - 0.35) / 0.15);
+      st.style.setProperty('--s', String(s));
+      st.classList.toggle('is-struck', s > 0.5);
+      const litB = Math.round(clamp((max - 0.5) / 0.25) * b.length);
+      b.forEach((w, i) => w.classList.toggle('is-dim', i >= litB));
+      un?.style.setProperty('--u', String(clamp((max - 0.75) / 0.15)));
+    };
+    const update = () => {
+      const r = el.getBoundingClientRect();
+      const vh = innerHeight;
+      max = Math.max(max, clamp((vh * 0.85 - r.top) / (r.height + vh * 0.45)));
+      render();
+    };
+    update();
+    if (!reduce) addEventListener('scroll', update, { passive: true });
+    // строки — когда доходят до нижней четверти экрана
+    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('is-on'); io.unobserve(e.target); } }), { rootMargin: '0px 0px -15% 0px' });
+    rows.forEach((r) => (reduce ? r.classList.add('is-on') : io.observe(r)));
+  });
+</script>

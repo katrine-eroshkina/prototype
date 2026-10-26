@@ -1,0 +1,138 @@
+---
+/**
+ * А · cases — текст кейса слева прямо на белом фоне, фото справа (текстовая часть — как в версии В:
+ * клиент, «результат за срок», пояснение в 2 строки серым, услуги тегами, «было → стало», «Читать кейс»).
+ * Переключение — как у Brandigo (/projects), сняли покадрово:
+ *  — всё движется одновременно, без задержек;
+ *  — пружина: ~0,5 с до места, перелёт ~1,5 % и мягкий возврат к ~1 с;
+ *  — направление чередуется: счётчик вверх, «Клиент» вниз, итог вверх, пояснение вниз, теги вверх, результат вниз, подпись вверх; фото вверх;
+ *  — у каждого элемента своё окошко (счётчик, клиент, описание, теги, результат, фото), ничего не проезжает поверх соседей;
+ *  — управление внизу: «Читать кейс» слева, справа ‹ 01 / 03 ›;
+ *  — без закольцовывания: на первом/последнем кейсе ненужная стрелка полупрозрачная.
+ */
+import Section from '../../Section.astro';
+import Btn from './Btn.astro';
+import SectionHead from './SectionHead.astro';
+import { sampleCases } from '@/data/content';
+import { cases as caseLinks } from '@/data/sitemap';
+import { url } from '@/lib/url';
+const items = sampleCases.map((c, i) => ({ ...c, n: String(i + 1).padStart(2, '0'), href: url(`/keisy/${caseLinks[i % caseLinks.length].slug}/`) }));
+const total = String(items.length).padStart(2, '0');
+---
+<Section id="cases" variant="grid">
+  <SectionHead eyebrow="Кейсы" link={{ href: '/keisy/', label: 'Все кейсы' }}>
+    Как клиенты растут с burkov/agency
+  </SectionHead>
+
+  <div class="mt-12 grid gap-8 lg:grid-cols-[1fr_1.4fr] lg:gap-16" data-cs data-hrefs={JSON.stringify(items.map((c) => c.href))} style="--i:0">
+    <!-- Фото проекта -->
+    <div class="cs-roll aspect-[4/3] rounded-2xl lg:order-2 lg:aspect-[3/2]">
+      <div class="cs-stack h-full">
+        {items.map((_, j) => (
+          <div class="cs-photo relative" style={`--j:${j}`} data-j={j}>
+            <span class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-xs text-white/50">фото проекта / клиента</span>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <!-- Текст кейса — прямо на белом фоне -->
+    <div class="flex flex-col">
+      <div class="cs-roll">
+        <div class="cs-stack cs-rev">{items.map((c, j) => <p class="cs-name cs-client whitespace-nowrap text-[32px] leading-10" style={`--j:${j}`} data-j={j}>{c.client}</p>)}</div>
+      </div>
+      <div class="cs-roll mt-4">
+        <div class="cs-stack">{items.map((c, j) => <p class="text-xl leading-7 text-[#2c2c2c]" style={`--j:${j}`} data-j={j}>{c.title} за {c.period}</p>)}</div>
+      </div>
+      <div class="cs-roll mt-2">
+        <div class="cs-stack cs-rev">{items.map((c, j) => <p class="text-sm leading-5 text-[#878787]" style={`--j:${j}`} data-j={j}>{c.d}</p>)}</div>
+      </div>
+      <div class="cs-roll mt-6">
+        <div class="cs-stack">
+          {items.map((c, j) => (
+            <ul class="flex flex-wrap gap-1" aria-label="Услуги" style={`--j:${j}`} data-j={j}>
+              {[c.tag, 'Аналитика'].map((s) => <li class="flex h-6 items-center rounded-md bg-brand px-2 text-xs font-medium text-white">{s}</li>)}
+            </ul>
+          ))}
+        </div>
+      </div>
+
+      <div class="mt-auto pt-10">
+        <div class="cs-roll">
+          <div class="cs-stack cs-rev">
+            {items.map((c, j) => (
+              <p class="cs-name flex items-center gap-2 whitespace-nowrap text-[40px] leading-[48px]" style={`--j:${j}`} data-j={j}>
+                <span class="text-[#878787]">{c.from}</span>
+                <svg class="size-7 shrink-0 text-[#878787]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-label="стало"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+                <span class="text-[#0c0d0f]">{c.to}</span>
+              </p>
+            ))}
+          </div>
+        </div>
+        <div class="cs-roll mt-1">
+          <div class="cs-stack">{items.map((c, j) => <p class="text-sm leading-5 text-[#878787]" style={`--j:${j}`} data-j={j}>{c.unit}</p>)}</div>
+        </div>
+        <div class="mt-6 flex items-center justify-between gap-4">
+          <Btn href={items[0].href} data-cs-link>Читать кейс</Btn>
+          <div class="flex items-center gap-3">
+            <button type="button" class="cs-btn" data-cs-prev aria-label="Предыдущий кейс" disabled>
+              <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6" /></svg>
+            </button>
+            <p class="flex text-sm leading-5 tabular-nums text-[#878787]">
+              <span class="cs-roll h-5"><span class="cs-stack">{items.map((c, j) => <span style={`--j:${j}`} data-j={j}>{c.n}</span>)}</span></span>
+              <span>&nbsp;/ {total}</span>
+            </p>
+            <button type="button" class="cs-btn" data-cs-next aria-label="Следующий кейс">
+              <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6" /></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</Section>
+
+<style>
+  .cs-name { font-family: var(--font-display); font-weight: 300; letter-spacing: -0.03em; color: #2c2c2c; font-variant-ligatures: none; }
+  /* Имя клиента — обычным начертанием, как заголовки; тонкое (300) только у цифр результата */
+  .cs-client { font-weight: 400; letter-spacing: -0.02em; }
+  /* Окошко: всё, что за его пределами, не видно — поэтому ничего не наезжает на соседние элементы */
+  .cs-roll { display: block; overflow: hidden; position: relative; }
+  /* Все варианты в одной ячейке: высота окошка = самый высокий вариант. Сдвиг = (свой номер − текущий) × своя высота */
+  .cs-stack { display: grid; }
+  .cs-stack > * { grid-area: 1 / 1; transform: translateY(calc((var(--j) - var(--i)) * 100%));
+    /* Пружина как у Brandigo: 0,5 с до места, перелёт ~1,5 %, к 1 с — покой */
+    transition: transform 1s linear(0, 0.15 8.6%, 0.5 17.9%, 0.78 27.3%, 0.93 36.6%, 0.995 46%, 1.015 55.5%, 1.013 64.8%, 1.008 74.1%, 1.003 83.5%, 1.001 92.8%, 1); }
+  /* Соседние строки едут навстречу друг другу: счётчик вверх, «Клиент» вниз, описание вверх, теги вниз… */
+  .cs-stack.cs-rev > * { transform: translateY(calc((var(--i) - var(--j)) * 100%)); }
+  .cs-photo { background: radial-gradient(120% 90% at 30% 20%, #5b6b80 0%, #2a323d 55%, #121519 100%); }
+  /* Стрелки — светло-серые квадраты 32px; на краю списка — полупрозрачная и неактивная */
+  .cs-btn { display: grid; place-items: center; width: 32px; height: 32px; background: #f4f4f2; color: #0c0d0f; transition: background-color .2s, color .2s, opacity .3s; }
+  .cs-btn:hover:not(:disabled) { background: #0c0d0f; color: #fff; }
+  .cs-btn:disabled { opacity: .3; cursor: default; }
+  @media (prefers-reduced-motion: reduce) { .cs-stack > * { transition: none; } }
+</style>
+
+<script>
+  // --i — номер текущего кейса; невидимые варианты скрыты от экранных чтецов; «Читать кейс» ведёт на текущий
+  document.querySelectorAll<HTMLElement>('[data-cs]').forEach((root) => {
+    const hrefs = JSON.parse(root.dataset.hrefs || '[]') as string[];
+    const n = hrefs.length || 1;
+    const prev = root.querySelector<HTMLButtonElement>('[data-cs-prev]');
+    const next = root.querySelector<HTMLButtonElement>('[data-cs-next]');
+    const link = root.querySelector<HTMLAnchorElement>('[data-cs-link]');
+    const variants = root.querySelectorAll<HTMLElement>('[data-j]');
+    let i = 0;
+    const go = (k: number) => {
+      i = Math.max(0, Math.min(n - 1, k));
+      root.style.setProperty('--i', String(i));
+      variants.forEach((v) => v.setAttribute('aria-hidden', String(Number(v.dataset.j) !== i)));
+      if (prev) prev.disabled = i === 0;
+      if (next) next.disabled = i === n - 1;
+      if (link && hrefs[i]) link.href = hrefs[i];
+    };
+    prev?.addEventListener('click', () => go(i - 1));
+    next?.addEventListener('click', () => go(i + 1));
+    go(0);
+  });
+</script>

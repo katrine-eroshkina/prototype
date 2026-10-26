@@ -34,12 +34,12 @@ const accGroups = groups.map((g) => ({
 ---
 <Section id="services" variant="groups" {theme}>
   {compact ? (
-    <div class="grid gap-10 lg:grid-cols-[1fr_1.4fr] lg:gap-16">
-      <div class="lg:sticky lg:top-24 lg:self-start">
-        <span class={badgeVariants({ variant: 'outline' })}>Услуги</span>
-        <h2 class="mt-3 text-3xl font-semibold tracking-tight md:text-4xl">Консалтинг и digital</h2>
-        <p class="mt-4 text-lg text-muted-foreground">Выберите, с чем нужна помощь.</p>
-        <a class:list={[buttonVariants({ size: 'lg' }), 'mt-8']} href={url('/uslugi/')}>Все услуги и цены →</a>
+    <div class="grid gap-12 lg:grid-cols-[1fr_1.5fr] lg:gap-20">
+      <div class="lg:sticky lg:top-28 lg:self-start">
+        <span class="eyebrow">Услуги</span>
+        <h2 class="display mt-4 text-4xl md:text-5xl lg:text-[3.5rem] lg:leading-[1.05]">Консалтинг и digital</h2>
+        <p class="mt-5 max-w-sm text-lg text-muted-foreground">Выберите, с чем нужна помощь. Стратегия и трафик — у одной команды.</p>
+        <a class:list={[buttonVariants({ variant: 'outline' }), 'mt-8 h-10 px-5']} href={url('/uslugi/')}>Все услуги и цены <span aria-hidden="true">→</span></a>
       </div>
       <ServicesAccordion client:visible groups={accGroups} ctaHref="#cta-form" />
     </div>

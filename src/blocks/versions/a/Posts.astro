@@ -1,0 +1,64 @@
+---
+/**
+ * А · cases:posts — статьи блога.
+ * /blog/ (список): фильтр по рубрикам и счётчик, как в списке кейсов; первая статья — крупной карточкой во всю ширину,
+ * ниже сетка 3 колонки; «Показать ещё» без иконки.
+ * related — «Читайте также» под статьёй: заголовок блока со ссылкой «Все статьи ›» и три другие статьи.
+ */
+import Section from '../../Section.astro';
+import SectionHead from './SectionHead.astro';
+import PostCard from './PostCard.astro';
+import Btn from './Btn.astro';
+import { blogPosts as posts, type PageCtx } from '@/data/content';
+import { url } from '@/lib/url';
+interface Props { ctx?: PageCtx; related?: string }
+const { related } = Astro.props;
+const href = (slug: string) => url(`/blog/${slug}/`);
+const filters = ['Все', ...new Set(posts.map((p) => p.r))];
+const [first, ...rest] = posts;
+const others = related ? posts.filter((p) => p.slug !== related).slice(0, 3) : [];
+---
+{related ? (
+  <Section id="cases" variant="posts">
+    <SectionHead eyebrow="Блог" link={{ href: '/blog/', label: 'Все статьи' }}>Читайте также</SectionHead>
+    <div class="mt-12 grid gap-x-3 gap-y-10 md:grid-cols-2 lg:grid-cols-3">
+      {others.map((p, i) => <PostCard href={href(p.slug)} title={p.t} rubric={p.r} {i} />)}
+    </div>
+  </Section>
+) : (
+  <Section id="cases" variant="posts" class="pt-10 md:pt-12">
+    <div class="flex flex-wrap items-center justify-between gap-4">
+      <div class="flex flex-wrap gap-1" role="group" aria-label="Фильтр по рубрикам">
+        {filters.map((f, i) => (
+          <button type="button" data-post-filter={f} aria-pressed={i === 0 ? 'true' : 'false'}
+            class="h-8 rounded-md bg-[#fafaf9] px-3 text-sm font-medium text-[#0c0d0f] transition hover:bg-[#f0f0ee] aria-pressed:bg-[#0c0d0f] aria-pressed:text-white">{f}</button>
+        ))}
+      </div>
+      <span class="text-sm leading-5 text-[#878787]"><span data-post-count>{posts.length}</span> статей</span>
+    </div>
+    <div class="mt-8" data-post-first><PostCard href={href(first.slug)} title={first.t} rubric={first.r} wide /></div>
+    <div class="mt-12 grid gap-x-3 gap-y-10 md:grid-cols-2 lg:grid-cols-3" data-post-grid>
+      {rest.map((p, i) => <PostCard href={href(p.slug)} title={p.t} rubric={p.r} i={i + 1} />)}
+    </div>
+    <div class="mt-12 flex justify-center">
+      <Btn as="button" type="button" noIcon>Показать ещё</Btn>
+    </div>
+  </Section>
+)}
+
+<script>
+  // Фильтр статей по рубрике (только на /blog/): крупная карточка прячется, если она другой рубрики
+  const btns = document.querySelectorAll<HTMLButtonElement>('.only-a [data-post-filter]');
+  const first = document.querySelector<HTMLElement>('.only-a [data-post-first]');
+  const grid = document.querySelector<HTMLElement>('.only-a [data-post-grid]');
+  const count = document.querySelector<HTMLElement>('.only-a [data-post-count]');
+  btns.forEach((b) => b.addEventListener('click', () => {
+    const f = b.dataset.postFilter;
+    btns.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    let n = 0;
+    const firstCard = first?.querySelector<HTMLElement>('a[data-tag]');
+    if (first && firstCard) { const show = f === 'Все' || firstCard.dataset.tag === f; first.hidden = !show; if (show) n++; }
+    grid?.querySelectorAll<HTMLElement>('a[data-tag]').forEach((c) => { const show = f === 'Все' || c.dataset.tag === f; c.hidden = !show; if (show) n++; });
+    if (count) count.textContent = String(n);
+  }));
+</script>

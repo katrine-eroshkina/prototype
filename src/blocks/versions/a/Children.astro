@@ -1,0 +1,45 @@
+---
+/**
+ * А · services:children — услуги внутри категории, карточками как на странице «Все услуги» (ServiceCard):
+ * светло-серая карточка (#fafaf9, скругление 16), название 24/32, строка о результате серым,
+ * внизу за линией — «от XX 000 ₽» (у digital — «/мес») и стрелка ↗, при наведении меняется только стрелка.
+ */
+import Section from '../../Section.astro';
+import SectionHead from './SectionHead.astro';
+import { ArrowUpRight } from 'lucide-react';
+import type { PageCtx } from '@/data/content';
+import { url } from '@/lib/url';
+interface Props { ctx: PageCtx }
+const { ctx } = Astro.props;
+const items = ctx.children ?? [];
+const cards = items.length ? items : [1, 2, 3].map(() => ({ href: '', title: 'Услуга категории' }));
+const monthly = ctx.direction === 'digital';
+---
+<Section id="services" variant="children">
+  <SectionHead eyebrow="Услуги">Что входит в направление</SectionHead>
+  <div class="mt-12 grid auto-rows-fr gap-3 md:grid-cols-2 xl:grid-cols-3">
+    {cards.map((s) => {
+      const Tag = s.href ? 'a' : 'div';
+      return (
+        <Tag href={s.href ? url(s.href) : undefined} class="ch-card flex min-h-56 flex-col rounded-2xl bg-[#fafaf9] p-5">
+          <h3 class="ch-title text-xl leading-7 lg:text-2xl lg:leading-8">{s.title}</h3>
+          <p class="mt-1 text-base leading-6 text-[#878787]">Результат услуги в одной строке</p>
+          <div class="mt-auto pt-6">
+            <div class="flex items-center justify-between border-t border-[#e8e8e6] pt-4">
+              <p class="ch-num whitespace-nowrap">от XX 000 ₽{monthly && <span class="ch-per"> /мес</span>}</p>
+              <ArrowUpRight size={24} strokeWidth={1.75} className="ch-arrow shrink-0" aria-hidden="true" />
+            </div>
+          </div>
+        </Tag>
+      );
+    })}
+  </div>
+</Section>
+
+<style>
+  .ch-title { font-family: var(--font-display); font-weight: 500; letter-spacing: -0.02em; font-variant-ligatures: none; color: #0c0d0f; }
+  .ch-num { font-family: var(--font-display); font-size: 32px; line-height: 36px; font-weight: 500; letter-spacing: -0.05em; color: #000; font-variant-ligatures: none; }
+  .ch-per { font-family: 'Inter', sans-serif; font-size: 16px; line-height: 1; font-weight: 400; letter-spacing: 0; color: #878787; }
+  .ch-arrow { color: #0c0d0f; transition: color .2s, transform .2s; }
+  .ch-card:is(:hover, :focus-visible) .ch-arrow { color: var(--brand); transform: translate(2px, -2px); }
+</style>

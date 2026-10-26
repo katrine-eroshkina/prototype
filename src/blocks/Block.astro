@@ -46,6 +46,37 @@ import Contacts from './contacts/Contacts.astro';
 import Geography from './geography/Geography.astro';
 import TableChannels from './table/Channels.astro';
 
+// Версия А: свои раскладки блоков (по референсам)
+import AHero from './versions/a/Hero.astro';
+import AServices from './versions/a/Services.astro';
+import ACases from './versions/a/Cases.astro';
+import AStatement from './versions/a/Statement.astro';
+import AProcess from './versions/a/Process.astro';
+import APricing from './versions/a/Pricing.astro';
+import AHeroSplit from './versions/a/HeroSplit.astro';
+import AHeroPage from './versions/a/HeroPage.astro';
+import ACasesGrid from './versions/a/CasesGrid.astro';
+import AChildren from './versions/a/Children.astro';
+import ASituations from './versions/a/Situations.astro';
+import AIncludes from './versions/a/Includes.astro';
+import AMetrics from './versions/a/Metrics.astro';
+import AFaq from './versions/a/Faq.astro';
+import AChannels from './versions/a/Channels.astro';
+import AEmpty from './versions/a/Empty.astro';
+import ANumberedCards from './versions/a/NumberedCards.astro';
+import ACaseStory from './versions/a/CaseStory.astro';
+import AContacts from './versions/a/Contacts.astro';
+import AMediaGrid from './versions/a/MediaGrid.astro';
+import ATestimonials from './versions/a/Testimonials.astro';
+import AGeography from './versions/a/Geography.astro';
+import ACta from './versions/a/Cta.astro';
+import AServicesCatalog from './versions/a/ServicesCatalog.astro';
+import AExpert from './versions/a/Expert.astro';
+import AHistory from './versions/a/History.astro';
+import APosts from './versions/a/Posts.astro';
+import ASystem from './versions/a/System.astro';
+import ALegal from './versions/a/Legal.astro';
+
 interface Props { id: string; ctx: PageCtx; index: number }
 const { id, ctx, index } = Astro.props;
 
@@ -76,5 +107,62 @@ const Component = variants ? (variant ? variants[variant] : Object.values(varian
 /** Варианты со своим фоном — им тему не передаём */
 const selfThemed = new Set(['text:statement', 'cta:form', 'cta:banner', 'cta:lead', 'cta:cross', 'cases:metrics', 'people:expert']);
 const theme: Theme | undefined = block === 'hero' ? 'light' : selfThemed.has(id) ? undefined : index % 2 ? 'alt' : 'light';
+
+/** Главная: блоки версии А */
+const versions: Record<string, any> = {
+  'hero:main': AHero,
+  'services:groups': AServices,
+  cases: ACases,
+  'text:statement': AStatement,
+  process: AProcess,
+  pricing: APricing,
+  'people:team': AMediaGrid,
+  testimonials: ATestimonials,
+  geography: AGeography,
+  'cta:form': ACta,
+};
+const v = ctx.kind === 'home' ? versions[id] : undefined;
+const VA = v;
+/** Внутренние страницы: блоки версии А; блок без своего варианта А рисуется общим компонентом */
+const innerA: Record<string, any> = {
+  'services:groups': AServicesCatalog,
+  'services:children': AChildren,
+  'hero:page': AHeroPage,
+  'hero:form': AHeroSplit,
+  'cards:situations': ASituations,
+  'cards:includes': AIncludes,
+  process: AProcess,
+  pricing: APricing,
+  'cases:metrics': AMetrics,
+  'cases:grid': ACasesGrid,
+  cases: ACasesGrid,
+  'table:channels': AChannels,
+  'logos:clients': AEmpty,
+  'cta:banner': ACta,
+  'hero:case': AHeroSplit,
+  'cases:problems': ANumberedCards,
+  'cases:story': ACaseStory,
+  contacts: AContacts,
+  'hero:about': AHeroSplit,
+  'text:statement': AStatement,
+  'cards:values': ANumberedCards,
+  'people:expert': AExpert,
+  'process:history': AHistory,
+  'people:team': AMediaGrid,
+  'logos:documents': AMediaGrid,
+  testimonials: ATestimonials,
+  'cases:posts': APosts,
+  'text:article': ALegal,
+  faq: AFaq,
+  'cta:form': ACta,
+};
+/** Служебные (404, «Спасибо»): в А — один экран System, формы-баннера под ним нет */
+const systemA: Record<string, any> = { 'hero:page': ASystem, 'cta:banner': AEmpty };
+const IA = ctx.kind === 'home' ? undefined : (ctx.kind === 'system' && systemA[id]) || innerA[id];
 ---
-{Component ? <Component {ctx} {theme} /> : <div class="container"><WireBlock {id} /></div>}
+{/* Только версия А. Обёртка .only-a — на неё опираются скрипты блоков А */}
+{v ? (
+  <div class="only-a"><VA {ctx} {id} /></div>
+) : IA ? (
+  <div class="only-a"><IA {ctx} {id} /></div>
+) : Component ? <Component {ctx} {theme} /> : <div class="container"><WireBlock {id} /></div>}

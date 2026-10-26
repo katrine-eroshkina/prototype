@@ -1,0 +1,6 @@
+---
+/** А · мини-заголовок блока: синий слэш (как в логотипе и в hero) + серый текст 16/24 */
+interface Props { class?: string }
+const { class: className } = Astro.props;
+---
+<p class:list={['text-base leading-6 text-[#66696f]', className]}><span class="font-extrabold text-brand">/</span> <slot /></p>

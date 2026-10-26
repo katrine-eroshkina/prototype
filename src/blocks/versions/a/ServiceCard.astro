@@ -1,0 +1,40 @@
+---
+/**
+ * А · карточка категории услуг (по макету в Figma, узел 220:1232):
+ * название в одну строку (акцент + остальное), описание 16/24 в 2 строки, подуслуги тегами (если есть);
+ * внизу за линией — «от XX 000 ₽» и стрелка ↗. При наведении меняется только стрелка.
+ * Высоту выравнивает сетка (auto-rows-fr у родителя).
+ */
+import { ArrowUpRight } from 'lucide-react';
+import { catUrl, type Category } from '@/data/sitemap';
+import { serviceCardA } from '@/data/content';
+import { url } from '@/lib/url';
+interface Props { c: Category; monthly?: boolean }
+const { c, monthly } = Astro.props;
+const t = serviceCardA[c.slug];
+---
+<a href={url(catUrl(c))} class="svc-card flex min-h-72 flex-col rounded-2xl bg-[#fafaf9] p-5">
+  <h3 class="svc-title whitespace-nowrap text-xl leading-7 lg:text-2xl lg:leading-8"><span class="text-brand">{t.accent}</span>{t.rest.startsWith('-') ? '' : ' '}{t.rest}</h3>
+  <p class="mt-1 min-h-12 text-base leading-6 text-[#878787]">{t.text}</p>
+
+  {c.children.length > 0 && (
+    <div class="mt-6 flex flex-wrap gap-1">
+      {c.children.map((s) => <span class="flex h-6 items-center rounded-md bg-brand px-2 text-xs font-medium text-white">{s.title}</span>)}
+    </div>
+  )}
+
+  <div class="mt-auto pt-6">
+    <div class="flex items-center justify-between border-t border-[#e8e8e6] pt-4">
+      <p class="svc-num whitespace-nowrap">от XX 000 ₽{monthly && <span class="svc-per"> /мес</span>}</p>
+      <ArrowUpRight size={24} strokeWidth={1.75} className="svc-arrow shrink-0" aria-hidden="true" />
+    </div>
+  </div>
+</a>
+
+<style>
+  .svc-title { font-family: var(--font-display); font-weight: 500; letter-spacing: -0.02em; font-variant-ligatures: none; color: #0c0d0f; }
+  .svc-num { font-family: var(--font-display); font-size: 32px; line-height: 36px; font-weight: 500; letter-spacing: -0.05em; color: #000; font-variant-ligatures: none; }
+  .svc-per { font-family: 'Inter', sans-serif; font-size: 16px; font-weight: 400; letter-spacing: 0; color: #878787; }
+  .svc-arrow { color: #0c0d0f; transition: color .2s, transform .2s; }
+  .svc-card:is(:hover, :focus-visible) .svc-arrow { color: var(--brand); transform: translate(2px, -2px); }
+</style>

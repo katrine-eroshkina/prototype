@@ -1,0 +1,43 @@
+---
+/** Линейные схемы этапов процесса (версия Б, по Rulebase) — общие для Б и А. i — номер этапа 0–3; 4 — «Запуск» для А: от выделенной точки рост вверх полупрозрачной линией, как прогноз */
+interface Props { i: number; class?: string }
+const { i, class: className } = Astro.props;
+---
+<svg class:list={['w-full text-brand', className]} viewBox="0 0 240 160" fill="none" stroke="currentColor" aria-hidden="true">
+  {i === 0 && (<>
+    {[40, 80, 120].map((y) => <line x1="20" x2="220" y1={y} y2={y} stroke-opacity="0.3" />)}
+    <line x1="120" x2="120" y1="20" y2="140" />
+    {[40, 80, 120].map((y) => <><circle cx="20" cy={y} r="2.5" fill="currentColor" fill-opacity="0.4" stroke="none" /><circle cx="220" cy={y} r="2.5" fill="currentColor" fill-opacity="0.4" stroke="none" /><circle cx="120" cy={y} r="4" fill="currentColor" stroke="none" /></>)}
+    <circle cx="120" cy="80" r="14" fill="currentColor" fill-opacity="0.12" stroke-opacity="0.3" />
+  </>)}
+  {i === 1 && (<>
+    <polyline points="10,110 50,110 90,110 110,110 140,30 165,110 200,110 230,110" stroke-linejoin="round" />
+    {[10, 50, 90, 200, 230].map((x) => <circle cx={x} cy="110" r="2.5" fill="currentColor" fill-opacity="0.5" stroke="none" />)}
+    <circle cx="140" cy="30" r="14" fill="currentColor" fill-opacity="0.12" stroke-opacity="0.3" />
+    <circle cx="140" cy="30" r="4.5" fill="currentColor" stroke="none" />
+  </>)}
+  {i === 4 && (<>
+    <polyline points="10,120 45,120 80,120 105,120" />
+    <polyline points="105,120 130,44 165,38 200,30 230,22" stroke-linejoin="round" stroke-opacity="0.35" />
+    {[10, 45, 80].map((x) => <circle cx={x} cy="120" r="2.5" fill="currentColor" fill-opacity="0.5" stroke="none" />)}
+    {[[130, 44], [165, 38], [200, 30], [230, 22]].map(([x, y]) => <circle cx={x} cy={y} r="2.5" fill="currentColor" fill-opacity="0.4" stroke="none" />)}
+    <circle cx="105" cy="120" r="14" fill="currentColor" fill-opacity="0.12" stroke-opacity="0.3" />
+    <circle cx="105" cy="120" r="4.5" fill="currentColor" stroke="none" />
+  </>)}
+  {i === 2 && (<>
+    <path d="M15 40 C 80 40, 90 80, 120 80 S 160 40, 225 40" stroke-opacity="0.35" />
+    <path d="M15 120 C 80 120, 90 80, 120 80 S 160 120, 225 120" />
+    <circle cx="120" cy="80" r="14" fill="currentColor" fill-opacity="0.12" stroke-opacity="0.3" />
+    <circle cx="120" cy="80" r="4.5" fill="currentColor" stroke="none" />
+    {[[15, 40], [225, 40]].map(([x, y]) => <circle cx={x} cy={y} r="2.5" fill="currentColor" fill-opacity="0.4" stroke="none" />)}
+    {[[15, 120], [225, 120]].map(([x, y]) => <circle cx={x} cy={y} r="4" fill="currentColor" stroke="none" />)}
+  </>)}
+  {i === 3 && (<>
+    <path d="M20 120 C 60 115, 70 95, 100 90 S 150 60, 175 55 S 205 40, 215 35" stroke-opacity="0.35" />
+    <path d="M20 120 C 70 150, 170 150, 215 35" />
+    {[[60, 108], [100, 90], [150, 64]].map(([x, y]) => <circle cx={x} cy={y} r="3" fill="currentColor" fill-opacity="0.6" stroke="none" />)}
+    <circle cx="20" cy="120" r="4" fill="currentColor" stroke="none" />
+    <circle cx="215" cy="35" r="14" fill="currentColor" fill-opacity="0.12" stroke-opacity="0.3" />
+    <circle cx="215" cy="35" r="4.5" fill="currentColor" stroke="none" />
+  </>)}
+</svg>

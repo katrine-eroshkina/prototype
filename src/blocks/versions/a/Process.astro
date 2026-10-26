@@ -1,0 +1,31 @@
+---
+/**
+ * А · process — по Aside (блок Password manager): светло-серые карточки (#fafaf9, скругление 16),
+ * внутри — линейная схема этапа из версии Б (синим акцентом, схемы шагов 3 и 4 переставлены, «Запуск» после скачка идёт вверх); подпись снизу: жирное начало + серый текст.
+ * На внутренних страницах — шаги и пояснения этой страницы (processSteps).
+ */
+import Section from '../../Section.astro';
+import SectionHead from './SectionHead.astro';
+import ProcessArt from '../../process/ProcessArt.astro';
+import { processSteps, type PageCtx } from '@/data/content';
+interface Props { ctx: PageCtx }
+const { ctx } = Astro.props;
+const steps = processSteps(ctx);
+const isHome = ctx.kind === 'home';
+const more = ['Считаем рынок, спрос и цену заявки до договора.', 'Настраиваем каналы и сквозную аналитику.', 'Каждую неделю убираем то, что не приносит денег.', 'Раз в месяц — заявки, выручка и окупаемость.'];
+---
+<Section id="process">
+  <SectionHead eyebrow="Как работаем">
+    Четыре шага от созвона до отчёта в деньгах
+  </SectionHead>
+  <ol class="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+    {steps.map((s, i) => (
+      <li>
+        <div class="grid aspect-square place-items-center rounded-2xl bg-[#fafaf9] p-6">
+          <ProcessArt i={[0, 4, 3, 2][i]} />
+        </div>
+        <p class="mt-4 text-base leading-6"><span class:list={["text-[#2c2c2c]", !isHome && "block"]}>{s.t}{isHome && "."}</span>{isHome && " "}<span class="text-[#878787]">{(isHome ? more[i] : s.d).replace(/\.$/, "")}</span></p>
+      </li>
+    ))}
+  </ol>
+</Section>

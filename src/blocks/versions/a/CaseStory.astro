@@ -1,0 +1,91 @@
+---
+/**
+ * А · cases:story — «Что сделали»: этапы строками без разделителей, сетка как у блоков главной (1fr / 1.4fr).
+ * Слева «/ 01 · Месяц 1», название этапа шрифтом заголовков, короткое описание серым (две строки) и работы с синими галочками в одну колонку;
+ * справа итог этапа на светло-серой плашке и два скриншота.
+ * На скриншотах — иконка «развернуть»: по клику картинка открывается крупно в лайтбоксе
+ * (стрелки — к соседним скриншотам всех этапов, Esc или крестик — закрыть).
+ */
+import Section from '../../Section.astro';
+import SectionHead from './SectionHead.astro';
+import { Check, ChevronLeft, ChevronRight, Maximize2, X } from 'lucide-react';
+import { caseStudy as cs, type PageCtx } from '@/data/content';
+interface Props { ctx: PageCtx }
+let n = 0;
+---
+<Section id="cases" variant="story">
+  <SectionHead eyebrow="Решение" lead={`${cs.stages.length} этапа за 8 месяцев — от технической основы до контента`}>Что сделали</SectionHead>
+  <ol class="mt-12 grid gap-16">
+    {cs.stages.map((s, i) => (
+      <li class="grid gap-6 lg:grid-cols-[1fr_1.4fr] lg:gap-16">
+        <div>
+          <p class="text-base leading-6 text-[#878787]"><span class="font-extrabold text-brand">/</span> {String(i + 1).padStart(2, '0')} · {s.period}</p>
+          <h3 class="cs-h mt-2 text-[32px] leading-10">{s.t}</h3>
+          {s.d && <p class="mt-3 text-base leading-6 text-[#878787]">{s.d.replace(/\.$/, '')}</p>}
+          <ul class="mt-6 grid gap-3">
+            {s.works.map((w) => (
+              <li class="flex gap-3 text-base leading-6 text-[#2c2c2c]"><span class="mt-0.5 grid size-5 shrink-0 place-items-center rounded-full bg-brand text-white" aria-hidden="true"><Check size={12} strokeWidth={3} /></span>{w}</li>
+            ))}
+          </ul>
+        </div>
+        <div>
+          <div class="rounded-2xl bg-[#fafaf9] p-5 md:p-6">
+            <p class="text-sm leading-5 text-[#878787]">Итог этапа</p>
+            <p class="mt-1 text-base leading-6 text-[#0c0d0f]">{s.result.replace(/\.$/, '')}</p>
+          </div>
+          <div class="mt-3 grid gap-3 sm:grid-cols-2">
+            {s.media.map((m) => (
+              <button type="button" class="cs-shot group relative grid aspect-[4/3] place-items-center rounded-2xl bg-[#fafaf9] text-sm leading-5 text-[#878787]" data-shot={n++} data-label={m} aria-label={`Развернуть: ${m}`}>
+                {m}
+                <span class="absolute right-3 top-3 grid size-8 place-items-center rounded-lg bg-white text-[#0c0d0f] transition group-hover:bg-[#0c0d0f] group-hover:text-white" aria-hidden="true"><Maximize2 size={16} strokeWidth={1.75} /></span>
+              </button>
+            ))}
+          </div>
+        </div>
+      </li>
+    ))}
+  </ol>
+
+  <!-- Лайтбокс: крупный скриншот, стрелки к соседним, крестик -->
+  <dialog class="cs-lb m-0 size-full max-h-none max-w-none bg-transparent p-4 backdrop:bg-black/80 md:p-10" data-lightbox>
+    <div class="relative mx-auto flex h-full max-w-6xl flex-col items-center justify-center">
+      <!-- крестик — внутри контейнера картинки, в правом верхнем углу -->
+      <div class="relative w-full">
+        <div class="grid aspect-[4/3] max-h-[80vh] w-full place-items-center rounded-2xl bg-[#fafaf9] text-base text-[#878787]" data-lb-view></div>
+        <button type="button" class="absolute right-4 top-4 grid size-10 place-items-center rounded-[5px] bg-[#0c0d0f] text-white" data-lb-close aria-label="Закрыть"><X size={20} strokeWidth={1.75} /></button>
+      </div>
+      <p class="mt-4 text-sm leading-5 text-white/70" data-lb-caption></p>
+      <button type="button" class="absolute left-0 top-1/2 grid size-10 -translate-y-1/2 place-items-center rounded-[5px] bg-white text-[#0c0d0f] md:-left-14" data-lb-prev aria-label="Предыдущий"><ChevronLeft size={20} strokeWidth={1.75} /></button>
+      <button type="button" class="absolute right-0 top-1/2 grid size-10 -translate-y-1/2 place-items-center rounded-[5px] bg-white text-[#0c0d0f] md:-right-14" data-lb-next aria-label="Следующий"><ChevronRight size={20} strokeWidth={1.75} /></button>
+    </div>
+  </dialog>
+</Section>
+
+<style>
+  .cs-h { font-family: var(--font-display); font-weight: 400; letter-spacing: -0.02em; color: #2c2c2c; font-variant-ligatures: none; }
+  .cs-shot { cursor: zoom-in; }
+</style>
+
+<script>
+  // Лайтбокс скриншотов этапов: открыть по клику, листать стрелками (кнопки и клавиатура), закрыть Esc / крестиком / кликом по фону
+  document.querySelectorAll<HTMLDialogElement>('[data-lightbox]').forEach((dlg) => {
+    const root = dlg.closest('section')!;
+    const shots = [...root.querySelectorAll<HTMLButtonElement>('.cs-shot')];
+    const view = dlg.querySelector<HTMLElement>('[data-lb-view]')!;
+    const cap = dlg.querySelector<HTMLElement>('[data-lb-caption]')!;
+    let cur = 0;
+    const show = (i: number) => {
+      cur = (i + shots.length) % shots.length;
+      const label = shots[cur].dataset.label ?? '';
+      const img = shots[cur].querySelector('img');
+      view.innerHTML = img ? `<img class="size-full rounded-2xl object-contain" src="${img.src}" alt="">` : label;
+      cap.textContent = `${label} · ${cur + 1} / ${shots.length}`;
+    };
+    shots.forEach((b, i) => b.addEventListener('click', () => { show(i); dlg.showModal(); }));
+    dlg.querySelector('[data-lb-close]')!.addEventListener('click', () => dlg.close());
+    dlg.querySelector('[data-lb-prev]')!.addEventListener('click', () => show(cur - 1));
+    dlg.querySelector('[data-lb-next]')!.addEventListener('click', () => show(cur + 1));
+    dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
+    dlg.addEventListener('keydown', (e) => { if (e.key === 'ArrowLeft') show(cur - 1); if (e.key === 'ArrowRight') show(cur + 1); });
+  });
+</script>

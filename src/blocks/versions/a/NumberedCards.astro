@@ -1,0 +1,33 @@
+---
+/**
+ * А · нумерованные карточки — общие для «Что мы обнаружили» в кейсе (cases:problems, сетка 2×2)
+ * и «Как мы работаем» в «О компании» (cards:values, сетка 3×2).
+ * Светло-серые карточки одной высоты: «/ 01» (синий слэш, номер серым), заголовок 24/32 шрифтом заголовков, пояснение серым.
+ */
+import Section from '../../Section.astro';
+import SectionHead from './SectionHead.astro';
+import { caseStudy as cs, values, type PageCtx } from '@/data/content';
+interface Props { ctx: PageCtx; id?: string }
+const { id } = Astro.props;
+const problems = id === 'cases:problems';
+const head = problems
+  ? { eyebrow: 'Аудит', title: 'Что мы обнаружили', lead: 'Ключевые проблемы, которые мешали сайту расти' }
+  : { eyebrow: 'Принципы', title: 'Как мы работаем', lead: undefined };
+const items = problems ? cs.problems : values;
+---
+<Section id={problems ? 'cases' : 'cards'} variant={problems ? 'problems' : 'values'}>
+  <SectionHead eyebrow={head.eyebrow} lead={head.lead}>{head.title}</SectionHead>
+  <div class:list={['mt-12 grid auto-rows-fr gap-3', problems ? 'md:grid-cols-2' : 'sm:grid-cols-2 lg:grid-cols-3']}>
+    {items.map((p, i) => (
+      <div class="flex flex-col rounded-2xl bg-[#fafaf9] p-6 md:p-8">
+        <span class="text-base leading-6 tabular-nums text-[#878787]"><span class="font-extrabold text-brand">/</span> {String(i + 1).padStart(2, '0')}</span>
+        <h3 class="nc-h mt-6 text-2xl leading-8">{p.t}</h3>
+        <p class="mt-2 text-base leading-6 text-[#878787]">{p.d.replace(/\.$/, '')}</p>
+      </div>
+    ))}
+  </div>
+</Section>
+
+<style>
+  .nc-h { font-family: var(--font-display); font-weight: 400; letter-spacing: -0.02em; color: #2c2c2c; font-variant-ligatures: none; }
+</style>
