@@ -1,15 +1,17 @@
 ---
 import { url } from '@/lib/url';
+import Roll from '@/blocks/versions/a/Roll.astro';
+/** Хлебные крошки: 14/20, ссылки fg-muted с перекаткой при наведении, текущая страница — fg */
 
 interface Props { items: { href?: string; title: string }[] }
 const { items } = Astro.props;
 ---
-<nav aria-label="Хлебные крошки" class="flex flex-wrap items-center gap-1.5 text-sm text-muted-foreground">
-  <a class="hover:text-foreground" href={url('/')}>Главная</a>
+<nav aria-label="Хлебные крошки" class="flex flex-wrap items-center gap-2 text-sm leading-5 text-fg-muted">
+  <a href={url('/')}><Roll>Главная</Roll></a>
   {items.map((item) => (
     <>
       <span aria-hidden="true">/</span>
-      {item.href ? <a class="hover:text-foreground" href={url(item.href)}>{item.title}</a> : <span class="text-foreground">{item.title}</span>}
+      {item.href ? <a href={url(item.href)}><Roll>{item.title}</Roll></a> : <span class="text-fg">{item.title}</span>}
     </>
   ))}
 </nav>

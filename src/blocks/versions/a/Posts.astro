@@ -11,6 +11,7 @@ import PostCard from './PostCard.astro';
 import Btn from './Btn.astro';
 import { blogPosts as posts, type PageCtx } from '@/data/content';
 import { url } from '@/lib/url';
+import Chip from './Chip.astro';
 interface Props { ctx?: PageCtx; related?: string }
 const { related } = Astro.props;
 const href = (slug: string) => url(`/blog/${slug}/`);
@@ -30,11 +31,10 @@ const others = related ? posts.filter((p) => p.slug !== related).slice(0, 3) : [
     <div class="flex flex-wrap items-center justify-between gap-4">
       <div class="flex flex-wrap gap-1" role="group" aria-label="Фильтр по рубрикам">
         {filters.map((f, i) => (
-          <button type="button" data-post-filter={f} aria-pressed={i === 0 ? 'true' : 'false'}
-            class="h-8 rounded-md bg-[#fafaf9] px-3 text-sm font-medium text-[#0c0d0f] transition hover:bg-[#f0f0ee] aria-pressed:bg-[#0c0d0f] aria-pressed:text-white">{f}</button>
+          <Chip data-post-filter={f} pressed={i === 0}>{f}</Chip>
         ))}
       </div>
-      <span class="text-sm leading-5 text-[#878787]"><span data-post-count>{posts.length}</span> статей</span>
+      <span class="text-sm leading-5 text-fg-muted"><span data-post-count>{posts.length}</span> статей</span>
     </div>
     <div class="mt-8" data-post-first><PostCard href={href(first.slug)} title={first.t} rubric={first.r} wide /></div>
     <div class="mt-12 grid gap-x-3 gap-y-10 md:grid-cols-2 lg:grid-cols-3" data-post-grid>

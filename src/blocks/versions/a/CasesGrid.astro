@@ -11,6 +11,7 @@ import Btn from './Btn.astro';
 import { listCases, sampleCases, type PageCtx } from '@/data/content';
 import { cases as caseLinks } from '@/data/sitemap';
 import { url } from '@/lib/url';
+import Chip from './Chip.astro';
 interface Props { ctx: PageCtx }
 const { ctx } = Astro.props;
 const isList = ctx.kind === 'casesList';
@@ -29,11 +30,10 @@ const filters = ['Все', ...new Set(listCases.map((c) => c.tag))];
     <div class="flex flex-wrap items-center justify-between gap-4">
       <div class="flex flex-wrap gap-1" role="group" aria-label="Фильтр по услугам">
         {filters.map((f, i) => (
-          <button type="button" data-filter={f} aria-pressed={i === 0 ? 'true' : 'false'}
-            class="h-8 rounded-md bg-[#fafaf9] px-3 text-sm font-medium text-[#0c0d0f] transition hover:bg-[#f0f0ee] aria-pressed:bg-[#0c0d0f] aria-pressed:text-white">{f}</button>
+          <Chip data-filter={f} pressed={i === 0}>{f}</Chip>
         ))}
       </div>
-      <span class="text-sm leading-5 text-[#878787]"><span data-count>{listCases.length}</span> проектов</span>
+      <span class="text-sm leading-5 text-fg-muted"><span data-count>{listCases.length}</span> проектов</span>
     </div>
     <div class="mt-8 grid gap-x-3 gap-y-10 md:grid-cols-2 lg:grid-cols-3">
       {listCases.map((c, i) => (

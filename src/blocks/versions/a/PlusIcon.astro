@@ -1,0 +1,9 @@
+---
+/**
+ * А · иконка аккордеона — «+» в круге 24×24, линия 1,5, цвет fg-muted.
+ * В открытой строке поворачивается в «×» (стили — у родителя: [open] .acc-plus).
+ */
+interface Props { class?: string }
+const { class: className } = Astro.props;
+---
+<svg class:list={['acc-plus size-6 shrink-0 text-fg-muted', className]} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="11.25" /><path d="M12 7.5v9M7.5 12h9" /></svg>

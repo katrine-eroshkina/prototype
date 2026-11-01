@@ -1,0 +1,10 @@
+---
+/**
+ * А · текстовая ссылка «Текст ›» — 14/20 medium (inline — кегль как у окружающего текста), цвет fg; при наведении текст перекатывается (.roll), цвет не меняется.
+ */
+import type { HTMLAttributes } from 'astro/types';
+type Props = HTMLAttributes<'a'> & { as?: 'a' | 'span'; inline?: boolean; class?: string };
+const { as: Tag = 'a', inline = false, class: className, ...rest } = Astro.props;
+const label = (await Astro.slots.render('default')).trim() + ' ›';
+---
+<Tag class:list={['font-medium text-fg', !inline && 'text-sm', className]} {...rest}><span class="roll"><span set:html={label} /><span aria-hidden="true" set:html={label} /></span></Tag>

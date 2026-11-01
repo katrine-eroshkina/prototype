@@ -1,0 +1,13 @@
+---
+/**
+ * А · цена «от XX 000 ₽ /мес» — число 32/36, вес 500, трекинг −5 %, цвет fg; период — 16px fg-muted обычным Inter.
+ * Карточки услуг, список услуг на главной, подуслуги, тарифы.
+ */
+interface Props { value?: string; per?: string; class?: string }
+const { value = 'XX 000 ₽', per, class: className } = Astro.props;
+---
+<p class:list={['t-h3 whitespace-nowrap text-fg', className]}>от {value}{per && <span class="price-per"> {per}</span>}</p>
+
+<style>
+  .price-per { font-family: 'Inter', sans-serif; font-size: 16px; line-height: 1; font-weight: 400; letter-spacing: 0; color: var(--fg-muted); }
+</style>

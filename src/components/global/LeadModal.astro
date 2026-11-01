@@ -1,0 +1,91 @@
+---
+/**
+ * Поп-ап «Обсудить задачу»: имя + телефон + согласие. Открывается любой кнопкой с атрибутом data-lead.
+ * Значение атрибута — тема заявки (например, «Тариф «Рост»»): показывается над формой и уходит в скрытое поле topic.
+ * Состояния: форма → «Заявка отправлена» (в том же окне) или ошибка под кнопкой.
+ * В прототипе отправки нет: после «Отправить» сразу показывается «Заявка отправлена».
+ * Для показа: ?modal=lead · ?modal=lead-done · ?modal=lead-error
+ * Закрытие — крестик, Esc, клик по фону. Карточка page, скругление 16, ширина 480, содержимое по центру (как у формы cta:form).
+ */
+import { X, Check } from 'lucide-react';
+import Btn from '../../blocks/versions/a/Btn.astro';
+import Field from '../../blocks/versions/a/Field.astro';
+import Consent from '../../blocks/versions/a/Consent.astro';
+---
+<dialog class="lm m-auto w-[calc(100%-32px)] max-w-[480px] rounded-2xl bg-page p-0 text-fg backdrop:bg-black/60 backdrop:backdrop-blur-sm" aria-labelledby="lm-title" data-lead-modal>
+  <div class="relative px-6 pb-8 pt-16 text-center md:px-10 md:pb-10">
+    <button type="button" class="absolute right-4 top-4 grid size-10 place-items-center rounded-[5px] bg-action text-fg-inverse" aria-label="Закрыть" data-modal-close><X size={20} strokeWidth={1.75} /></button>
+
+    <div data-lm-step="form">
+      <h2 id="lm-title" class="t-h3 text-balance text-fg">Обсудить задачу</h2>
+      <p class="mx-auto mt-2 max-w-[360px] text-base leading-6 text-fg-muted">Оставьте имя и телефон. Перезвоним в течение рабочего дня, первая консультация бесплатно</p>
+      <p class="mt-4 text-sm leading-5 text-fg" hidden data-lm-topic></p>
+      <form class="mt-8 grid gap-4" data-lead-form data-consent-form data-lm-form>
+        <input type="hidden" name="topic" data-lm-topic-input />
+        <Field name="name" placeholder="Имя" autocomplete="name" required />
+        <Field name="phone" type="tel" inputmode="tel" placeholder="Телефон" autocomplete="tel" required />
+        <Btn as="button" type="submit" full class="mt-4" disabled data-consent-submit>Отправить</Btn>
+        <p class="text-sm leading-5 text-fg" role="alert" hidden data-lm-error>Не получилось отправить. Попробуйте ещё раз или позвоните: +7 XXX XXX-XX-XX</p>
+        <Consent class="mt-2" />
+      </form>
+    </div>
+
+    <div hidden data-lm-step="done">
+      <span class="mx-auto grid size-12 place-items-center rounded-full bg-brand text-fg-inverse" aria-hidden="true"><Check size={24} strokeWidth={2.5} /></span>
+      <h2 class="t-h3 mt-6 text-fg">Заявка отправлена</h2>
+      <p class="mx-auto mt-2 max-w-[360px] text-base leading-6 text-fg-muted">Перезвоним в течение рабочего дня и договоримся о бесплатной консультации</p>
+      <Btn as="button" type="button" variant="light" noIcon class="mt-8" data-modal-close>Хорошо</Btn>
+    </div>
+  </div>
+</dialog>
+
+<style>
+  .lm[open] { animation: lm-in .25s ease; }
+  .lm[open]::backdrop { animation: lm-fade .25s ease; }
+  @keyframes lm-in { from { opacity: 0; transform: translateY(12px); } }
+  @keyframes lm-fade { from { opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { .lm[open], .lm[open]::backdrop { animation: none; } }
+</style>
+
+<script>
+  const dlg = document.querySelector<HTMLDialogElement>('[data-lead-modal]');
+  if (dlg) {
+    const form = dlg.querySelector<HTMLFormElement>('[data-lm-form]')!;
+    const topic = dlg.querySelector<HTMLElement>('[data-lm-topic]')!;
+    const topicInput = dlg.querySelector<HTMLInputElement>('[data-lm-topic-input]')!;
+    const err = dlg.querySelector<HTMLElement>('[data-lm-error]')!;
+    const done = dlg.querySelector<HTMLElement>('[data-lm-step="done"]')!;
+    const step = (name: 'form' | 'done') => dlg.querySelectorAll<HTMLElement>('[data-lm-step]').forEach((s) => { s.hidden = s.dataset.lmStep !== name; });
+    const open = (theme = '') => {
+      step('form'); err.hidden = true;
+      topic.hidden = !theme; topic.textContent = theme ? `Тема: ${theme}` : ''; topicInput.value = theme;
+      dlg.showModal();
+    };
+
+    // Любая кнопка с data-lead открывает окно вместо перехода по ссылке
+    document.addEventListener('click', (e) => {
+      const t = (e.target as HTMLElement).closest<HTMLElement>('[data-lead]');
+      if (!t) return;
+      e.preventDefault();
+      open(t.dataset.lead);
+    });
+    dlg.querySelectorAll('[data-modal-close]').forEach((b) => b.addEventListener('click', () => dlg.close()));
+    dlg.addEventListener('click', (e) => { if (e.target === dlg) dlg.close(); });
+    // После успешной отправки форма очищается
+    dlg.addEventListener('close', () => { if (!done.hidden) { form.reset(); form.querySelector('[data-consent]')?.dispatchEvent(new Event('change')); } });
+
+    // Отправка. На боевом сайте: fetch на обработчик заявок; успех → step('done') и цель Метрики, ошибка → err.hidden = false
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      step('done');
+    });
+
+    const demo = new URLSearchParams(location.search).get('modal');
+    if (demo?.startsWith('lead')) {
+      open();
+      if (demo === 'lead-done') step('done');
+      if (demo === 'lead-error') err.hidden = false;
+    }
+  }
+</script>

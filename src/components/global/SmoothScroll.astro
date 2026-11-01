@@ -19,7 +19,8 @@
   // Ссылки-якоря (#cta-form и т. п.) — плавно через Lenis; Lenis не учитывает scroll-margin-top — передаём его отступом
   document.addEventListener('click', (e) => {
     const a = (e.target as HTMLElement).closest<HTMLAnchorElement>('a[href^="#"]');
-    if (!a || a.getAttribute('href')!.length < 2) return;
+    // кнопки с data-lead открывают поп-ап заявки (LeadModal) — не прокручиваем
+    if (!a || a.hasAttribute('data-lead') || a.getAttribute('href')!.length < 2) return;
     const id = a.getAttribute('href')!.slice(1);
     const target = [...document.querySelectorAll<HTMLElement>(`[id="${CSS.escape(id)}"]`)].find((el) => el.offsetParent !== null);
     if (!target) return;

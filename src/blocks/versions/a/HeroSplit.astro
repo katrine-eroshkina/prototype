@@ -13,6 +13,7 @@ import Breadcrumbs from '@/components/wire/Breadcrumbs.astro';
 import Btn from './Btn.astro';
 import Problems from './Problems.astro';
 import { includes, caseStudy as cs, type PageCtx } from '@/data/content';
+import Badge from './Badge.astro';
 interface Props { ctx: PageCtx; id?: string }
 const { ctx, id } = Astro.props;
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
@@ -22,7 +23,7 @@ type Hero = {
   tag?: string;
   lead?: string;
   list?: boolean;
-  btn?: { href: string; label: string; download?: boolean };
+  btn?: { href: string; label: string; download?: boolean; lead?: boolean };
   facts: { l: string; v: string }[];
   cover?: string;
 };
@@ -48,7 +49,7 @@ if (id === 'hero:case') {
   h = {
     title: ctx.title,
     list: true,
-    btn: { href: '#cta-form', label: 'Получить расчёт' },
+    btn: { href: '#cta-form', label: 'Получить расчёт', lead: true },
     facts: [...(price ? [{ l: 'Стоимость', v: price.v }] : []), ...meta.filter((m) => m.l !== 'Цена'), { l: 'Договор', v: 'с KPI' }],
   };
 }
@@ -58,29 +59,25 @@ if (id === 'hero:case') {
   {ctx.crumbs && <Breadcrumbs items={ctx.crumbs} />}
   <div class="mt-8 grid gap-10 lg:grid-cols-[1fr_1.4fr] lg:gap-16">
     <div>
-      {h.tag && <span class="mb-4 flex h-6 w-fit items-center rounded-md bg-brand px-2 text-xs font-medium text-white">{h.tag}</span>}
-      <h1 class="hs-h1 max-w-[620px] text-balance text-[32px] leading-10 md:text-5xl md:leading-[56px]">{h.title}</h1>
-      {h.lead && <p class="mt-4 max-w-[560px] text-base leading-6 text-[#878787]">{h.lead.replace(/\.$/, '')}</p>}
+      {h.tag && <Badge class="mb-4 w-fit">{h.tag}</Badge>}
+      <h1 class="t-h1 max-w-[620px] text-balance text-fg">{h.title}</h1>
+      {h.lead && <p class="mt-4 max-w-[560px] text-base leading-6 text-fg-muted">{h.lead.replace(/\.$/, '')}</p>}
       {h.list && <Problems {ctx} class="mt-8" />}
-      {h.btn && <Btn class="mt-8" href={h.btn.href} icon={h.btn.download ? 'download' : 'arrow'} download={h.btn.download}>{h.btn.label}</Btn>}
+      {h.btn && <Btn class="mt-8" href={h.btn.href} icon={h.btn.download ? 'download' : 'arrow'} download={h.btn.download} data-lead={h.btn.lead ? '' : undefined}>{h.btn.label}</Btn>}
     </div>
     <dl class="grid grid-cols-2 gap-1 self-center">
       {h.facts.map((f) => (
-        <div class="rounded-2xl bg-[#fafaf9] p-5 md:p-6">
-          <dt class="text-sm leading-5 text-[#878787]">{f.l}</dt>
-          <dd class="hs-v mt-2 text-xl leading-7 md:text-2xl md:leading-8">{f.v}</dd>
+        <div class="rounded-2xl bg-surface p-5 md:p-6">
+          <dt class="text-sm leading-5 text-fg-muted">{f.l}</dt>
+          <dd class="t-h4 mt-2 text-fg">{f.v}</dd>
         </div>
       ))}
     </dl>
   </div>
   {h.cover && (
-    <div class="mt-12 aspect-[21/9] overflow-hidden rounded-2xl bg-[#fafaf9]">
+    <div class="mt-12 aspect-[21/9] overflow-hidden rounded-2xl bg-surface">
       <img class="size-full object-cover" src={h.cover} style="object-position:76% 50%" alt="" />
     </div>
   )}
 </Section>
 
-<style>
-  .hs-h1 { font-family: var(--font-display); font-weight: 400; letter-spacing: -0.02em; color: #2c2c2c; font-variant-ligatures: none; }
-  .hs-v { font-family: var(--font-display); font-weight: 400; letter-spacing: -0.02em; color: #0c0d0f; font-variant-ligatures: none; }
-</style>

@@ -20,11 +20,11 @@ const rf = data.reframe;
 
   <div class="mt-12 grid auto-rows-fr gap-3 sm:grid-cols-2 lg:grid-cols-3">
     {data.groups.map((g, i) => (
-      <div class="rounded-2xl bg-[#fafaf9] p-6 md:p-8">
-        <h3 class="inc-h text-2xl leading-8">{g.t}</h3>
+      <div class="rounded-2xl bg-surface p-6 md:p-8">
+        <h3 class="t-h4 text-fg">{g.t}</h3>
         <ul class="mt-6 grid gap-3">
           {g.items.map((item) => (
-            <li class="flex gap-3 text-base leading-6 text-[#2c2c2c]"><span class="mt-0.5 grid size-5 shrink-0 place-items-center rounded-full bg-brand text-white" aria-hidden="true"><Check size={12} strokeWidth={3} /></span>{item}</li>
+            <li class="flex gap-3 text-base leading-6 text-fg"><span class="mt-0.5 grid size-5 shrink-0 place-items-center rounded-full bg-brand text-fg-inverse" aria-hidden="true"><Check size={12} strokeWidth={3} /></span>{item}</li>
           ))}
         </ul>
       </div>
@@ -37,22 +37,22 @@ const rf = data.reframe;
      слева «Сейчас» — зачёркнутые проблемы серым, справа подсвеченная колонка — наш результат; стрелка на стыке колонок. -->
 <Section id="cards" variant="deliverables">
   <SectionHead eyebrow="Результат" lead={rf.lead}>{rf.title}</SectionHead>
-  <div class="mt-12 border-y border-[#ececea]">
+  <div class="mt-12 border-y border-stroke">
     <!-- шапка колонок -->
     <div class="relative grid md:grid-cols-2">
-      <div class="flex items-center gap-3 py-5 pr-6 text-sm leading-5 text-[#878787]"><span class="grid size-5 place-items-center rounded-full bg-[#e8e9ea]" aria-hidden="true"><Minus size={12} strokeWidth={3} /></span>Сейчас</div>
-      <div class="rf-hl hidden items-center gap-3 border-l border-[#ececea] px-6 py-5 text-sm leading-5 text-[#0c0d0f] md:flex"><span class="grid size-5 place-items-center rounded-full bg-brand text-white" aria-hidden="true"><Plus size={12} strokeWidth={3} /></span>{rf.after}</div>
-      <span class="absolute left-1/2 top-1/2 hidden size-8 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-lg bg-[#0c0d0f] text-white md:grid" aria-hidden="true"><ArrowRight size={16} strokeWidth={2} /></span>
+      <div class="flex items-center gap-3 py-5 pr-6 text-sm leading-5 text-fg-muted"><span class="grid size-5 place-items-center rounded-full bg-stroke" aria-hidden="true"><Minus size={12} strokeWidth={3} /></span>Сейчас</div>
+      <div class="rf-hl hidden items-center gap-3 border-l border-stroke px-6 py-5 text-sm leading-5 text-fg md:flex"><span class="grid size-5 place-items-center rounded-full bg-brand text-fg-inverse" aria-hidden="true"><Plus size={12} strokeWidth={3} /></span>{rf.after}</div>
+      <span class="absolute left-1/2 top-1/2 hidden size-8 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-lg bg-fg text-page md:grid" aria-hidden="true"><ArrowRight size={16} strokeWidth={2} /></span>
     </div>
     {data.deliverables.map((d, i) => (
-      <div class="grid border-t border-[#ececea] md:grid-cols-2">
+      <div class="grid border-t border-stroke md:grid-cols-2">
         <div class="py-6 pr-6">
-          <p class="text-base leading-6 text-[#878787] line-through decoration-[#878787]/60">{rf.before[i]?.t}</p>
-          <p class="mt-1 text-sm leading-5 text-[#878787]">{rf.before[i]?.d}</p>
+          <p class="text-base leading-6 text-fg-muted line-through decoration-fg-muted/60">{rf.before[i]?.t}</p>
+          <p class="mt-1 text-sm leading-5 text-fg-muted">{rf.before[i]?.d}</p>
         </div>
-        <div class="rf-hl border-[#ececea] px-6 py-6 max-md:-mx-0 max-md:rounded-xl md:border-l">
-          <p class="text-base font-medium leading-6 text-[#0c0d0f]">{d.t}</p>
-          <p class="mt-1 text-sm leading-5 text-[#878787]">{noDot(d.d)}</p>
+        <div class="rf-hl border-stroke px-6 py-6 max-md:-mx-0 max-md:rounded-xl md:border-l">
+          <p class="t-body text-fg">{d.t}</p>
+          <p class="mt-1 text-sm leading-5 text-fg-muted">{noDot(d.d)}</p>
         </div>
       </div>
     ))}
@@ -61,5 +61,4 @@ const rf = data.reframe;
 
 <style>
   .rf-hl { background: color-mix(in oklab, var(--brand) 5%, transparent); }
-  .inc-h { font-family: var(--font-display); font-weight: 400; letter-spacing: -0.02em; color: #2c2c2c; font-variant-ligatures: none; }
 </style>

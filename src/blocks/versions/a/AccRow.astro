@@ -1,0 +1,28 @@
+---
+/**
+ * А · строка аккордеона — светло-серая плашка (surface, скругление 16), поля 20 (от 768px — 24 по бокам).
+ * Слева заголовок (слот title), справа «+» в круге (PlusIcon): при наведении синий, в открытой строке поворачивается в «×».
+ * name — общий для группы: открыта одна строка. Раскрытие плавное там, где браузер умеет.
+ * FAQ и список услуг на главной.
+ */
+import PlusIcon from './PlusIcon.astro';
+interface Props { name: string; open?: boolean; class?: string }
+const { name, open = false, class: className } = Astro.props;
+---
+<details {name} class:list={['acc-row rounded-2xl bg-surface', className]} {open}>
+  <summary class="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-5 md:px-6">
+    <slot name="title" />
+    <PlusIcon />
+  </summary>
+  <div class="px-5 pb-6 md:px-6"><slot /></div>
+</details>
+
+<style>
+  .acc-row summary::-webkit-details-marker { display: none; }
+  .acc-row :global(.acc-plus) { transition: transform .25s, color .2s; }
+  .acc-row summary:hover :global(.acc-plus) { color: var(--brand); }
+  .acc-row[open] :global(.acc-plus) { transform: rotate(45deg); }
+  .acc-row { interpolate-size: allow-keywords; }
+  .acc-row::details-content { block-size: 0; overflow: hidden; transition: block-size .3s ease, content-visibility .3s allow-discrete; }
+  .acc-row[open]::details-content { block-size: auto; }
+</style>

@@ -10,6 +10,7 @@ import Section from '../../Section.astro';
 import SectionHead from './SectionHead.astro';
 import { Check, Minus } from 'lucide-react';
 import { channelsTable, packages, type PageCtx } from '@/data/content';
+import Badge from './Badge.astro';
 interface Props { ctx: PageCtx }
 const { ctx } = Astro.props;
 const isPrices = ctx.kind === 'prices';
@@ -29,30 +30,30 @@ const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
   <div class="mt-9 overflow-x-auto pt-3">
     <table class="w-full min-w-[720px] table-fixed text-left">
       <thead>
-        <tr class="border-y border-[#ececea]">
-          <th class="w-[34%] py-5 pr-6 text-sm font-normal leading-5 text-[#878787]">Что входит</th>
+        <tr class="border-y border-stroke">
+          <th class="w-[34%] py-5 pr-6 text-sm font-normal leading-5 text-fg-muted">Что входит</th>
           {list.map((p) => (
-            <th class:list={['relative border-l border-[#ececea] px-6 py-5 align-top font-normal', p.featured && 'cmp-hl']}>
-              {p.featured && <span class="absolute left-1/2 top-0 flex h-6 -translate-x-1/2 -translate-y-1/2 items-center whitespace-nowrap rounded-md bg-brand px-2 text-xs font-medium text-white">Чаще выбирают</span>}
-              <span class="cmp-h block text-xl leading-7">{p.name}</span>
-              <span class="mt-1 block text-sm leading-5 text-[#878787]">от {split(p.price).v}{split(p.price).per && ' /мес'}</span>
+            <th class:list={['relative border-l border-stroke px-6 py-5 align-top font-normal', p.featured && 'cmp-hl']}>
+              {p.featured && <Badge class="absolute left-1/2 top-0 -translate-x-1/2 -translate-y-1/2">Чаще выбирают</Badge>}
+              <span class="t-h5 block text-fg">{p.name}</span>
+              <span class="mt-1 block text-sm leading-5 text-fg-muted">от {split(p.price).v}{split(p.price).per && ' /мес'}</span>
             </th>
           ))}
         </tr>
       </thead>
       <tbody>
-        <tr class="border-b border-[#ececea]">
-          <th class="py-4 pr-6 text-base font-normal leading-6 text-[#0c0d0f]">Для кого</th>
-          {list.map((p) => <td class:list={['border-l border-[#ececea] px-6 py-4 text-base leading-6 text-[#0c0d0f]', p.featured && 'cmp-hl']}>{cap(p.note)}</td>)}
+        <tr class="border-b border-stroke">
+          <th class="py-4 pr-6 text-base font-normal leading-6 text-fg">Для кого</th>
+          {list.map((p) => <td class:list={['border-l border-stroke px-6 py-4 text-base leading-6 text-fg', p.featured && 'cmp-hl']}>{cap(p.note)}</td>)}
         </tr>
         {features.map((f) => (
-          <tr class="border-b border-[#ececea]">
-            <th class="py-4 pr-6 text-base font-normal leading-6 text-[#0c0d0f]">{f}</th>
+          <tr class="border-b border-stroke">
+            <th class="py-4 pr-6 text-base font-normal leading-6 text-fg">{f}</th>
             {sets.map((s, i) => (
-              <td class:list={['border-l border-[#ececea] px-6 py-4', list[i].featured && 'cmp-hl']}>
+              <td class:list={['border-l border-stroke px-6 py-4', list[i].featured && 'cmp-hl']}>
                 {s.has(f)
-                  ? <span class="grid size-5 place-items-center rounded-full bg-brand text-white" aria-label="входит"><Check size={12} strokeWidth={3} /></span>
-                  : <span class="grid size-5 place-items-center rounded-full bg-[#e8e9ea] text-[#878787]" aria-label="не входит"><Minus size={12} strokeWidth={3} /></span>}
+                  ? <span class="grid size-5 place-items-center rounded-full bg-brand text-fg-inverse" aria-label="входит"><Check size={12} strokeWidth={3} /></span>
+                  : <span class="grid size-5 place-items-center rounded-full bg-stroke text-fg-muted" aria-label="не входит"><Minus size={12} strokeWidth={3} /></span>}
               </td>
             ))}
           </tr>
@@ -70,16 +71,16 @@ const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
   <div class="mt-12 overflow-x-auto">
     <table class="w-full min-w-[720px] table-fixed text-left">
       <thead>
-        <tr class="border-y border-[#ececea]">
-          <th class="w-[24%] py-5 pr-6 text-sm font-normal leading-5 text-[#878787]">Канал</th>
-          {channelsTable.cols.map((c) => <th class="cmp-h border-l border-[#ececea] px-6 py-5 text-xl font-normal leading-7">{c}</th>)}
+        <tr class="border-y border-stroke">
+          <th class="w-[24%] py-5 pr-6 text-sm font-normal leading-5 text-fg-muted">Канал</th>
+          {channelsTable.cols.map((c) => <th class="t-h5 border-l border-stroke px-6 py-5 text-fg">{c}</th>)}
         </tr>
       </thead>
       <tbody>
         {channelsTable.rows.map((r) => (
-          <tr class="border-b border-[#ececea]">
-            <th class="py-4 pr-6 text-base font-normal leading-6 text-[#0c0d0f]">{r.label}</th>
-            {r.vals.map((v) => <td class="border-l border-[#ececea] px-6 py-4 text-base leading-6 text-[#0c0d0f]">{v}</td>)}
+          <tr class="border-b border-stroke">
+            <th class="py-4 pr-6 text-base font-normal leading-6 text-fg">{r.label}</th>
+            {r.vals.map((v) => <td class="border-l border-stroke px-6 py-4 text-base leading-6 text-fg">{v}</td>)}
           </tr>
         ))}
       </tbody>
@@ -88,7 +89,6 @@ const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 </Section>
 
 <style>
-  .cmp-h { font-family: var(--font-display); font-weight: 400; letter-spacing: -0.02em; color: #2c2c2c; font-variant-ligatures: none; }
   /* подсветка колонки «Чаще выбирают» — лёгкий тон бренда, как плашка в ценах */
   .cmp-hl { background: color-mix(in oklab, var(--brand) 5%, transparent); }
 </style>

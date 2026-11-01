@@ -1,0 +1,11 @@
+---
+/**
+ * А · кнопка-фильтр — 32px, поля 12, скругление 12, текст 14 medium.
+ * Обычная — surface (при наведении stroke), выбранная (aria-pressed="true") — action с белым текстом.
+ * Фильтры на /keisy/ и /blog/.
+ */
+import type { HTMLAttributes } from 'astro/types';
+type Props = HTMLAttributes<'button'> & { pressed?: boolean; class?: string };
+const { pressed = false, class: className, ...rest } = Astro.props;
+---
+<button type="button" aria-pressed={pressed ? 'true' : 'false'} class:list={['h-8 rounded-md bg-surface px-3 text-sm font-medium text-fg transition hover:bg-stroke aria-pressed:bg-action aria-pressed:text-fg-inverse', className]} {...rest}><slot /></button>

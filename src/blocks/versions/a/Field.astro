@@ -1,0 +1,10 @@
+---
+/**
+ * А · поле формы — только нижняя линия 1px fg, поля 12 сверху и снизу, текст 16 fg, подсказка тоже fg, по центру.
+ * Форма заявки (cta:form).
+ */
+import type { HTMLAttributes } from 'astro/types';
+type Props = HTMLAttributes<'input'>;
+const { class: className, ...rest } = Astro.props;
+---
+<input class:list={['w-full border-0 border-b border-fg bg-transparent px-0 py-3 text-center text-base text-fg outline-none placeholder:text-fg', className]} {...rest} />

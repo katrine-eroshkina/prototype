@@ -3,4 +3,4 @@
 interface Props { class?: string }
 const { class: className } = Astro.props;
 ---
-<p class:list={['text-base leading-6 text-[#66696f]', className]}><span class="font-extrabold text-brand">/</span> <slot /></p>
+<p class:list={['text-base leading-6 text-fg-muted', className]}><span class="font-extrabold text-brand">/</span> <slot /></p>

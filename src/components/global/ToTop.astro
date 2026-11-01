@@ -2,11 +2,11 @@
 /**
  * Кнопка «Наверх» — справа внизу, как плашка-иконка у кнопок А: чёрный квадрат 40, скругление 5, стрелка вверх.
  * Появляется, когда прокрутили больше экрана; по клику — плавно наверх (через Lenis, если запущен).
- * У низа страницы останавливается над линией строки с ИНН/ОГРН в подвале, чтобы не закрывать переключатель «RU».
+ * У низа страницы останавливается над линией строки с ИНН/ОГРН в подвале, чтобы не наезжать на правовую строку.
  */
 import { ArrowUp } from 'lucide-react';
 ---
-<button type="button" class="to-top fixed bottom-4 right-4 z-[60] grid size-10 place-items-center rounded-[5px] bg-[#0c0d0f] text-white md:bottom-6 md:right-6" aria-label="Наверх" data-to-top>
+<button type="button" class="to-top fixed bottom-4 right-4 z-[60] grid size-10 place-items-center rounded-[5px] bg-action text-fg-inverse md:bottom-6 md:right-6" aria-label="Наверх" data-to-top>
   <ArrowUp size={20} strokeWidth={1.75} />
 </button>
 
@@ -20,7 +20,7 @@ import { ArrowUp } from 'lucide-react';
 
 <script>
   const btn = document.querySelector<HTMLButtonElement>('[data-to-top]')!;
-  // Внизу страницы кнопка не опускается ниже линии над строкой с ИНН/ОГРН в подвале — останавливается над ней (зазор 16), не закрывая «RU»
+  // Внизу страницы кнопка не опускается ниже линии над строкой с ИНН/ОГРН в подвале — останавливается над ней (зазор 16)
   const legal = document.querySelector<HTMLElement>('.ft-legal');
   const sync = () => {
     btn.classList.toggle('is-on', scrollY > innerHeight);

@@ -1,0 +1,23 @@
+---
+/**
+ * А · согласие на обработку данных — чекбокс 16 (fg) и текст 14/20 со ссылками на согласие и политику.
+ * Пока галочка не стоит, кнопка формы (data-consent-submit) неактивна — для всех форм страницы: блок заявки и поп-ап.
+ */
+import { url } from '@/lib/url';
+interface Props { class?: string }
+const { class: className } = Astro.props;
+---
+<label class:list={['flex cursor-pointer items-start gap-3 text-left text-sm leading-5 text-fg', className]}>
+  <input class="mt-0.5 size-4 shrink-0 cursor-pointer accent-fg" type="checkbox" required data-consent />
+  <span>Согласен на обработку <a class="underline underline-offset-4" href={url('/soglasie/')}>персональных данных</a><br class="hidden sm:block" /> и&nbsp;с <a class="underline underline-offset-4" href={url('/politika/')}>политикой конфиденциальности</a></span>
+</label>
+<script>
+  // Кнопка «Отправить» активна только с отмеченным согласием
+  document.querySelectorAll<HTMLFormElement>('[data-consent-form]').forEach((f) => {
+    const box = f.querySelector<HTMLInputElement>('[data-consent]');
+    const btn = f.querySelector<HTMLButtonElement>('[data-consent-submit]');
+    if (!box || !btn) return;
+    const sync = () => { btn.disabled = !box.checked; };
+    box.addEventListener('change', sync); sync();
+  });
+</script>

@@ -16,6 +16,7 @@ import SectionHead from './SectionHead.astro';
 import { sampleCases } from '@/data/content';
 import { cases as caseLinks } from '@/data/sitemap';
 import { url } from '@/lib/url';
+import Badge from './Badge.astro';
 const items = sampleCases.map((c, i) => ({ ...c, n: String(i + 1).padStart(2, '0'), href: url(`/keisy/${caseLinks[i % caseLinks.length].slug}/`) }));
 const total = String(items.length).padStart(2, '0');
 ---
@@ -30,7 +31,7 @@ const total = String(items.length).padStart(2, '0');
       <div class="cs-stack h-full">
         {items.map((_, j) => (
           <div class="cs-photo relative" style={`--j:${j}`} data-j={j}>
-            <span class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-xs text-white/50">фото проекта / клиента</span>
+            <span class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 text-xs text-fg-inverse/50">фото проекта / клиента</span>
           </div>
         ))}
       </div>
@@ -39,19 +40,19 @@ const total = String(items.length).padStart(2, '0');
     <!-- Текст кейса — прямо на белом фоне -->
     <div class="flex flex-col">
       <div class="cs-roll">
-        <div class="cs-stack cs-rev">{items.map((c, j) => <p class="cs-name cs-client whitespace-nowrap text-[32px] leading-10" style={`--j:${j}`} data-j={j}>{c.client}</p>)}</div>
+        <div class="cs-stack cs-rev">{items.map((c, j) => <p class="cs-client t-h3 whitespace-nowrap text-fg" style={`--j:${j}`} data-j={j}>{c.client}</p>)}</div>
       </div>
       <div class="cs-roll mt-4">
-        <div class="cs-stack">{items.map((c, j) => <p class="text-xl leading-7 text-[#2c2c2c]" style={`--j:${j}`} data-j={j}>{c.title} за {c.period}</p>)}</div>
+        <div class="cs-stack">{items.map((c, j) => <p class="t-h5 text-fg" style={`--j:${j}`} data-j={j}>{c.title} за {c.period}</p>)}</div>
       </div>
       <div class="cs-roll mt-2">
-        <div class="cs-stack cs-rev">{items.map((c, j) => <p class="text-sm leading-5 text-[#878787]" style={`--j:${j}`} data-j={j}>{c.d}</p>)}</div>
+        <div class="cs-stack cs-rev">{items.map((c, j) => <p class="text-sm leading-5 text-fg-muted" style={`--j:${j}`} data-j={j}>{c.d}</p>)}</div>
       </div>
       <div class="cs-roll mt-6">
         <div class="cs-stack">
           {items.map((c, j) => (
             <ul class="flex flex-wrap gap-1" aria-label="Услуги" style={`--j:${j}`} data-j={j}>
-              {[c.tag, 'Аналитика'].map((s) => <li class="flex h-6 items-center rounded-md bg-brand px-2 text-xs font-medium text-white">{s}</li>)}
+              {[c.tag, 'Аналитика'].map((s) => <Badge as="li">{s}</Badge>)}
             </ul>
           ))}
         </div>
@@ -61,16 +62,16 @@ const total = String(items.length).padStart(2, '0');
         <div class="cs-roll">
           <div class="cs-stack cs-rev">
             {items.map((c, j) => (
-              <p class="cs-name flex items-center gap-2 whitespace-nowrap text-[40px] leading-[48px]" style={`--j:${j}`} data-j={j}>
-                <span class="text-[#878787]">{c.from}</span>
-                <svg class="size-7 shrink-0 text-[#878787]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-label="стало"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
-                <span class="text-[#0c0d0f]">{c.to}</span>
+              <p class="t-h2 flex items-center gap-2 whitespace-nowrap text-fg" style={`--j:${j}`} data-j={j}>
+                <span class="text-fg-muted">{c.from}</span>
+                <svg class="size-7 shrink-0 text-fg-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-label="стало"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
+                <span class="text-fg">{c.to}</span>
               </p>
             ))}
           </div>
         </div>
         <div class="cs-roll mt-1">
-          <div class="cs-stack">{items.map((c, j) => <p class="text-sm leading-5 text-[#878787]" style={`--j:${j}`} data-j={j}>{c.unit}</p>)}</div>
+          <div class="cs-stack">{items.map((c, j) => <p class="text-sm leading-5 text-fg-muted" style={`--j:${j}`} data-j={j}>{c.unit}</p>)}</div>
         </div>
         <div class="mt-6 flex items-center justify-between gap-4">
           <Btn href={items[0].href} data-cs-link>Читать кейс</Btn>
@@ -78,7 +79,7 @@ const total = String(items.length).padStart(2, '0');
             <button type="button" class="cs-btn" data-cs-prev aria-label="Предыдущий кейс" disabled>
               <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6" /></svg>
             </button>
-            <p class="flex text-sm leading-5 tabular-nums text-[#878787]">
+            <p class="flex text-sm leading-5 tabular-nums text-fg-muted">
               <span class="cs-roll h-5"><span class="cs-stack">{items.map((c, j) => <span style={`--j:${j}`} data-j={j}>{c.n}</span>)}</span></span>
               <span>&nbsp;/ {total}</span>
             </p>
@@ -93,7 +94,6 @@ const total = String(items.length).padStart(2, '0');
 </Section>
 
 <style>
-  .cs-name { font-family: var(--font-display); font-weight: 300; letter-spacing: -0.03em; color: #2c2c2c; font-variant-ligatures: none; }
   /* Имя клиента — обычным начертанием, как заголовки; тонкое (300) только у цифр результата */
   .cs-client { font-weight: 400; letter-spacing: -0.02em; }
   /* Окошко: всё, что за его пределами, не видно — поэтому ничего не наезжает на соседние элементы */
@@ -108,8 +108,8 @@ const total = String(items.length).padStart(2, '0');
   .cs-stack.cs-rev > * { transform: translateY(calc((var(--i) - var(--j)) * (100% + 8px))); }
   .cs-photo { background: radial-gradient(120% 90% at 30% 20%, #5b6b80 0%, #2a323d 55%, #121519 100%); }
   /* Стрелки — светло-серые квадраты 32px; на краю списка — полупрозрачная и неактивная */
-  .cs-btn { display: grid; place-items: center; width: 32px; height: 32px; background: #f4f4f2; color: #0c0d0f; transition: background-color .2s, color .2s, opacity .3s; }
-  .cs-btn:hover:not(:disabled) { background: #0c0d0f; color: #fff; }
+  .cs-btn { display: grid; place-items: center; width: 32px; height: 32px; background: var(--stroke); color: var(--fg); transition: background-color .2s, color .2s, opacity .3s; }
+  .cs-btn:hover:not(:disabled) { background: var(--action); color: var(--fg-inverse); }
   .cs-btn:disabled { opacity: .3; cursor: default; }
   @media (prefers-reduced-motion: reduce) { .cs-stack > * { transition: none; } }
 </style>

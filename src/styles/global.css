@@ -81,11 +81,40 @@
   --color-ring: var(--ring);
   --color-brand: var(--brand);
   --color-draft: var(--draft);
+  /* Цвета по ролям (имена = семантические переменные в Figma) */
+  --color-fg: var(--fg);
+  --color-action: var(--action);
+  --color-fg-muted: var(--fg-muted);
+  --color-fg-inverse: var(--fg-inverse);
+  --color-stroke: var(--stroke);
+  --color-surface: var(--surface);
+  --color-page: var(--page);
   --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
   /* Заголовки: в Б и В — Inter Tight, в А — Inter («Inter A» ниже) */
   --font-display: var(--display-font);
 }
 
+:root {
+  /*
+   * Цвета версии А — два уровня, как в Figma (UI-кит, страница /kit/):
+   * 1) базовая палитра — сами оттенки: gray-950, gray-900, gray-500, gray-200, gray-50, white, blue-500;
+   * 2) роли — что этим цветом красим. В коде используем только роли (text-fg, bg-surface, border-stroke…).
+   */
+  --fg: #2c2c2c;         /* gray-900 · основной: текст, заголовки, кнопки, цифры */
+  --action: #0c0d0f;     /* gray-950 · фон кнопок (основная, в шапке, «Наверх», выбранный фильтр) */
+  --fg-muted: #878787;   /* gray-500 · вторичный текст, подписи, «/ Раздел», иконки */
+  --fg-inverse: #ffffff; /* white · текст на тёмном и на синем */
+  --stroke: #ececea;     /* gray-200 · линии, разделители, светлая кнопка, стрелки слайдера */
+  --surface: #fafaf9;    /* gray-50 · плашки, карточки, заглушки */
+  --page: #ffffff;       /* white · фон страницы */
+  /* --brand — blue-500, акцент (задан ниже, в блоке версии А) */
+  /* служебные полупрозрачные: стекло шапки, тонкие линии, обводка вторичной кнопки */
+  --glass: rgb(255 255 255 / .6);
+  --glass-strong: rgb(255 255 255 / .7);
+  --glass-soft: rgb(255 255 255 / .25);
+  --hairline: rgb(44 44 44 / .06);
+  --outline: rgb(12 13 15 / .3);
+}
 :root { --display-font: 'Inter Tight', 'Inter', ui-sans-serif, system-ui, sans-serif; }
 
 /* Версия А: заголовки и цифры — Inter (как весь текст). Отдельное имя «Inter A», чтобы тонкое 300 подгружалось только здесь и не меняло версии Б и В */
@@ -108,20 +137,20 @@
 [data-style="a"], [data-style="a"] .dark {
   color-scheme: light;
   --radius: 0.75rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.16 0.005 260);
+  --background: var(--page);
+  --foreground: var(--fg);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.16 0.005 260);
+  --card-foreground: var(--fg);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.16 0.005 260);
-  --primary: oklch(0.16 0.005 260);
+  --popover-foreground: var(--fg);
+  --primary: var(--fg);
   --primary-foreground: oklch(1 0 0);
   --secondary: oklch(0.97 0.003 260);
-  --secondary-foreground: oklch(0.16 0.005 260);
+  --secondary-foreground: var(--fg);
   --muted: oklch(0.975 0.003 260);
   --muted-foreground: oklch(0.52 0.01 260);
   --accent: oklch(0.96 0.005 260);
-  --accent-foreground: oklch(0.16 0.005 260);
+  --accent-foreground: var(--fg);
   --border: oklch(0.92 0.004 260);
   --input: oklch(0.88 0.006 260);
   --ring: oklch(0.6 0.19 255);
@@ -138,21 +167,21 @@
 [data-style="a"] footer .container-x { max-width: none; padding-inline: 24px; }
 @media (min-width: 640px) { [data-style="a"] footer .container-x { padding-inline: 32px; } }
 /* крупная надпись — от края до края полей (ширина надписи ≈ 6,6 кегля) */
-[data-style="a"] footer .ft-word { font-size: calc((100vw - 48px) / 6.6); }
-@media (min-width: 640px) { [data-style="a"] footer .ft-word { font-size: calc((100vw - 64px) / 6.6); } }
-[data-style="a"] .ft-head { font-size: 0.875rem; text-transform: none; letter-spacing: 0; font-weight: 400; color: #878787; }
+[data-style="a"] footer .ft-word { font-size: calc((100vw - 48px) / 6.9); }
+@media (min-width: 640px) { [data-style="a"] footer .ft-word { font-size: calc((100vw - 64px) / 6.9); } }
+[data-style="a"] .ft-head { font-size: 0.875rem; text-transform: none; letter-spacing: 0; font-weight: 400; color: var(--fg-muted); }
 /* Мини-заголовок «/ Название»: синий слэш, серый текст 16/24 (как Eyebrow.astro) */
-[data-style="a"] .eyebrow { font-size: 1rem; line-height: 1.5rem; color: #66696f; gap: 0.3em; }
+[data-style="a"] .eyebrow { font-size: 1rem; line-height: 1.5rem; color: var(--fg-muted); gap: 0.3em; }
 [data-style="a"] .eyebrow::before { content: '/'; width: auto; height: auto; background: none; color: var(--brand); font-weight: 800; }
 
 /* Внутренние страницы версии А — типографика и цвета как на главной (раскладки блоков общие):
    единый белый фон, заголовки обычным начертанием #2c2c2c, вторичный текст #878787,
    карточки — светло-серые #fafaf9 со скруглением 16 без рамок и теней, без моно-капсов */
-[data-style="a"] { --muted-foreground: #878787; --card: #fafaf9; --border: #ececea; }
+[data-style="a"] { --muted-foreground: var(--fg-muted); --card: var(--surface); --border: var(--stroke); }
 [data-style="a"] section[data-theme="alt"] { background-color: transparent; }
-[data-style="a"] main :is(h1, h2):not(.hero-h1, .text-white) { font-family: var(--font-display); font-weight: 400; color: #2c2c2c; letter-spacing: -0.02em; font-variant-ligatures: none; }
-[data-style="a"] main :is(h3, h4) { color: #2c2c2c; }
-[data-style="a"] main .display { color: #2c2c2c; }
+[data-style="a"] main :is(h1, h2):not(.hero-h1, .text-fg-inverse) { font-family: var(--font-display); font-weight: 400; color: var(--fg); letter-spacing: -0.02em; font-variant-ligatures: none; }
+[data-style="a"] main :is(h3, h4) { color: var(--fg); }
+[data-style="a"] main .display { color: var(--fg); }
 [data-style="a"] main .bg-card:not(.ring-1) { border-color: transparent; box-shadow: none; border-radius: 16px; }
 [data-style="a"] main .bg-card.ring-1 { border-radius: 16px; }
 [data-style="a"] main :is(.font-mono, .mono):not(.text-draft) { font-family: 'Inter', ui-sans-serif, sans-serif; letter-spacing: 0; }
@@ -192,3 +221,68 @@
 :is(a, button, .roll-host):hover .roll > :first-child { transform: translateY(-105%); }
 :is(a, button, .roll-host):hover .roll > :last-child { transform: none; }
 @media (prefers-reduced-motion: reduce) { .roll > * { transition: none; } }
+
+/* =====================================================================
+ * Текстовые стили версии А — те же 10 стилей, что в Figma (UI-кит, /kit/). Шрифт везде Inter.
+ * Заголовки и цифры: вес 400, трекинг −2 %, без лигатур. Вес 500 — только у Label и Caption.
+ * Размер на телефоне → от 768 px. Цвет стили не задают — он ставится отдельно (text-fg, text-fg-muted…).
+ * Это утилиты Tailwind: работают с префиксами (md:t-h5).
+ * ===================================================================== */
+@utility t-heading { font-family: var(--font-display); font-weight: 400; letter-spacing: -0.02em; font-variant-ligatures: none; font-feature-settings: "liga" 0, "clig" 0, "calt" 0; }
+/* Display — 40/40 → 64/64: первый экран главной, «404» */
+@utility t-display { @apply t-heading; font-size: 40px; line-height: 40px; @media (width >= 48rem) { font-size: 64px; line-height: 64px; } }
+/* H1 — 32/40 → 48/56: заголовки страниц и блоков */
+@utility t-h1 { @apply t-heading; font-size: 32px; line-height: 40px; @media (width >= 48rem) { font-size: 48px; line-height: 56px; } }
+/* H2 — 32/40 → 40/48: цифры «было → стало», годы, метрики, подзаголовки статьи */
+@utility t-h2 { @apply t-heading; font-size: 32px; line-height: 40px; @media (width >= 48rem) { font-size: 40px; line-height: 48px; } }
+/* H3 — 24/32 → 32/40: подзаголовки кейса и документов, цитата, цены, клиент в слайдере */
+@utility t-h3 { @apply t-heading; font-size: 24px; line-height: 32px; @media (width >= 48rem) { font-size: 32px; line-height: 40px; } }
+/* H4 — 20/28 → 24/32: названия услуг, тарифов, карточек */
+@utility t-h4 { @apply t-heading; font-size: 20px; line-height: 28px; @media (width >= 48rem) { font-size: 24px; line-height: 32px; } }
+/* H5 — 20/28: подписи карточек, контакты, вопросы FAQ, пункты мобильного меню */
+@utility t-h5 { @apply t-heading; font-size: 20px; line-height: 28px; }
+/* Body — 16/24: основной текст */
+@utility t-body { font-size: 16px; line-height: 24px; font-weight: 400; letter-spacing: 0; font-family: var(--font-sans); }
+/* Small — 14/20: подписи, мета, хлебные крошки */
+@utility t-small { font-size: 14px; line-height: 20px; font-weight: 400; }
+/* Label — 14/20 · 500: кнопки, ссылки «… ›», меню */
+@utility t-label { font-size: 14px; line-height: 20px; font-weight: 500; }
+/* Caption — 12/16 · 500: бейджи, подпись карты */
+@utility t-caption { font-size: 12px; line-height: 16px; font-weight: 500; }
+
+/* =====================================================================
+ * Тёмная тема — html[data-theme="dark"]. Пока включается для просмотра (?theme=dark, см. Base.astro).
+ * На боевом сайте то же самое ставится в @media (prefers-color-scheme: dark). Таблица ролей — docs/03-тёмная-тема.md
+ * ===================================================================== */
+html[data-theme="dark"] {
+  --fg: #ececea;         /* gray-200 */
+  --fg-muted: #878787;   /* gray-500 */
+  --fg-inverse: #ffffff; /* white */
+  --stroke: #2a2b2e;     /* gray-800 */
+  --surface: #18191b;    /* gray-850 */
+  --page: #0c0d0f;       /* gray-950 */
+  --action: #127eee;     /* blue-500: кнопки синие */
+  --glass: rgb(12 13 15 / .6);
+  --glass-strong: rgb(24 25 27 / .7);
+  --glass-soft: rgb(12 13 15 / .35);
+  --hairline: rgb(255 255 255 / .08);
+  --outline: rgb(236 236 234 / .3);
+}
+html[data-theme="dark"][data-style="a"], html[data-theme="dark"][data-style="a"] .dark {
+  color-scheme: dark;
+  --card: var(--surface);
+  --popover: var(--surface);
+  --primary-foreground: var(--page);
+  --secondary: var(--surface);
+  --muted: var(--surface);
+  --muted-foreground: var(--fg-muted);
+  --accent: var(--stroke);
+  --border: var(--stroke);
+  --input: var(--stroke);
+}
+/* обложки статей — тёмная подложка вместо светло-серой */
+html[data-theme="dark"] .pc-bg-0, html[data-theme="dark"] .post-cover { background: radial-gradient(80% 90% at 75% 30%, color-mix(in oklab, var(--brand) 28%, transparent), transparent 70%), var(--surface); }
+html[data-theme="dark"] .pc-bg-1, html[data-theme="dark"] .post-cover-2 { background: radial-gradient(70% 80% at 25% 75%, color-mix(in oklab, var(--brand) 20%, transparent), transparent 70%), var(--surface); }
+html[data-theme="dark"] .pc-bg-2 { background: radial-gradient(90% 90% at 50% 0%, #22303f, transparent 70%), var(--surface); }
+/* карта — инверсия серой подложки */
+html[data-theme="dark"] img[src*="/geo/map"] { filter: grayscale(1) invert(1) contrast(.85); opacity: .5; }

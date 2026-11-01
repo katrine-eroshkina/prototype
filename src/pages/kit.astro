@@ -1,0 +1,303 @@
+---
+/**
+ * UI-кит версии А — все токены и базовые компоненты сайта на одной странице.
+ * Доступна только по ссылке /kit/ (в меню и подвале её нет), как /logo/.
+ * Это эталон для переноса в Figma: имена цветов, текстовых стилей и компонентов здесь = имена в Figma.
+ * Компоненты подключены настоящие (из src/blocks/versions/a), не копии, — кит всегда совпадает с сайтом.
+ */
+import Base from '../layouts/Base.astro';
+import Btn from '../blocks/versions/a/Btn.astro';
+import Badge from '../blocks/versions/a/Badge.astro';
+import Chip from '../blocks/versions/a/Chip.astro';
+import Eyebrow from '../blocks/versions/a/Eyebrow.astro';
+import MoreLink from '../blocks/versions/a/MoreLink.astro';
+import Roll from '../blocks/versions/a/Roll.astro';
+import Price from '../blocks/versions/a/Price.astro';
+import PlusIcon from '../blocks/versions/a/PlusIcon.astro';
+import AccRow from '../blocks/versions/a/AccRow.astro';
+import Field from '../blocks/versions/a/Field.astro';
+import Consent from '../blocks/versions/a/Consent.astro';
+import SectionHead from '../blocks/versions/a/SectionHead.astro';
+import ServiceCard from '../blocks/versions/a/ServiceCard.astro';
+import CaseCard from '../blocks/versions/a/CaseCard.astro';
+import PostCard from '../blocks/versions/a/PostCard.astro';
+import TestimonialCard from '../blocks/versions/a/TestimonialCard.astro';
+import Breadcrumbs from '../components/wire/Breadcrumbs.astro';
+import Messenger from '../components/icons/Messenger.astro';
+import { ArrowRight, ArrowUp, ArrowUpRight, Check, ChevronLeft, ChevronRight, Copy, FileBadge, FileText, Frown, Maximize2, Minus, Plus, X } from 'lucide-react';
+import { groups } from '@/data/sitemap';
+import { listCases, testimonialsA } from '@/data/content';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+/** Базовая палитра — сами оттенки (в Figma — коллекция Primitives) */
+const palette = [
+  { name: 'gray-950', hex: '#0C0D0F' },
+  { name: 'gray-900', hex: '#2C2C2C' },
+  { name: 'gray-500', hex: '#878787' },
+  { name: 'gray-200', hex: '#ECECEA' },
+  { name: 'gray-50', hex: '#FAFAF9' },
+  { name: 'white', hex: '#FFFFFF' },
+  { name: 'blue-500', hex: 'oklch(0.6 0.19 255)', css: 'var(--brand)' },
+];
+/** Роли — что красим (в Figma — коллекция Semantic; в коде — классы text-fg, bg-surface, border-stroke…) */
+const roles = [
+  { name: 'fg', ref: 'gray-900', css: 'var(--fg)', role: 'Основной: текст, заголовки, кнопки, цифры' },
+  { name: 'fg-muted', ref: 'gray-500', css: 'var(--fg-muted)', role: 'Вторичный текст, подписи, «/ Раздел», иконки' },
+  { name: 'action', ref: 'gray-950', css: 'var(--action)', role: 'Фон кнопок: основная, в шапке, «Наверх», выбранный фильтр' },
+  { name: 'fg-inverse', ref: 'white', css: 'var(--fg-inverse)', role: 'Текст на тёмном и на синем' },
+  { name: 'stroke', ref: 'gray-200', css: 'var(--stroke)', role: 'Линии, разделители, светлая кнопка, стрелки слайдера' },
+  { name: 'surface', ref: 'gray-50', css: 'var(--surface)', role: 'Плашки, карточки, заглушки' },
+  { name: 'page', ref: 'white', css: 'var(--page)', role: 'Фон страницы' },
+  { name: 'brand', ref: 'blue-500', css: 'var(--brand)', role: 'Акцент: слэш, бейджи, подчёркивания, стрелки при наведении' },
+];
+
+/** Текстовые стили. d — десктоп, m — телефон (если отличается). Все — Inter. */
+const type = [
+  { name: 'Display', cls: 't-display', d: '64/64', m: '40/40', ex: 'Маркетинг, который считает деньги', use: 'Первый экран главной, «404»' },
+  { name: 'H1', cls: 't-h1', d: '48/56', m: '32/40', ex: 'Решения под вашу задачу', use: 'Заголовки страниц и блоков, «Подход», форма заявки' },
+  { name: 'H2', cls: 't-h2', d: '40/48', m: '32/40', ex: '40 → 125', use: 'Цифры «было → стало», годы, метрики, подзаголовки статьи' },
+  { name: 'H3', cls: 't-h3', d: '32/40', m: '24/32', ex: 'от XX 000 ₽', use: 'Цены, подзаголовки кейса и документов, цитата, клиент в слайдере' },
+  { name: 'H4', cls: 't-h4', d: '24/32', m: '20/28', ex: 'SEO-продвижение', use: 'Названия услуг, тарифов, карточек; факты на первом экране' },
+  { name: 'H5', cls: 't-h5', d: '20/28', m: '', ex: 'Заявки из поиска ×3 за 8 месяцев', use: 'Подписи карточек, контакты, вопросы FAQ, мобильное меню' },
+  { name: 'Body', cls: 't-body', d: '16/24', m: '', ex: 'Строим понятную цепочку: находим точки роста и сами их запускаем', use: 'Основной текст, статьи, имена' },
+  { name: 'Small', cls: 't-small text-fg-muted', d: '14/20', m: '', ex: '5 мин · 12 октября 2026', use: 'Подписи, мета, хлебные крошки' },
+  { name: 'Label', cls: 't-label', d: '14/20 · 500', m: '', ex: 'Все кейсы ›', use: 'Кнопки, ссылки «… ›», меню в шапке' },
+  { name: 'Caption', cls: 't-caption', d: '12/16 · 500', m: '', ex: 'Бейдж', use: 'Бейджи, подпись карты' },
+];
+
+const space = [4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80, 96];
+const radii = [
+  { r: '5px', name: 'radius-btn · 5', use: 'Кнопки, кнопка «Наверх», логотип' },
+  { r: '12px', name: 'radius-md · 12', use: 'Бейджи, фильтры, меню языка' },
+  { r: '16px', name: 'radius-card · 16', use: 'Карточки, плашки, обложки, карта' },
+  { r: '9999px', name: 'radius-full', use: 'Аватары, кружки в таблицах' },
+];
+const icons = { ArrowRight, ArrowUp, ArrowUpRight, Check, ChevronLeft, ChevronRight, Copy, FileBadge, FileText, Frown, Maximize2, Minus, Plus, X };
+const svc = groups[1].categories.find((c) => c.slug === 'seo') ?? groups[1].categories[0];
+const c0 = listCases[0];
+---
+<Base title="UI-кит" template="system" noTitle>
+  <div class="kit pb-24 pt-10 md:pt-14">
+    <Eyebrow>UI-кит · версия А</Eyebrow>
+    <h1 class="t-h1 mt-2 text-fg">Токены и компоненты</h1>
+    <p class="mt-2 max-w-[620px] text-base leading-6 text-fg-muted">Эталон для Figma: имена цветов, стилей и компонентов здесь совпадают с Figma. Все примеры — настоящие компоненты сайта.</p>
+    <nav class="mt-8 flex flex-wrap gap-1" aria-label="Разделы кита">
+      {['Цвета', 'Типографика', 'Сетка и отступы', 'Скругления', 'Иконки', 'Кнопки', 'Ссылки', 'Бейджи и подписи', 'Форма', 'Аккордеон', 'Заголовок блока', 'Карточки'].map((t, i) => <a class="flex h-8 items-center rounded-md bg-surface px-3 text-sm font-medium text-fg" href={`#k${i + 1}`}><Roll>{t}</Roll></a>)}
+    </nav>
+
+    <!-- 1. Цвета -->
+    <section class="k-sec" id="k1">
+      <h2 class="k-h">Цвета</h2>
+      <p class="mt-2 text-sm leading-5 text-fg-muted">Два уровня, как принято в дизайн-системах: базовая палитра (сами оттенки) и роли (что ими красим). В коде и макетах используем только роли.</p>
+      <p class="mt-8 t-label text-fg">Роли</p>
+      <div class="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        {roles.map((c) => (
+          <div>
+            <div class="h-24 rounded-2xl ring-1 ring-inset ring-black/5" style={`background:${c.css}`}></div>
+            <p class="mt-3 t-label text-fg">{c.name}</p>
+            <p class="text-sm leading-5 text-fg-muted">→ {c.ref}</p>
+            <p class="mt-1 text-sm leading-5 text-fg-muted">{c.role}</p>
+          </div>
+        ))}
+      </div>
+      <p class="mt-10 t-label text-fg">Базовая палитра</p>
+      <div class="mt-4 grid grid-cols-3 gap-3 lg:grid-cols-7">
+        {palette.map((c) => (
+          <div>
+            <div class="h-16 rounded-2xl ring-1 ring-inset ring-black/5" style={`background:${c.css ?? c.hex}`}></div>
+            <p class="mt-2 text-sm font-medium leading-5 text-fg">{c.name}</p>
+            <p class="text-sm leading-5 text-fg-muted">{c.hex}</p>
+          </div>
+        ))}
+      </div>
+      <p class="mt-6 text-sm leading-5 text-fg-muted">Тексты поверх обложек — белый и белый 70 %. Затемнение обложки кейса — градиент снизу от чёрного 80 % к прозрачному.</p>
+    </section>
+
+    <!-- 2. Типографика -->
+    <section class="k-sec" id="k2">
+      <h2 class="k-h">Типографика</h2>
+      <p class="mt-2 text-sm leading-5 text-fg-muted">10 стилей, шрифт только Inter. Заголовки H1–H5 и Display — вес 400, трекинг −2 %, без лигатур; вес 500 — только у Label и Caption. В коде — классы t-display, t-h1 … t-caption.</p>
+      <div class="mt-6 divide-y divide-stroke border-y border-stroke">
+        {type.map((t) => (
+          <div class="grid gap-2 py-6 md:grid-cols-[200px_1fr] md:gap-8">
+            <div>
+              <p class="t-label text-fg">{t.name}</p>
+              <p class="text-sm leading-5 text-fg-muted">{t.d}{t.m && <><br />телефон: {t.m}</>}<br />{t.cls.split(' ')[0]}</p>
+              <p class="mt-1 text-sm leading-5 text-fg-muted">{t.use}</p>
+            </div>
+            <p class:list={['text-fg', t.cls]}>{t.ex}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- 3. Сетка и отступы -->
+    <section class="k-sec" id="k3">
+      <h2 class="k-h">Сетка и отступы</h2>
+      <div class="mt-6 grid gap-10 lg:grid-cols-2">
+        <div>
+          <p class="t-label text-fg">Контейнер</p>
+          <ul class="mt-2 grid gap-1 text-sm leading-5 text-fg-muted">
+            <li>Ширина содержимого — до 1280 px, по центру</li>
+            <li>Поля: 16 px (телефон) · 24 px (от 640) · 40 px (от 1024)</li>
+            <li>Шапка и подвал — на всю ширину, поля 24 / 32 px</li>
+            <li>Колонки блоков: 1fr / 1.4fr (заголовок слева, содержимое справа), промежуток 64</li>
+            <li>Сетка карточек: 3 колонки, промежуток 12 (между строками 40)</li>
+            <li>Блок: отступы сверху и снизу 96 (телефон — 64)</li>
+          </ul>
+        </div>
+        <div>
+          <p class="t-label text-fg">Шаг — 4 px</p>
+          <div class="mt-3 grid gap-2">
+            {space.map((s) => <div class="flex items-center gap-4"><span class="w-8 text-right text-sm leading-5 text-fg-muted">{s}</span><span class="h-3 rounded-sm bg-brand/80" style={`width:${s * 3}px`}></span></div>)}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. Скругления -->
+    <section class="k-sec" id="k4">
+      <h2 class="k-h">Скругления</h2>
+      <div class="mt-6 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        {radii.map((r) => (
+          <div>
+            <div class="size-24 bg-surface ring-1 ring-inset ring-stroke" style={`border-radius:${r.r}`}></div>
+            <p class="mt-3 t-label text-fg">{r.name}</p>
+            <p class="text-sm leading-5 text-fg-muted">{r.use}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- 5. Иконки -->
+    <section class="k-sec" id="k5">
+      <h2 class="k-h">Иконки</h2>
+      <p class="mt-2 text-sm leading-5 text-fg-muted">Lucide, линия 1,5–2. Размеры: 16 · 20 · 24. Мессенджеры — свои, 20/24.</p>
+      <div class="mt-6 flex flex-wrap gap-2">
+        {Object.entries(icons).map(([n, I]) => (
+          <div class="grid w-28 place-items-center gap-2 rounded-2xl bg-surface py-5 text-fg"><I size={24} strokeWidth={1.75} /><span class="text-xs leading-4 text-fg-muted">{n}</span></div>
+        ))}
+        <div class="grid w-28 place-items-center gap-2 rounded-2xl bg-surface py-5"><PlusIcon /><span class="text-xs leading-4 text-fg-muted">PlusIcon</span></div>
+        {(['telegram', 'whatsapp', 'max'] as const).map((m) => (
+          <div class="grid w-28 place-items-center gap-2 rounded-2xl bg-surface py-5 text-fg"><span class="flex gap-2"><Messenger name={m} size={24} /><Messenger name={m} size={24} mono /></span><span class="text-xs leading-4 text-fg-muted">{m}</span></div>
+        ))}
+      </div>
+    </section>
+
+    <!-- 6. Кнопки -->
+    <section class="k-sec" id="k6">
+      <h2 class="k-h">Кнопки</h2>
+      <p class="mt-2 text-sm leading-5 text-fg-muted">Высота 40, скругление 5, текст 14 medium, плашки через зазор 2. При наведении цвет не меняется: текст перекатывается, стрелка поворачивается на 45°, у «скачать» стрелка опускается. Наведите, чтобы посмотреть.</p>
+      <div class="mt-6 grid gap-8 md:grid-cols-2">
+        <div class="k-row"><Btn href="#k6">Обсудить задачу</Btn><span class="k-cap">Btn · dark (основная)</span></div>
+        <div class="k-row"><Btn href="#k6" variant="light">Смотреть кейсы</Btn><span class="k-cap">Btn · light</span></div>
+        <div class="k-row"><Btn href="#k6" variant="outline">Показать ещё</Btn><span class="k-cap">Btn · outline (вторичная, без иконки)</span></div>
+        <div class="k-row"><Btn href="#k6" noIcon>Показать ещё</Btn><span class="k-cap">Btn · dark без иконки</span></div>
+        <div class="k-row"><Btn href="#k6" icon="download">Скачать презентацию</Btn><span class="k-cap">Btn · иконка «скачать»</span></div>
+        <div class="k-row"><Btn as="button" disabled>Отправить</Btn><span class="k-cap">Btn · неактивная (30 %)</span></div>
+        <div class="k-row md:col-span-2"><div class="w-full max-w-sm"><Btn href="#k6" full>Отправить</Btn></div><span class="k-cap">Btn · full (на ширину формы)</span></div>
+        <div class="k-row"><a class="inline-flex h-[30px] items-center rounded-[5px] bg-action px-3 text-sm font-medium text-fg-inverse" href="#k6"><Roll>Обсудить задачу</Roll></a><span class="k-cap">Кнопка S · шапка (30 px)</span></div>
+        <div class="k-row"><span class="grid size-10 place-items-center rounded-[5px] bg-action text-fg-inverse"><ArrowUp size={20} strokeWidth={2} /></span><span class="k-cap">Кнопка «Наверх» (40 × 40)</span></div>
+        <div class="k-row"><span class="flex items-center gap-3"><span class="grid size-8 place-items-center bg-stroke text-fg opacity-30"><ChevronLeft size={16} strokeWidth={2} /></span><span class="text-sm leading-5 text-fg-muted">1 / 6</span><span class="grid size-8 place-items-center bg-stroke text-fg"><ChevronRight size={16} strokeWidth={2} /></span></span><span class="k-cap">Стрелки слайдера (32 × 32, без скругления, stroke; на краю — 30 %)</span></div>
+        <div class="k-row"><span class="flex flex-wrap gap-1"><Chip pressed>Все</Chip><Chip>SEO</Chip><Chip>Консалтинг</Chip></span><span class="k-cap">Chip · фильтр (выбранный / обычный)</span></div>
+      </div>
+    </section>
+
+    <!-- 7. Ссылки -->
+    <section class="k-sec" id="k7">
+      <h2 class="k-h">Ссылки</h2>
+      <p class="mt-2 text-sm leading-5 text-fg-muted">Цвет при наведении не меняется — текст перекатывается (Roll). Телефон и почта — без эффекта.</p>
+      <div class="mt-6 grid gap-8 md:grid-cols-2">
+        <div class="k-row"><MoreLink href="#k7">Все кейсы</MoreLink><span class="k-cap">MoreLink · «Текст ›» 14 medium</span></div>
+        <div class="k-row"><p class="text-base leading-6 text-fg-muted">Не нашли ответ? <MoreLink inline href="#k7">Спросите нас</MoreLink></p><span class="k-cap">MoreLink · inline (кегль текста)</span></div>
+        <div class="k-row"><a class="text-base leading-6 text-fg" href="#k7"><Roll>Пункт меню или подвала</Roll></a><span class="k-cap">Roll · любая текстовая ссылка</span></div>
+        <div class="k-row"><Breadcrumbs items={[{ href: '/uslugi/', title: 'Услуги' }, { title: 'SEO-продвижение' }]} /><span class="k-cap">Хлебные крошки</span></div>
+        <div class="k-row"><a class="group flex items-center gap-2 text-base leading-6 text-fg" href="#k7"><Messenger name="telegram" size={20} mono /><Roll>Telegram</Roll><ArrowUpRight size={14} strokeWidth={2} className="-ml-1 text-fg-muted" /></a><span class="k-cap">Ссылка-мессенджер</span></div>
+      </div>
+    </section>
+
+    <!-- 8. Бейджи и подписи -->
+    <section class="k-sec" id="k8">
+      <h2 class="k-h">Бейджи и подписи</h2>
+      <div class="mt-6 grid gap-8 md:grid-cols-2">
+        <div class="k-row"><span class="flex gap-1"><Badge>SEO</Badge><Badge>Аналитика</Badge></span><span class="k-cap">Badge · 24, brand, текст 12 medium</span></div>
+        <div class="k-row"><span class="relative"><Badge>Чаще выбирают</Badge></span><span class="k-cap">Badge · над колонкой тарифа</span></div>
+        <div class="k-row"><Eyebrow>Услуги</Eyebrow><span class="k-cap">Eyebrow · «/ Раздел» 16/24, слэш brand 800</span></div>
+        <div class="k-row"><Price per="/мес" /><span class="k-cap">Price · с периодом</span></div>
+        <div class="k-row"><Price value="150 000 ₽" /><span class="k-cap">Price · без периода</span></div>
+      </div>
+    </section>
+
+    <!-- 9. Форма -->
+    <section class="k-sec" id="k9">
+      <h2 class="k-h">Форма</h2>
+      <div class="mt-6 grid max-w-sm gap-4" data-consent-form>
+        <Field placeholder="Имя" />
+        <Field placeholder="Телефон или Telegram" />
+        <Btn as="button" type="button" full class="mt-4" disabled data-consent-submit>Отправить</Btn>
+        <Consent class="mt-2" />
+      </div>
+      <p class="mt-4 text-sm leading-5 text-fg-muted">Field — только нижняя линия fg. Кнопка активна, когда стоит галочка согласия.</p>
+    </section>
+
+    <!-- 10. Аккордеон -->
+    <section class="k-sec" id="k10">
+      <h2 class="k-h">Аккордеон</h2>
+      <div class="mt-6 grid max-w-[760px] gap-1">
+        <AccRow name="kit-acc" open>
+          <span slot="title" class="t-h5 text-fg">Сколько стоит продвижение?</span>
+          <p class="max-w-[600px] text-base leading-6 text-fg-muted">Стоимость зависит от задачи и ниши — называем её после бесплатной консультации</p>
+        </AccRow>
+        <AccRow name="kit-acc">
+          <span slot="title" class="t-h5 text-fg">Когда будут первые результаты?</span>
+          <p class="max-w-[600px] text-base leading-6 text-fg-muted">Первые изменения — через месяц, устойчивый рост — через три-четыре</p>
+        </AccRow>
+      </div>
+      <p class="mt-4 text-sm leading-5 text-fg-muted">AccRow · surface, скругление 16, поля 20/24. Заголовок — H5 в FAQ, H4 в списке услуг.</p>
+    </section>
+
+    <!-- 11. Заголовок блока -->
+    <section class="k-sec" id="k11">
+      <h2 class="k-h">Заголовок блока</h2>
+      <div class="mt-6 grid gap-12">
+        <SectionHead eyebrow="Кейсы" link={{ href: '/keisy/', label: 'Все кейсы' }}>Результаты в цифрах</SectionHead>
+        <SectionHead eyebrow="Услуги" lead="Строим понятную цепочку: находим точки роста, подбираем инструменты и сами их запускаем">Решения под вашу задачу</SectionHead>
+        <SectionHead eyebrow="Отзывы" center>Что говорят клиенты</SectionHead>
+      </div>
+      <p class="mt-6 text-sm leading-5 text-fg-muted">SectionHead · Eyebrow → 8 → H2 (до 620) → 8 → описание Body fg-muted. Справа — MoreLink по центру заголовка. Вариант по центру.</p>
+    </section>
+
+    <!-- 12. Карточки -->
+    <section class="k-sec" id="k12">
+      <h2 class="k-h">Карточки</h2>
+      <div class="mt-6 grid gap-x-3 gap-y-10 md:grid-cols-2 lg:grid-cols-3">
+        <div><p class="k-cap mb-3">ServiceCard</p><ServiceCard c={svc} monthly /></div>
+        <div><p class="k-cap mb-3">CaseCard</p><CaseCard href="#k12" tag={c0.tag} from={c0.from} to={c0.to} unit={c0.unit} caption={c0.title} cover={{ src: `${base}/cases/1.png`, pos: '76% 50%' }} /></div>
+        <div><p class="k-cap mb-3">CaseCard · без обложки</p><CaseCard href="#k12" tag={c0.tag} from={c0.from} to={c0.to} unit={c0.unit} caption={c0.title} /></div>
+        <div><p class="k-cap mb-3">PostCard</p><PostCard href="#k12" title="Как понять, что маркетинг не работает" rubric="Консалтинг" /></div>
+        <div class="lg:col-span-2"><p class="k-cap mb-3">TestimonialCard</p><TestimonialCard t={testimonialsA[0]} /></div>
+        <div class="md:col-span-2 lg:col-span-3"><p class="k-cap mb-3">PostCard · wide</p><PostCard href="#k12" title="SEO в эпоху нейросетей: что изменилось" rubric="SEO" i={1} wide /></div>
+      </div>
+    </section>
+
+    <p class="k-sec text-sm leading-5 text-fg-muted">Шапка и подвал — на этой же странице, сверху и снизу.</p>
+  </div>
+</Base>
+
+<script>
+  // Форма в ките: кнопка активна только с галочкой
+  document.querySelectorAll<HTMLElement>('.kit [data-consent-form]').forEach((f) => {
+    const box = f.querySelector<HTMLInputElement>('[data-consent]');
+    const btn = f.querySelector<HTMLButtonElement>('[data-consent-submit]');
+    if (!box || !btn) return;
+    box.addEventListener('change', () => { btn.disabled = !box.checked; });
+  });
+</script>
+
+<style>
+  .k-sec { margin-top: 96px; scroll-margin-top: 96px; }
+  .k-h { font-family: var(--font-display); font-weight: 400; font-size: 32px; line-height: 40px; letter-spacing: -0.02em; color: var(--fg); font-variant-ligatures: none; padding-top: 24px; border-top: 1px solid var(--stroke); }
+  .k-row { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+  .k-cap { display: block; font-size: 14px; line-height: 20px; color: var(--fg-muted); }
+</style>

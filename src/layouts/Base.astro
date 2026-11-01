@@ -5,6 +5,8 @@ import Footer from '../components/global/Footer.astro';
 import SmoothScroll from '../components/global/SmoothScroll.astro';
 import ToTop from '../components/global/ToTop.astro';
 import LeadForms from '../components/global/LeadForms.astro';
+import LeadModal from '../components/global/LeadModal.astro';
+import ReviewModal from '../components/global/ReviewModal.astro';
 import Breadcrumbs from '../components/wire/Breadcrumbs.astro';
 import Block from '../blocks/Block.astro';
 import { recipes, type RecipeKey } from '../data/recipes';
@@ -49,6 +51,9 @@ const templateLabel: Record<Template, string> = {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" />
     <title>{title} — burkov/agency</title>
+    <!-- Тёмная тема для просмотра: ?theme=dark (запоминается до закрытия вкладки), ?theme=light — обратно.
+         На боевом сайте тема включается сама по настройке системы — см. docs/03-тёмная-тема.md -->
+    <script is:inline>(function(){try{var p=new URLSearchParams(location.search).get('theme');if(p==='dark'||p==='light')sessionStorage.setItem('theme',p);if(sessionStorage.getItem('theme')==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}})();</script>
   </head>
   <body>
     <HeaderA />
@@ -68,5 +73,7 @@ const templateLabel: Record<Template, string> = {
       <slot name="after" />
     </main>
     <Footer />
+    <LeadModal />
+    <ReviewModal />
   </body>
 </html>

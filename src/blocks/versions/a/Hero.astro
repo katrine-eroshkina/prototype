@@ -16,13 +16,9 @@ import { homeHero } from '@/data/content';
 
   <div class="relative flex flex-col items-center text-center">
     <Eyebrow>Консалтинг и Digital услуги</Eyebrow>
-    <h1 class="hero-h1 max-w-[656px] text-balance font-display text-[40px] leading-[1] md:text-[64px] md:leading-[64px]">{homeHero.title}</h1>
-    <p class="mt-4 max-w-[512px] text-base leading-6 text-foreground/80">{homeHero.lead.replace(/\.$/, '')}</p>
-    <Btn class="mt-8" href="#cta-form">{homeHero.primary}</Btn>
+    <h1 class="hero-h1 t-display max-w-[656px] text-balance">{homeHero.title}</h1>
+    <p class="mt-4 max-w-[512px] t-body text-fg/80">{homeHero.lead.replace(/\.$/, '')}</p>
+    <Btn class="mt-8" href="#cta-form" data-lead="">{homeHero.primary}</Btn>
   </div>
 </Section>
 
-<style>
-  /* 64/64, вес 400, трекинг −1 %; без лигатур, чтобы буквы не слипались */
-  .hero-h1 { font-weight: 400; letter-spacing: -0.02em; font-variant-ligatures: none; font-feature-settings: "liga" 0, "clig" 0, "calt" 0; }
-</style>

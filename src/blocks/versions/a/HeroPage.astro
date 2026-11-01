@@ -32,10 +32,10 @@ const c = ci !== undefined ? listCases[ci] : undefined;
   {ctx.crumbs && <Breadcrumbs items={ctx.crumbs} />}
   <div class:list={['mt-8', c && 'grid gap-10 lg:grid-cols-[1fr_1.4fr] lg:gap-16']}>
     <div>
-      <h1 class="hp-h1 max-w-[760px] text-balance text-[32px] leading-10 md:text-5xl md:leading-[56px]">{ctx.title}</h1>
-      {lead && <p class="mt-4 max-w-[620px] text-base leading-6 text-[#878787]">{lead.replace(/\.$/, '')}</p>}
+      <h1 class="t-h1 max-w-[760px] text-balance text-fg">{ctx.title}</h1>
+      {lead && <p class="mt-4 max-w-[620px] text-base leading-6 text-fg-muted">{lead.replace(/\.$/, '')}</p>}
       {isCategory && <Problems {ctx} class="mt-8" />}
-      {showCta && <Btn class="mt-8" href="#cta-form">Обсудить задачу</Btn>}
+      {showCta && <Btn class="mt-8" href="#cta-form" data-lead="">Обсудить задачу</Btn>}
     </div>
     {c && ci !== undefined && (
       <div class="self-center">
@@ -46,6 +46,3 @@ const c = ci !== undefined ? listCases[ci] : undefined;
   </div>
 </Section>
 
-<style>
-  .hp-h1 { font-family: var(--font-display); font-weight: 400; letter-spacing: -0.02em; color: #2c2c2c; font-variant-ligatures: none; }
-</style>

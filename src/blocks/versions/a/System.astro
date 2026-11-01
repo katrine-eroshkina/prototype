@@ -28,12 +28,12 @@ const messengers = [
     <HeroBg word={false} fade={false} light={false} />
     <div class="relative flex max-w-[560px] flex-col items-center text-center">
       {thanks ? (
-        <span class="grid size-14 place-items-center rounded-full bg-[#0c0d0f] text-white"><Check size={28} strokeWidth={2} /></span>
+        <span class="grid size-14 place-items-center rounded-full bg-fg text-page"><Check size={28} strokeWidth={2} /></span>
       ) : (
-        <p class="sy-h text-[96px] leading-none md:text-[160px]">404</p>
+        <p class="t-display text-fg">404</p>
       )}
-      <h1 class="sy-h mt-6 text-balance text-[32px] leading-10 md:text-5xl md:leading-[56px]">{thanks ? 'Спасибо, заявка у нас' : 'Такой страницы нет'}</h1>
-      <p class="mt-3 text-base leading-6 text-[#0c0d0f]">
+      <h1 class="t-h1 mt-6 text-balance text-fg">{thanks ? 'Спасибо, заявка у нас' : 'Такой страницы нет'}</h1>
+      <p class="mt-3 text-base leading-6 text-fg">
         {thanks
           ? 'Ответим в течение рабочего дня. Если срочно — напишите в мессенджер'
           : 'Возможно, ссылка устарела или в адресе опечатка. Начните с главной или посмотрите услуги'}
@@ -41,8 +41,8 @@ const messengers = [
       {thanks && (
         <div class="mt-6 flex flex-wrap justify-center gap-x-6 gap-y-2">
           {messengers.map((m) => (
-            <a class="group flex h-8 items-center gap-2 text-base font-medium text-[#0c0d0f]" href={m.href} target="_blank" rel="noopener">
-              <Messenger name={m.icon} size={20} mono /><span class="roll"><span>{m.t}</span><span aria-hidden="true">{m.t}</span></span><ArrowUpRight size={14} strokeWidth={2} className="-ml-1 text-[#0c0d0f]/60 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+            <a class="t-body group flex h-8 items-center gap-2 text-fg" href={m.href} target="_blank" rel="noopener">
+              <Messenger name={m.icon} size={20} mono /><span class="roll"><span>{m.t}</span><span aria-hidden="true">{m.t}</span></span><ArrowUpRight size={14} strokeWidth={2} className="-ml-1 text-fg/60 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
             </a>
           ))}
         </div>
@@ -64,6 +64,3 @@ const messengers = [
   </div>
 </Section>
 
-<style>
-  .sy-h { font-family: var(--font-display); font-weight: 400; letter-spacing: -0.02em; color: #0c0d0f; font-variant-ligatures: none; }
-</style>

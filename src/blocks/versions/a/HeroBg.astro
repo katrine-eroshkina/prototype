@@ -8,7 +8,8 @@
  *     (plus-lighter / luminosity + белое свечение) — на краях букв проступает голубая аура;
  *     всё слово целиком ещё раз размыто и полупрозрачно.
  *  4. Перелив: большое белое размытое пятно медленно едет по слову слева направо (14 с).
- *  5. Внизу — переход в белый.
+ *  5. Внизу — переход в цвет страницы.
+ * Тёмная тема (html[data-theme="dark"]): те же полосы в глубоких сине-графитовых тонах, слово и перелив тусклее.
  * Размеры — в долях ширины блока (cqw), как у оригинала, поэтому одинаково на любой ширине.
  */
 // Зерно: шум из SVG-фильтра, серый, плитка 230 px
@@ -36,8 +37,8 @@ const word = 'burkov/';
     <p class="absolute left-0 top-[-5.42cqw] text-[oklch(0.97_0.003_90)] opacity-60 mix-blend-plus-lighter blur-[0.82cqw] [text-shadow:0_0_2.232cqw_white]">{word}</p>
   </div>}
 
-  <!-- 5. Переход в белый снизу -->
-  {fade && <div class="absolute inset-x-0 bottom-0 z-[5] h-[8.4%] bg-gradient-to-b from-white/0 to-white"></div>}
+  <!-- 5. Переход в цвет страницы снизу -->
+  {fade && <div class="hb-fade absolute inset-x-0 bottom-0 z-[5] h-[8.4%] [background:linear-gradient(to_bottom,transparent,var(--page))]"></div>}
   <!-- 2б. Живое зерно поверх всего -->
   <div class="hb-static" style={`background-image:${noise}`}></div>
 </div>
@@ -57,6 +58,46 @@ const word = 'burkov/';
         oklch(0.72 0.024 250) 62%, oklch(0.64 0.022 290) 82%, oklch(0.6 0.022 320) 100%);
     filter: blur(40px);
   }
+  /* Тёмная тема: ночная версия тех же полос — холодный графит сверху, глубокий синий в центре, сливово-коричневый внизу */
+  :global(html[data-theme="dark"]) .hb-photo {
+    background:
+      radial-gradient(45% 35% at 45% 32%, oklch(0.36 0.06 250) 0%, transparent 75%),
+      radial-gradient(28% 30% at 10% 55%, oklch(0.32 0.05 240) 0%, transparent 75%),
+      radial-gradient(30% 32% at 88% 78%, oklch(0.3 0.03 35) 0%, transparent 75%),
+      radial-gradient(35% 30% at 62% 82%, oklch(0.26 0.035 320) 0%, transparent 75%),
+      linear-gradient(180deg,
+        oklch(0.2 0.025 250) 0%, oklch(0.26 0.04 245) 25%, oklch(0.29 0.045 245) 45%,
+        oklch(0.23 0.03 260) 62%, oklch(0.18 0.02 290) 82%, oklch(0.15 0.015 300) 100%);
+  }
+  /* Тёмная тема: на тёмном фоне осветление не «пересвечивает» буквы, поэтому блик в буквах рисуется заливкой текста
+     (белое пятно, background-clip: text), а голубой шарик идёт по фону. Оба двигает ОДНА анимация — прогресс --hb-p
+     (0 → 1 за первые 56 % из 14 с, как в светлой теме), поэтому белое пятно в буквах всегда точно под шариком. */
+  @property --hb-p { syntax: '<number>'; inherits: true; initial-value: 0; }
+  @keyframes hb-p { 0% { --hb-p: 0; } 56%, 100% { --hb-p: 1; } }
+  :global(html[data-theme="dark"]) .hb { animation: hb-p 14s cubic-bezier(.42, 0, .58, 1) infinite; }
+  /* шарик: голубой, путь тот же, что в светлой теме: от −650 до 1548 (в долях 1440) */
+  :global(html[data-theme="dark"]) .hb-light {
+    animation: none; opacity: .55;
+    background: radial-gradient(54.7% 54.7% at 45.3% 50%, oklch(0.78 0.09 240) 0%, oklch(0.78 0.09 240 / 0) 100%);
+    transform: translate3d(calc((-650 + 2198 * var(--hb-p)) * var(--u)), calc(100cqh - 570 * var(--u)), 0);
+  }
+  /* буквы: ровная голубовато-серая заливка + белое пятно шириной с шарик, центр — там же, где центр шарика
+     (центр шарика −344 + 2198·p; слово сдвинуто на −30; минус половина пятна 337,5) */
+  :global(html[data-theme="dark"]) .hb-word { opacity: 1; }
+  :global(html[data-theme="dark"]) .hb-word p {
+    --u: calc(100cqw / 1440);
+    opacity: .9; color: transparent; text-shadow: none;
+    background-image:
+      radial-gradient(closest-side, #fff 0%, rgb(255 255 255 / 0) 100%),
+      linear-gradient(oklch(0.33 0.04 245), oklch(0.33 0.04 245));
+    background-size: calc(675 * var(--u)) 200%, 100% 100%; background-repeat: no-repeat;
+    background-position: calc((-651.7 + 2198 * var(--hb-p)) * var(--u)) 50%, 0 0;
+    -webkit-background-clip: text; background-clip: text;
+  }
+  @media (prefers-reduced-motion: reduce) { :global(html[data-theme="dark"]) .hb { animation: none; } }
+  /* переход в тёмную страницу длиннее и мягче — иначе яркие буквы снизу обрываются полосой */
+  :global(html[data-theme="dark"]) .hb-fade { height: 26%; background: linear-gradient(to bottom, transparent 0%, color-mix(in srgb, var(--page) 55%, transparent) 55%, var(--page) 100%); }
+  :global(html[data-theme="dark"]) .hb-static { opacity: .2; }
   .hb-word {
     position: absolute; left: -2.083%; bottom: -4cqw; z-index: 4;
     width: 105.8%; height: calc(24.75cqw + 10px);

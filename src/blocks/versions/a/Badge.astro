@@ -1,0 +1,10 @@
+---
+/**
+ * А · бейдж — синяя плашка 24px, текст 12/16 medium белый, поля 8px (метка услуги, рубрики, подуслуги).
+ * as="a" — бейдж-ссылка (подуслуги в списке услуг). Цвет при наведении не меняется.
+ */
+import type { HTMLAttributes } from 'astro/types';
+type Props = HTMLAttributes<'span'> & { as?: 'span' | 'a' | 'li'; href?: string; class?: string };
+const { as: Tag = 'span', class: className, ...rest } = Astro.props;
+---
+<Tag class:list={['flex h-6 items-center whitespace-nowrap rounded-md bg-brand px-2 text-xs font-medium text-fg-inverse', className]} {...rest}><slot /></Tag>

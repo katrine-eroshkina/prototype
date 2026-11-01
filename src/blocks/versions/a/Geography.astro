@@ -25,26 +25,23 @@ const pins = [{ t: 'Москва', x: 62.7, y: 68.3 }, { t: 'Санкт-Пете
     <ul class="flex flex-col gap-6">
       {cities.map((c) => (
         <li>
-          <p class="geo-v text-xl leading-7">{c.t}</p>
-          <p class="mt-1 text-sm leading-5 text-[#878787]">{c.d}</p>
+          <p class="t-h5 text-fg">{c.t}</p>
+          <p class="mt-1 text-sm leading-5 text-fg-muted">{c.d}</p>
         </li>
       ))}
     </ul>
-    <div class="relative aspect-[4/3] overflow-hidden rounded-2xl bg-[#fafaf9] lg:aspect-auto">
+    <div class="relative aspect-[4/3] overflow-hidden rounded-2xl bg-surface lg:aspect-auto">
       <div class="absolute inset-x-0 top-1/2 aspect-[4/3] -translate-y-1/2">
         <img class="absolute inset-0 size-full object-cover opacity-60 grayscale contrast-[0.8]" src={`${base}/geo/map.jpg`} alt="Карта: Москва и Санкт-Петербург" width="1304" height="976" loading="lazy" />
         {pins.map((p) => (
           <div class="absolute flex -translate-x-1/2 -translate-y-[6px] flex-col items-center" style={`left:${p.x}%;top:${p.y}%`}>
             <span class="size-3 rounded-full border-2 border-white bg-brand shadow-[0_0_0_6px_color-mix(in_oklch,var(--brand)_18%,transparent)]"></span>
-            <span class="mt-2 rounded-lg bg-white px-3 py-1 text-sm leading-5 text-[#2c2c2c] shadow-[0_1px_2px_rgb(0_0_0/0.08)]">{p.t}</span>
+            <span class="mt-2 rounded-lg bg-page px-3 py-1 text-sm leading-5 text-fg shadow-[0_1px_2px_rgb(0_0_0/0.08)]">{p.t}</span>
           </div>
         ))}
       </div>
-      <span class="absolute bottom-2 right-3 text-[10px] leading-4 text-[#878787]">© OpenStreetMap</span>
+      <span class="absolute bottom-2 right-3 t-caption font-normal text-fg-muted">© OpenStreetMap</span>
     </div>
   </div>
 </Section>
 
-<style>
-  .geo-v { font-family: var(--font-display); font-weight: 400; letter-spacing: -0.02em; color: #0c0d0f; font-variant-ligatures: none; }
-</style>

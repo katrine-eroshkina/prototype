@@ -1,0 +1,8 @@
+---
+/**
+ * А · перекатка текста при наведении: надпись уезжает вверх, снизу въезжает копия (стили .roll — в global.css).
+ * Срабатывает при наведении на ближайшую ссылку или кнопку. Так ведут себя все текстовые ссылки сайта — цвет у них не меняется.
+ */
+const html = (await Astro.slots.render('default')).trim();
+---
+<span class="roll"><span set:html={html} /><span aria-hidden="true" set:html={html} /></span>

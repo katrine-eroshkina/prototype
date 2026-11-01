@@ -144,7 +144,7 @@ const favSlash = `<svg viewBox="0 0 32 32"><rect width="32" height="32" rx="7" f
 
 <style is:global>
   :root {
-    --ink: #0e0e0e;
+    --ink-2: #0e0e0e;
     --paper: #f3f2ee;
     --muted: #6d6b66;
     --line: #dcdad4;
@@ -152,7 +152,7 @@ const favSlash = `<svg viewBox="0 0 32 32"><rect width="32" height="32" rx="7" f
     --ultra: #2d2dff;
   }
   * { box-sizing: border-box; }
-  body { margin: 0; background: var(--paper); color: var(--ink); font: 16px/1.5 'Inter', system-ui, sans-serif; }
+  body { margin: 0; background: var(--paper); color: var(--ink-2); font: 16px/1.5 'Inter', system-ui, sans-serif; }
   main { max-width: 1200px; margin: 0 auto; padding: 0 16px 80px; }
   a { color: inherit; }
   code { font: 600 0.92em 'Inter', sans-serif; background: #fff; padding: 1px 6px; border-radius: 4px; }
@@ -168,13 +168,13 @@ const favSlash = `<svg viewBox="0 0 32 32"><rect width="32" height="32" rx="7" f
   .stage { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; }
   .cell { display: grid; place-items: center; min-height: 260px; padding: 32px 16px; border-radius: 16px; overflow: hidden; }
   .cell--md { min-height: 180px; }
-  .cell--light { background: #fff; color: var(--ink); }
-  .cell--dark { background: var(--ink); color: #fff; }
+  .cell--light { background: #fff; color: var(--ink-2); }
+  .cell--dark { background: var(--ink-2); color: #fff; }
 
   .usage { display: flex; gap: 12px; flex-wrap: wrap; }
   .usage__header { flex: 1 1 520px; display: flex; align-items: center; gap: 28px; padding: 14px 20px; background: #fff; border-radius: 12px; font-size: 14px; min-width: 0; }
   .usage__header nav { display: flex; gap: 20px; color: var(--muted); }
-  .usage__btn { margin-left: auto; padding: 8px 14px; border-radius: 999px; background: var(--ink); color: #fff; white-space: nowrap; }
+  .usage__btn { margin-left: auto; padding: 8px 14px; border-radius: 999px; background: var(--ink-2); color: #fff; white-space: nowrap; }
   .usage__fav { display: flex; align-items: center; gap: 14px; padding: 14px 20px; background: #fff; border-radius: 12px; }
   .usage__cap { font-size: 12px; color: var(--muted); }
   .fav { display: grid; place-items: center; }
@@ -223,7 +223,7 @@ const favSlash = `<svg viewBox="0 0 32 32"><rect width="32" height="32" rx="7" f
   .usage__variants .usage__header { flex: none; }
   .usage__logo { flex: none; }
   .usage__replay { align-self: flex-start; padding: 8px 16px; border: 0; border-radius: 12px; background: #fff; color: var(--muted); font: 500 13px 'Inter', sans-serif; cursor: pointer; }
-  .usage__replay:hover { color: var(--ink); }
+  .usage__replay:hover { color: var(--ink-2); }
   .usage__fav { align-self: flex-start; }
 
   @media (prefers-reduced-motion: reduce) {

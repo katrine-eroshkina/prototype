@@ -20,28 +20,26 @@ const under = 'рост, который можно посчитать'.split(' '
 ---
 <Section id="text" variant="statement">
   <Eyebrow>Подход</Eyebrow>
-  <h2 class="mf-title mt-2 max-w-[920px] text-[32px] leading-10 md:text-[56px] md:leading-[64px]" data-mf>
+  <h2 class="mf-title t-h1 mt-2 max-w-[920px] text-fg" data-mf>
     {lead.map((w) => <span class="mf-w" data-mf-a>{w} </span>)}
     <span class="mf-w whitespace-nowrap" data-mf-a><span class="mf-strike" data-mf-strike>{strike}</span>.</span>
     <span class="block">{tail.map((w) => <span class="mf-w" data-mf-b>{w} </span>)}<span class="mf-under" data-mf-under>{under.map((w, i) => <span class="mf-w" data-mf-b>{i < under.length - 1 ? `${w} ` : w}</span>)}</span></span>
   </h2>
 
-  <ul class="mt-16 border-b border-[#ececea] md:mt-20">
+  <ul class="mt-16 border-b border-stroke md:mt-20">
     {rows.map((r, i) => (
-      <li class="mf-row grid items-center gap-y-1 border-t border-[#ececea] py-5 md:grid-cols-[1fr_1.4fr] md:gap-x-8 md:py-6 lg:gap-x-16" style={`--i:${i}`} data-mf-row>
-        <span class="text-base leading-6 text-[#878787] line-through decoration-[#878787]/60 md:text-xl md:leading-7">{r.was}</span>
-        <span class="flex items-center gap-4"><span class="hidden size-8 shrink-0 place-items-center rounded-lg bg-[#0c0d0f] text-white md:grid" aria-hidden="true"><ArrowRight size={16} strokeWidth={2} /></span><span class="mf-now flex-1 text-base leading-6 md:text-xl md:leading-7">{r.now}</span><span class="shrink-0 text-sm leading-5 text-[#878787] md:text-base md:leading-6">{r.where}</span></span>
+      <li class="mf-row grid items-center gap-y-1 border-t border-stroke py-5 md:grid-cols-[1fr_1.4fr] md:gap-x-8 md:py-6 lg:gap-x-16" style={`--i:${i}`} data-mf-row>
+        <span class="t-body text-fg-muted line-through decoration-fg-muted/60 md:t-h5">{r.was}</span>
+        <span class="flex items-center gap-4"><span class="hidden size-8 shrink-0 place-items-center rounded-lg bg-fg text-page md:grid" aria-hidden="true"><ArrowRight size={16} strokeWidth={2} /></span><span class="t-body flex-1 text-fg md:t-h5">{r.now}</span><span class="t-small shrink-0 text-fg-muted md:t-body">{r.where}</span></span>
       </li>
     ))}
   </ul>
 </Section>
 
 <style>
-  .mf-title, .mf-now { font-family: var(--font-display); font-weight: 400; letter-spacing: -0.02em; color: #2c2c2c; font-variant-ligatures: none; }
-  .mf-now { color: #0c0d0f; }
   /* Слово до проявления — бледное */
   .mf-w { transition: color .3s; }
-  .mf-w.is-dim { color: rgb(44 44 44 / 0.2); }
+  .mf-w.is-dim { color: color-mix(in srgb, var(--fg) 20%, transparent); }
   /* Зачёркивание: синяя линия растёт слева направо по --s (0…1), зачёркнутое уходит в серый */
   .mf-strike { --s: 0; background: linear-gradient(var(--brand), var(--brand)) no-repeat 0 58% / calc(var(--s) * 100%) 0.07em; }
   .mf-w:not(.is-dim) > .mf-strike { color: var(--brand); }

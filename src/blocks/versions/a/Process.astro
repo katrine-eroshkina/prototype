@@ -1,6 +1,6 @@
 ---
 /**
- * А · process — по Aside (блок Password manager): светло-серые карточки (#fafaf9, скругление 16),
+ * А · process — по Aside (блок Password manager): светло-серые карточки (surface, скругление 16),
  * внутри — линейная схема этапа из версии Б (синим акцентом, схемы шагов 3 и 4 переставлены, «Запуск» после скачка идёт вверх); подпись снизу: жирное начало + серый текст.
  * На внутренних страницах — шаги и пояснения этой страницы (processSteps).
  */
@@ -21,10 +21,10 @@ const more = ['Считаем рынок, спрос и цену заявки д
   <ol class="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
     {steps.map((s, i) => (
       <li>
-        <div class="grid aspect-square place-items-center rounded-2xl bg-[#fafaf9] p-6">
+        <div class="grid aspect-square place-items-center rounded-2xl bg-surface p-6">
           <ProcessArt i={[0, 4, 3, 2][i]} />
         </div>
-        <p class="mt-4 text-base leading-6"><span class:list={["text-[#2c2c2c]", !isHome && "block"]}>{s.t}{isHome && "."}</span>{isHome && " "}<span class="text-[#878787]">{(isHome ? more[i] : s.d).replace(/\.$/, "")}</span></p>
+        <p class="mt-4 text-base leading-6"><span class:list={["text-fg", !isHome && "block"]}>{s.t}{isHome && "."}</span>{isHome && " "}<span class="text-fg-muted">{(isHome ? more[i] : s.d).replace(/\.$/, "")}</span></p>
       </li>
     ))}
   </ol>

@@ -1,0 +1,62 @@
+---
+/**
+ * Поп-ап отзыва: видео или благодарственное письмо (PDF). Открывается кнопкой с data-review="video|pdf".
+ * data-src — файл или адрес плеера для встраивания (YouTube / Rutube / VK), data-caption — автор.
+ * Видео: плеер 16:9, запускается сразу. PDF: документ на всю высоту окна, без кнопки «Скачать».
+ * На телефоне PDF не открывается в окне (встроенный просмотр там работает плохо) — сразу открывается в новой вкладке.
+ * Пока файлов нет, в окне серая заглушка нужных пропорций.
+ * Для показа: ?modal=review-video · ?modal=review-pdf
+ * Закрытие — крестик, Esc, клик по фону. Видео при закрытии останавливается.
+ */
+import { X, Play, FileText } from 'lucide-react';
+---
+<dialog class="rv m-0 size-full max-h-none max-w-none bg-transparent p-4 backdrop:bg-black/80 md:p-10" aria-label="Отзыв" data-review-modal>
+  <div class="mx-auto flex h-full max-w-5xl flex-col items-center justify-center" data-rv-shell>
+    <div class="relative w-full">
+      <div class="overflow-hidden rounded-2xl bg-surface" data-rv-view></div>
+      <button type="button" class="absolute right-4 top-4 grid size-10 place-items-center rounded-[5px] bg-action text-fg-inverse" aria-label="Закрыть" data-modal-close><X size={20} strokeWidth={1.75} /></button>
+    </div>
+    <p class="mt-4 w-full text-sm leading-5 text-fg-inverse/70" data-rv-caption></p>
+  </div>
+
+  <template data-rv-ph="video"><div class="grid aspect-video w-full place-items-center text-base text-fg-muted"><span class="flex flex-col items-center gap-3"><Play size={40} strokeWidth={1.5} />Видеоотзыв</span></div></template>
+  <template data-rv-ph="pdf"><div class="grid h-[calc(100dvh-160px)] w-full place-items-center text-base text-fg-muted md:h-[calc(100dvh-200px)]"><span class="flex flex-col items-center gap-3"><FileText size={40} strokeWidth={1.5} />Благодарственное письмо, PDF</span></div></template>
+</dialog>
+
+<script>
+  const dlg = document.querySelector<HTMLDialogElement>('[data-review-modal]');
+  if (dlg) {
+    const view = dlg.querySelector<HTMLElement>('[data-rv-view]')!;
+    const cap = dlg.querySelector<HTMLElement>('[data-rv-caption]')!;
+    const ph = (k: string) => dlg.querySelector<HTMLTemplateElement>(`[data-rv-ph="${k}"]`)!.content.cloneNode(true);
+    const open = (kind: string, src: string, caption: string) => {
+      if (kind === 'pdf' && src && matchMedia('(max-width: 767px)').matches) { window.open(src, '_blank', 'noopener'); return; }
+      view.replaceChildren();
+      if (kind === 'video') {
+        if (!src) view.append(ph('video'));
+        else if (/\.(mp4|webm|mov)(\?|$)/i.test(src)) view.innerHTML = `<video class="aspect-video w-full bg-black" src="${src}" controls autoplay playsinline></video>`;
+        else view.innerHTML = `<iframe class="aspect-video w-full" src="${src}" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen title="Видеоотзыв"></iframe>`;
+      } else {
+        if (!src) view.append(ph('pdf'));
+        else view.innerHTML = `<iframe class="h-[calc(100dvh-160px)] w-full bg-page md:h-[calc(100dvh-200px)]" src="${src}#view=FitH&toolbar=0" title="Благодарственное письмо"></iframe>`;
+      }
+      cap.textContent = caption;
+      dlg.showModal();
+    };
+
+    document.addEventListener('click', (e) => {
+      const t = (e.target as HTMLElement).closest<HTMLElement>('[data-review]');
+      if (!t) return;
+      e.preventDefault();
+      open(t.dataset.review!, t.dataset.src ?? '', t.dataset.caption ?? '');
+    });
+    dlg.querySelector('[data-modal-close]')!.addEventListener('click', () => dlg.close());
+    dlg.addEventListener('click', (e) => { if (e.target === dlg || e.target === dlg.querySelector('[data-rv-shell]')) dlg.close(); });
+    // Видео останавливается: содержимое окна убирается при закрытии
+    dlg.addEventListener('close', () => view.replaceChildren());
+
+    const demo = new URLSearchParams(location.search).get('modal');
+    if (demo === 'review-video') open('video', '', 'Ольга Смирнова · Коммерческий директор, Теплострой');
+    if (demo === 'review-pdf') open('pdf', '', 'Игорь Воронцов · Основатель, Нордлайн');
+  }
+</script>
