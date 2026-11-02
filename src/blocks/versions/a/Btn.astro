@@ -21,13 +21,13 @@ type Props = HTMLAttributes<'a'> & HTMLAttributes<'button'> & {
 const { as = 'a', variant = 'dark', full = false, noIcon = false, icon: iconName = 'arrow', class: className, ...rest } = Astro.props;
 const Tag = as;
 const txt = {
-  dark: 'bg-action text-fg-inverse',
+  dark: 'bg-action text-on-action',
   light: 'bg-stroke text-fg',
   outline: 'text-fg shadow-[inset_0_0_0_1.5px_var(--outline)]',
 }[variant];
 const ic = {
-  dark: 'bg-action text-fg-inverse',
-  light: 'bg-action text-fg-inverse',
+  dark: 'bg-action text-on-action',
+  light: 'bg-action text-on-action',
   outline: '',
 }[variant];
 const icon = variant !== 'outline' && !noIcon;

@@ -109,7 +109,7 @@ const total = String(items.length).padStart(2, '0');
   .cs-photo { background: radial-gradient(120% 90% at 30% 20%, #5b6b80 0%, #2a323d 55%, #121519 100%); }
   /* Стрелки — светло-серые квадраты 32px; на краю списка — полупрозрачная и неактивная */
   .cs-btn { display: grid; place-items: center; width: 32px; height: 32px; background: var(--stroke); color: var(--fg); transition: background-color .2s, color .2s, opacity .3s; }
-  .cs-btn:hover:not(:disabled) { background: var(--action); color: var(--fg-inverse); }
+  .cs-btn:hover:not(:disabled) { background: var(--action); color: var(--on-action); }
   .cs-btn:disabled { opacity: .3; cursor: default; }
   @media (prefers-reduced-motion: reduce) { .cs-stack > * { transition: none; } }
 </style>

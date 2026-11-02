@@ -42,12 +42,13 @@ const noDot = (s?: string) => s?.replace(/\.$/, '');
 
       <div class="flex items-center gap-1 justify-self-end">
         <a class="ha-tel mr-3 hidden whitespace-nowrap text-sm text-fg xl:inline" href="tel:+70000000000">+7 XXX XXX-XX-XX</a>
-        <a class="ha-btn ha-cta hidden h-[30px] items-center rounded-[5px] bg-action px-3 text-sm font-medium text-fg-inverse transition sm:inline-flex" href={url('/kontakty/')} data-lead=""><span class="roll"><span>Обсудить задачу</span><span aria-hidden="true">Обсудить задачу</span></span></a>
-        <a class="ha-btn ha-icon hidden size-[30px] place-items-center rounded-[5px] bg-action text-fg-inverse transition sm:grid" href={url('/kontakty/')} aria-label="Связаться" data-lead="">
+        <a class="ha-btn ha-cta hidden h-[30px] items-center rounded-[5px] bg-action px-3 text-sm font-medium text-on-action transition sm:inline-flex" href={url('/kontakty/')} data-lead=""><span class="roll"><span>Обсудить задачу</span><span aria-hidden="true">Обсудить задачу</span></span></a>
+        <a class="ha-btn ha-icon hidden size-[30px] place-items-center rounded-[5px] bg-action text-on-action transition sm:grid" href={url('/kontakty/')} aria-label="Связаться" data-lead="">
           <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 14.5l5-5M10 9.5h4.5V14"/></svg>
         </a>
-        <button type="button" class="ha-btn grid size-[30px] place-items-center rounded-[5px] bg-action text-fg-inverse lg:hidden" aria-expanded="false" aria-controls="ha-mob" aria-label="Меню" data-ha-burger>
-          <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 8h16M4 16h16"/></svg>
+        <button type="button" class="ha-burger -mr-1 grid size-[32px] place-items-center text-fg lg:hidden" aria-expanded="false" aria-controls="ha-mob" aria-label="Меню" data-ha-burger>
+          <svg class="ha-burger-open size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><path d="M4 8h16M4 16h16"/></svg>
+          <svg class="ha-burger-close size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
         </button>
       </div>
     </div>
@@ -92,9 +93,9 @@ const noDot = (s?: string) => s?.replace(/\.$/, '');
     </div>
 
     <!-- ===== Мобильное меню ===== -->
-    <div class="max-h-[calc(100svh-80px)] overflow-y-auto border-t border-stroke px-4 pb-6 lg:hidden" id="ha-mob" hidden data-ha-mob>
-      <details class="border-b border-stroke py-3">
-        <summary class="flex cursor-pointer list-none items-center justify-between t-h5">Услуги <span class="text-fg-muted">+</span></summary>
+    <div class="ha-mob overscroll-contain px-4 pb-8 pt-4 lg:hidden" id="ha-mob" hidden data-ha-mob data-lenis-prevent>
+      <details class="py-3">
+        <summary class="flex cursor-pointer list-none items-center justify-between t-h5">Услуги <svg class="ha-mob-chev size-6 text-fg transition-transform duration-200" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
         {groups.map((g) => (
           <div class="mt-4">
             <p class="text-sm text-fg-muted">{g.title}</p>
@@ -103,11 +104,10 @@ const noDot = (s?: string) => s?.replace(/\.$/, '');
         ))}
         <a class="mt-2 block py-2 text-sm text-fg-muted underline underline-offset-4" href={url('/uslugi/')}>Все услуги</a>
       </details>
-      {navRest.map((i) => <a class="t-h5 block border-b border-stroke py-3" href={url(i.href)}>{i.title}{i.draft && <sup class="ml-1 text-sm text-fg-muted">(?)</sup>}</a>)}
+      {navRest.map((i) => <a class="t-h5 block py-3" href={url(i.href)}>{i.title}{i.draft && <sup class="ml-1 text-sm text-fg-muted">(?)</sup>}</a>)}
       <div class="mt-6 flex flex-col items-start gap-3 text-sm text-fg-muted">
-        <a class="inline-flex h-10 items-center rounded-[5px] bg-action px-4 font-medium text-fg-inverse" href={url('/kontakty/')} data-lead="">Обсудить задачу</a>
+        <a class="inline-flex h-10 items-center rounded-[5px] bg-action px-4 font-medium text-on-action" href={url('/kontakty/')} data-lead="">Обсудить задачу</a>
         <a class="text-base text-fg" href="tel:+70000000000">+7 XXX XXX-XX-XX</a>
-        <span>Telegram · MAX</span>
       </div>
     </div>
   </div>
@@ -120,6 +120,21 @@ const noDot = (s?: string) => s?.replace(/\.$/, '');
   /* наведение на квадрат со стрелкой тоже перекатывает текст кнопки */
   .ha-cta:has(+ .ha-icon:hover) .roll > :first-child { transform: translateY(-105%); }
   .ha-cta:has(+ .ha-icon:hover) .roll > :last-child { transform: none; }
+  /* «Услуги» в мобильном меню: шеврон вниз, как на десктопе; в раскрытом виде переворачивается */
+  .ha-mob summary::-webkit-details-marker { display: none; }
+  .ha-mob details[open] .ha-mob-chev { transform: rotate(180deg); }
+  /* Бургер: в открытом меню вместо полосок — крестик */
+  .ha-burger-close, [aria-expanded="true"] > .ha-burger-open { display: none; }
+  [aria-expanded="true"] > .ha-burger-close { display: block; }
+  /* Мобильное меню на весь экран: шапка растягивается до низа, фон страницы, меню прокручивается внутри, сайт под ним не прокручивается */
+  @media (max-width: 1023px) {
+    /* двойной [data-mob] — сильнее правила стекла после прокрутки ([data-ha][data-scrolled]) */
+    [data-ha][data-mob][data-mob] { bottom: 0; display: flex; flex-direction: column; background: var(--page); -webkit-backdrop-filter: none; backdrop-filter: none; }
+    [data-ha][data-mob] .ha-bar { flex: 1; min-height: 0; display: flex; flex-direction: column; box-shadow: none; }
+    [data-ha][data-mob] .ha-mob { flex: 1; min-height: 0; overflow-y: auto; }
+    /* кнопка «Наверх» не висит поверх меню */
+    :global(html.ha-mob-open .to-top) { display: none; }
+  }
   /* Раскрытие: плавно, пункты появляются лесенкой (как у Wonderful) */
   .ha-mega { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .35s cubic-bezier(.2,.7,.2,1); }
   .ha-mega > div { min-height: 0; overflow: hidden; }
@@ -182,10 +197,22 @@ const noDot = (s?: string) => s?.replace(/\.$/, '');
     // Мобильное меню
     const burger = root.querySelector<HTMLButtonElement>('[data-ha-burger]')!;
     const mob = root.querySelector<HTMLElement>('[data-ha-mob]')!;
-    burger.addEventListener('click', () => {
-      mob.hidden = !mob.hidden;
-      burger.setAttribute('aria-expanded', String(!mob.hidden));
-    });
+    const lenis = () => (window as any).lenis;
+    const setMob = (open: boolean) => {
+      mob.hidden = !open;
+      root.toggleAttribute('data-mob', open);
+      burger.setAttribute('aria-expanded', String(open));
+      burger.setAttribute('aria-label', open ? 'Закрыть меню' : 'Меню');
+      // сайт под меню не прокручивается
+      document.documentElement.style.overflow = open ? 'hidden' : '';
+      document.documentElement.classList.toggle('ha-mob-open', open);
+      if (open) lenis()?.stop(); else lenis()?.start();
+    };
+    burger.addEventListener('click', () => setMob(mob.hidden));
+    // переход по пункту, «Обсудить задачу», Esc и переход на десктоп закрывают меню
+    mob.addEventListener('click', (e) => { if ((e.target as HTMLElement).closest('a')) setMob(false); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !mob.hidden) setMob(false); });
+    matchMedia('(min-width: 1024px)').addEventListener('change', (e) => { if (e.matches && !mob.hidden) setMob(false); });
 
     // После прокрутки за шапкой появляется полоса размытого стекла
     const onScroll = () => root.toggleAttribute('data-scrolled', scrollY > 20);

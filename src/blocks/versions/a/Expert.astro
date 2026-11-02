@@ -4,8 +4,10 @@
  * Слева фото (скругление 16; пока то же стоковое, что у основателя в «Команде»), имя и роль.
  * Справа мини-заголовок «/ Слово основателя», цитата шрифтом заголовков, абзац серым, регалии с синими галочками в две колонки
  * карточка книги основателя и «Написать лично» — мессенджеры чёрными иконками без подложки, как в «Контактах». Тексты — заглушки.
- * Книга — светло-серая карточка (скругление 16): обложка 2:3, подпись «Книга основателя», название, одна строка о книге
- * и две внешние ссылки «Печатная ↗» / «Аудиокнига ↗» (как ссылки мессенджеров, открываются в новой вкладке).
+ * Книга — светло-серая карточка (скругление 16): слева объёмная книга (обложка 2:3, корешок, срез страниц), повёрнута к зрителю
+ * под углом, по центру карточки по высоте (на телефоне — над названием); при наведении на карточку разворачивается и чуть поднимается.
+ * Справа название, две строки о книге и две внешние ссылки «Печатная ↗» / «Аудиокнига ↗» (как у мессенджеров, в новой вкладке).
+ * Пока нет обложки — заглушка в цветах бренда с названием.
  */
 import Section from '../../Section.astro';
 import Eyebrow from './Eyebrow.astro';
@@ -23,7 +25,7 @@ const messengers = [
 // Книга основателя: обложка, название и ссылки — заглушки, ждём от заказчика
 const book = {
   title: 'Название книги',
-  about: 'Одна строка о том, чему учит книга',
+  about: 'О чём книга и какую задачу бизнеса помогает решить. Для кого она и что читатель заберёт с собой',
   cover: '',
   links: [
     { t: 'Печатная', icon: BookOpen, href: '#' },
@@ -44,24 +46,27 @@ const book = {
       <p class="mt-4 max-w-[560px] text-base leading-6 text-fg-muted">Короткий абзац: как пришёл в маркетинг, почему собрал команду и за что отвечает лично</p>
       <ul class="mt-8 grid gap-3 sm:grid-cols-2">
         {creds.map((c) => (
-          <li class="flex gap-3 text-base leading-6 text-fg"><span class="mt-0.5 grid size-5 shrink-0 place-items-center rounded-full bg-brand text-fg-inverse" aria-hidden="true"><Check size={12} strokeWidth={3} /></span>{c}</li>
+          <li class="flex gap-3 text-base leading-6 text-fg"><span class="mt-0.5 grid size-5 shrink-0 place-items-center rounded-full bg-brand-bg text-on-brand" aria-hidden="true"><Check size={12} strokeWidth={3} /></span>{c}</li>
         ))}
       </ul>
-      <div class="mt-10 flex gap-4 rounded-2xl bg-surface p-4 md:gap-6 md:p-6">
-        {book.cover
-          ? <img class="aspect-[2/3] w-20 shrink-0 rounded-[4px] object-cover shadow-[0_4px_12px_rgb(44_44_44/0.12)] md:w-24" src={book.cover} alt={`Обложка книги «${book.title}»`} loading="lazy" />
-          : <span class="grid aspect-[2/3] w-20 shrink-0 place-items-center rounded-[4px] bg-stroke text-fg-muted shadow-[0_4px_12px_rgb(44_44_44/0.12)] md:w-24" aria-hidden="true"><BookOpen size={24} strokeWidth={1.5} /></span>}
-        <div class="flex min-w-0 flex-col">
-          <p class="text-sm leading-5 text-fg-muted">Книга основателя</p>
-          <p class="t-h5 mt-1 text-fg">{book.title}</p>
-          <p class="mt-1 text-base leading-6 text-fg-muted">{book.about}</p>
-          <div class="mt-auto flex flex-wrap gap-x-6 gap-y-1 pt-3">
-            {book.links.map((l) => (
-              <a class="t-body group flex h-8 items-center gap-2 text-fg" href={l.href} target="_blank" rel="noopener">
-                <l.icon size={20} strokeWidth={1.75} /><span class="roll"><span>{l.t}</span><span aria-hidden="true">{l.t}</span></span><ArrowUpRight size={14} strokeWidth={2} className="-ml-1 text-fg-muted transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-              </a>
-            ))}
+      <div class="bk-card relative mt-10 flex flex-col justify-center rounded-2xl bg-surface p-4 md:min-h-[200px] md:py-6 md:pl-[168px] md:pr-6">
+        <!-- Объёмная книга: на телефоне над названием, с 768 — слева по центру карточки по высоте; обложка + срез страниц, перспектива -->
+        <div class="bk-wrap relative mb-6 ml-2 mt-2 w-24 md:absolute md:left-6 md:top-1/2 md:m-0 md:w-28 md:-translate-y-1/2" aria-hidden={book.cover ? undefined : 'true'}>
+          <div class="bk">
+            {book.cover
+              ? <img class="bk-cover object-cover" src={book.cover} alt={`Обложка книги «${book.title}»`} loading="lazy" />
+              : <span class="bk-cover bk-ph"><span class="bk-ph-brand">burkov<b>/</b></span><span class="bk-ph-title">{book.title}</span></span>}
+            <span class="bk-pages"></span>
           </div>
+        </div>
+        <p class="t-h5 text-fg">{book.title}</p>
+        <p class="mt-1 max-w-[440px] text-base leading-6 text-fg-muted">{book.about}</p>
+        <div class="mt-3 flex flex-wrap gap-x-6 gap-y-1">
+          {book.links.map((l) => (
+            <a class="t-body group flex h-8 items-center gap-2 text-fg" href={l.href} target="_blank" rel="noopener">
+              <l.icon size={20} strokeWidth={1.75} /><span class="roll"><span>{l.t}</span><span aria-hidden="true">{l.t}</span></span><ArrowUpRight size={14} strokeWidth={2} className="-ml-1 text-fg-muted transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+            </a>
+          ))}
         </div>
       </div>
       <p class="mt-10 text-sm leading-5 text-fg-muted">Написать лично</p>
@@ -76,3 +81,32 @@ const book = {
   </div>
 </Section>
 
+<style>
+  /* Книга: перспектива, обложка повёрнута к зрителю, справа — срез страниц (толщина 12 / 16) */
+  .bk-wrap { perspective: 900px; }
+  .bk { --t: 12px; position: relative; aspect-ratio: 2 / 3; transform-style: preserve-3d;
+    transform: rotateY(-28deg) rotateX(4deg); transform-origin: 30% 50%;
+    transition: transform .5s cubic-bezier(.2, .7, .2, 1); }
+  @media (min-width: 768px) { .bk { --t: 16px; } }
+  .bk-card:hover .bk { transform: rotateY(-10deg) rotateX(2deg) translateY(-6px); }
+  .bk-cover { position: absolute; inset: 0; width: 100%; height: 100%; border-radius: 2px 4px 4px 2px;
+    transform: translateZ(calc(var(--t) / 2)); backface-visibility: hidden;
+    box-shadow: 0 16px 24px -8px rgb(12 13 15 / .35); }
+  /* сгиб у корешка */
+  .bk-cover::after { content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+    background: linear-gradient(90deg, rgb(0 0 0 / .28) 0, rgb(255 255 255 / .18) 3%, transparent 7%, transparent 92%, rgb(0 0 0 / .12)); }
+  /* срез страниц справа */
+  .bk-pages { position: absolute; top: 2px; bottom: 2px; right: 0; width: var(--t);
+    transform-origin: right center; transform: translateX(calc(var(--t) / 2)) rotateY(90deg);
+    background: repeating-linear-gradient(90deg, #f3f2ee 0 1px, #dcdad3 1px 2px); }
+  /* заглушка обложки — в цветах бренда */
+  .bk-ph { display: flex; flex-direction: column; justify-content: space-between; padding: 10%; overflow: hidden;
+    background: radial-gradient(120% 80% at 80% 10%, color-mix(in oklab, var(--brand) 85%, white), transparent 60%),
+                linear-gradient(160deg, var(--brand) 0%, #0c0d0f 85%);
+    color: #fff; }
+  .bk-ph-brand { font-size: 8px; line-height: 1; font-weight: 700; letter-spacing: -.02em; }
+  .bk-ph-brand b { color: #fff; opacity: .6; font-weight: 700; }
+  .bk-ph-title { font-size: 12px; line-height: 1.15; letter-spacing: -.02em; }
+  @media (min-width: 768px) { .bk-ph-brand { font-size: 10px; } .bk-ph-title { font-size: 15px; } }
+  @media (prefers-reduced-motion: reduce) { .bk { transition: none; } }
+</style>

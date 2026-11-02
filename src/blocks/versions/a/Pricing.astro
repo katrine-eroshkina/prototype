@@ -47,7 +47,7 @@ const split = (p: string) => { const [v, per] = p.split('/'); return { v: v.trim
               <Price class="mt-8" value={pr.v} per={pr.per || undefined} />
               <ul class="mt-8 grid gap-3 border-t border-stroke pt-6">
                 {t.items.map((it) => (
-                  <li class="flex gap-3 text-base leading-6 text-fg"><span class="mt-0.5 grid size-5 shrink-0 place-items-center rounded-full bg-brand text-fg-inverse" aria-hidden="true"><Check size={12} strokeWidth={3} /></span>{it}</li>
+                  <li class="flex gap-3 text-base leading-6 text-fg"><span class="mt-0.5 grid size-5 shrink-0 place-items-center rounded-full bg-brand-bg text-on-brand" aria-hidden="true"><Check size={12} strokeWidth={3} /></span>{it}</li>
                 ))}
               </ul>
               <div class="mt-auto pt-10">

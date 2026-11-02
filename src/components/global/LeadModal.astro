@@ -14,7 +14,7 @@ import Consent from '../../blocks/versions/a/Consent.astro';
 ---
 <dialog class="lm m-auto w-[calc(100%-32px)] max-w-[480px] rounded-2xl bg-page p-0 text-fg backdrop:bg-black/60 backdrop:backdrop-blur-sm" aria-labelledby="lm-title" data-lead-modal>
   <div class="relative px-6 pb-8 pt-16 text-center md:px-10 md:pb-10">
-    <button type="button" class="absolute right-4 top-4 grid size-10 place-items-center rounded-[5px] bg-action text-fg-inverse" aria-label="Закрыть" data-modal-close><X size={20} strokeWidth={1.75} /></button>
+    <button type="button" class="absolute right-4 top-4 grid size-10 place-items-center rounded-[5px] bg-action text-on-action" aria-label="Закрыть" data-modal-close><X size={20} strokeWidth={1.75} /></button>
 
     <div data-lm-step="form">
       <h2 id="lm-title" class="t-h3 text-balance text-fg">Обсудить задачу</h2>
@@ -31,7 +31,7 @@ import Consent from '../../blocks/versions/a/Consent.astro';
     </div>
 
     <div hidden data-lm-step="done">
-      <span class="mx-auto grid size-12 place-items-center rounded-full bg-brand text-fg-inverse" aria-hidden="true"><Check size={24} strokeWidth={2.5} /></span>
+      <span class="mx-auto grid size-12 place-items-center rounded-full bg-brand-bg text-on-brand" aria-hidden="true"><Check size={24} strokeWidth={2.5} /></span>
       <h2 class="t-h3 mt-6 text-fg">Заявка отправлена</h2>
       <p class="mx-auto mt-2 max-w-[360px] text-base leading-6 text-fg-muted">Перезвоним в течение рабочего дня и договоримся о бесплатной консультации</p>
       <Btn as="button" type="button" variant="light" noIcon class="mt-8" data-modal-close>Хорошо</Btn>

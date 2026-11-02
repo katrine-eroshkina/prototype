@@ -86,6 +86,9 @@
   --color-action: var(--action);
   --color-fg-muted: var(--fg-muted);
   --color-fg-inverse: var(--fg-inverse);
+  --color-on-action: var(--on-action);
+  --color-brand-bg: var(--brand-bg);
+  --color-on-brand: var(--on-brand);
   --color-stroke: var(--stroke);
   --color-surface: var(--surface);
   --color-page: var(--page);
@@ -103,7 +106,10 @@
   --fg: #2c2c2c;         /* gray-900 · основной: текст, заголовки, кнопки, цифры */
   --action: #0c0d0f;     /* gray-950 · фон кнопок (основная, в шапке, «Наверх», выбранный фильтр) */
   --fg-muted: #878787;   /* gray-500 · вторичный текст, подписи, «/ Раздел», иконки */
-  --fg-inverse: #ffffff; /* white · текст на тёмном и на синем */
+  --fg-inverse: #ffffff; /* white · белый текст поверх фото и затемнения */
+  --on-action: #ffffff;  /* white · текст и иконка на кнопке */
+  --brand-bg: var(--brand); /* blue-500 · фон бейджей и кружков с галочкой */
+  --on-brand: #ffffff;   /* white · текст и галочка на brand-bg */
   --stroke: #ececea;     /* gray-200 · линии, разделители, светлая кнопка, стрелки слайдера */
   --surface: #fafaf9;    /* gray-50 · плашки, карточки, заглушки */
   --page: #ffffff;       /* white · фон страницы */
@@ -261,7 +267,11 @@ html[data-theme="dark"] {
   --stroke: #2a2b2e;     /* gray-800 */
   --surface: #18191b;    /* gray-850 */
   --page: #0c0d0f;       /* gray-950 */
-  --action: #127eee;     /* blue-500: кнопки синие */
+  /* кнопки, бейджи и галочки — тональные: тёмно-синяя плашка, голубой текст (контраст 7.6) */
+  --action: #212b37;     /* slate-800 */
+  --on-action: #6fc7ef;  /* cyan-300 */
+  --brand-bg: #212b37;
+  --on-brand: #6fc7ef;
   --glass: rgb(12 13 15 / .6);
   --glass-strong: rgb(24 25 27 / .7);
   --glass-soft: rgb(12 13 15 / .35);
@@ -279,6 +289,8 @@ html[data-theme="dark"][data-style="a"], html[data-theme="dark"][data-style="a"]
   --accent: var(--stroke);
   --border: var(--stroke);
   --input: var(--stroke);
+  /* акцент — голубой (слэш, курсор, подчёркивания, линии схем); задан здесь, т. к. блок версии А переопределяет --brand и на .dark */
+  --brand: #6fc7ef;
 }
 /* обложки статей — тёмная подложка вместо светло-серой */
 html[data-theme="dark"] .pc-bg-0, html[data-theme="dark"] .post-cover { background: radial-gradient(80% 90% at 75% 30%, color-mix(in oklab, var(--brand) 28%, transparent), transparent 70%), var(--surface); }

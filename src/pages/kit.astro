@@ -45,11 +45,14 @@ const roles = [
   { name: 'fg', ref: 'gray-900', css: 'var(--fg)', role: 'Основной: текст, заголовки, кнопки, цифры' },
   { name: 'fg-muted', ref: 'gray-500', css: 'var(--fg-muted)', role: 'Вторичный текст, подписи, «/ Раздел», иконки' },
   { name: 'action', ref: 'gray-950', css: 'var(--action)', role: 'Фон кнопок: основная, в шапке, «Наверх», выбранный фильтр' },
-  { name: 'fg-inverse', ref: 'white', css: 'var(--fg-inverse)', role: 'Текст на тёмном и на синем' },
+  { name: 'on-action', ref: 'white', css: 'var(--on-action)', role: 'Текст и иконка на кнопке (в тёмной теме — голубой)' },
+  { name: 'fg-inverse', ref: 'white', css: 'var(--fg-inverse)', role: 'Белый текст поверх фото и затемнения' },
   { name: 'stroke', ref: 'gray-200', css: 'var(--stroke)', role: 'Линии, разделители, светлая кнопка, стрелки слайдера' },
   { name: 'surface', ref: 'gray-50', css: 'var(--surface)', role: 'Плашки, карточки, заглушки' },
   { name: 'page', ref: 'white', css: 'var(--page)', role: 'Фон страницы' },
-  { name: 'brand', ref: 'blue-500', css: 'var(--brand)', role: 'Акцент: слэш, бейджи, подчёркивания, стрелки при наведении' },
+  { name: 'brand', ref: 'blue-500', css: 'var(--brand)', role: 'Акцент: слэш, курсор, подчёркивания, линии схем, стрелки при наведении' },
+  { name: 'brand-bg', ref: 'blue-500', css: 'var(--brand-bg)', role: 'Фон бейджей и кружков с галочкой' },
+  { name: 'on-brand', ref: 'white', css: 'var(--on-brand)', role: 'Текст и галочка на brand-bg' },
 ];
 
 /** Текстовые стили. d — десктоп, m — телефон (если отличается). Все — Inter. */
@@ -197,8 +200,8 @@ const c0 = listCases[0];
         <div class="k-row"><Btn href="#k6" icon="download">Скачать презентацию</Btn><span class="k-cap">Btn · иконка «скачать»</span></div>
         <div class="k-row"><Btn as="button" disabled>Отправить</Btn><span class="k-cap">Btn · неактивная (30 %)</span></div>
         <div class="k-row md:col-span-2"><div class="w-full max-w-sm"><Btn href="#k6" full>Отправить</Btn></div><span class="k-cap">Btn · full (на ширину формы)</span></div>
-        <div class="k-row"><a class="inline-flex h-[30px] items-center rounded-[5px] bg-action px-3 text-sm font-medium text-fg-inverse" href="#k6"><Roll>Обсудить задачу</Roll></a><span class="k-cap">Кнопка S · шапка (30 px)</span></div>
-        <div class="k-row"><span class="grid size-10 place-items-center rounded-[5px] bg-action text-fg-inverse"><ArrowUp size={20} strokeWidth={2} /></span><span class="k-cap">Кнопка «Наверх» (40 × 40)</span></div>
+        <div class="k-row"><a class="inline-flex h-[30px] items-center rounded-[5px] bg-action px-3 text-sm font-medium text-on-action" href="#k6"><Roll>Обсудить задачу</Roll></a><span class="k-cap">Кнопка S · шапка (30 px)</span></div>
+        <div class="k-row"><span class="grid size-10 place-items-center rounded-[5px] bg-action text-on-action"><ArrowUp size={20} strokeWidth={2} /></span><span class="k-cap">Кнопка «Наверх» (40 × 40)</span></div>
         <div class="k-row"><span class="flex items-center gap-3"><span class="grid size-8 place-items-center bg-stroke text-fg opacity-30"><ChevronLeft size={16} strokeWidth={2} /></span><span class="text-sm leading-5 text-fg-muted">1 / 6</span><span class="grid size-8 place-items-center bg-stroke text-fg"><ChevronRight size={16} strokeWidth={2} /></span></span><span class="k-cap">Стрелки слайдера (32 × 32, без скругления, stroke; на краю — 30 %)</span></div>
         <div class="k-row"><span class="flex flex-wrap gap-1"><Chip pressed>Все</Chip><Chip>SEO</Chip><Chip>Консалтинг</Chip></span><span class="k-cap">Chip · фильтр (выбранный / обычный)</span></div>
       </div>

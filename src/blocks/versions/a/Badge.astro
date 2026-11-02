@@ -7,4 +7,4 @@ import type { HTMLAttributes } from 'astro/types';
 type Props = HTMLAttributes<'span'> & { as?: 'span' | 'a' | 'li'; href?: string; class?: string };
 const { as: Tag = 'span', class: className, ...rest } = Astro.props;
 ---
-<Tag class:list={['flex h-6 items-center whitespace-nowrap rounded-md bg-brand px-2 text-xs font-medium text-fg-inverse', className]} {...rest}><slot /></Tag>
+<Tag class:list={['flex h-6 items-center whitespace-nowrap rounded-md bg-brand-bg px-2 text-xs font-medium text-on-brand', className]} {...rest}><slot /></Tag>

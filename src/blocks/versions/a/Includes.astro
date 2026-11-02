@@ -24,7 +24,7 @@ const rf = data.reframe;
         <h3 class="t-h4 text-fg">{g.t}</h3>
         <ul class="mt-6 grid gap-3">
           {g.items.map((item) => (
-            <li class="flex gap-3 text-base leading-6 text-fg"><span class="mt-0.5 grid size-5 shrink-0 place-items-center rounded-full bg-brand text-fg-inverse" aria-hidden="true"><Check size={12} strokeWidth={3} /></span>{item}</li>
+            <li class="flex gap-3 text-base leading-6 text-fg"><span class="mt-0.5 grid size-5 shrink-0 place-items-center rounded-full bg-brand-bg text-on-brand" aria-hidden="true"><Check size={12} strokeWidth={3} /></span>{item}</li>
           ))}
         </ul>
       </div>
@@ -41,7 +41,7 @@ const rf = data.reframe;
     <!-- шапка колонок -->
     <div class="relative grid md:grid-cols-2">
       <div class="flex items-center gap-3 py-5 pr-6 text-sm leading-5 text-fg-muted"><span class="grid size-5 place-items-center rounded-full bg-stroke" aria-hidden="true"><Minus size={12} strokeWidth={3} /></span>Сейчас</div>
-      <div class="rf-hl hidden items-center gap-3 border-l border-stroke px-6 py-5 text-sm leading-5 text-fg md:flex"><span class="grid size-5 place-items-center rounded-full bg-brand text-fg-inverse" aria-hidden="true"><Plus size={12} strokeWidth={3} /></span>{rf.after}</div>
+      <div class="rf-hl hidden items-center gap-3 border-l border-stroke px-6 py-5 text-sm leading-5 text-fg md:flex"><span class="grid size-5 place-items-center rounded-full bg-brand-bg text-on-brand" aria-hidden="true"><Plus size={12} strokeWidth={3} /></span>{rf.after}</div>
       <span class="absolute left-1/2 top-1/2 hidden size-8 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-lg bg-fg text-page md:grid" aria-hidden="true"><ArrowRight size={16} strokeWidth={2} /></span>
     </div>
     {data.deliverables.map((d, i) => (

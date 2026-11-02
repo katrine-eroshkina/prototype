@@ -52,7 +52,7 @@ const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
             {sets.map((s, i) => (
               <td class:list={['border-l border-stroke px-6 py-4', list[i].featured && 'cmp-hl']}>
                 {s.has(f)
-                  ? <span class="grid size-5 place-items-center rounded-full bg-brand text-fg-inverse" aria-label="входит"><Check size={12} strokeWidth={3} /></span>
+                  ? <span class="grid size-5 place-items-center rounded-full bg-brand-bg text-on-brand" aria-label="входит"><Check size={12} strokeWidth={3} /></span>
                   : <span class="grid size-5 place-items-center rounded-full bg-stroke text-fg-muted" aria-label="не входит"><Minus size={12} strokeWidth={3} /></span>}
               </td>
             ))}
