@@ -9,6 +9,8 @@ export default defineConfig({
   site: 'https://katrine-eroshkina.github.io',
   base: '/prototype',
   trailingSlash: 'always',
+  // Локальный сервер на 127.0.0.1: иначе он слушает только IPv6, и браузер VS Code не может подключиться
+  server: { host: '127.0.0.1' },
   // React — только для интерактивных компонентов shadcn (острова), остальное статика
   integrations: [react()],
   vite: { plugins: [tailwindcss()] },

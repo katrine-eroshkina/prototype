@@ -1,0 +1,161 @@
+---
+/**
+ * Блоки версии А — документация: зачем блок, где стоит, из чего состоит, как адаптируется, что анимируется,
+ * откуда тексты и какие нюансы. Под каждым описанием — живой пример (тот же компонент, что на сайте).
+ * Доступна только по ссылке /blocks/, как /kit/ и /tokens/. Тексты описаний — src/data/blocks-docs.ts.
+ */
+import Base from '../layouts/Base.astro';
+import Block from '../blocks/Block.astro';
+import Eyebrow from '../blocks/versions/a/Eyebrow.astro';
+import Roll from '../blocks/versions/a/Roll.astro';
+import { blockGroups, globalDocs } from '@/data/blocks-docs';
+import { groups, serviceUrl } from '@/data/sitemap';
+import type { PageCtx } from '@/data/content';
+
+// Контексты страниц для живых примеров — как на настоящих страницах
+const seoGroup = groups.find((g) => g.categories.some((c) => c.slug === 'seo')) ?? groups[1];
+const seo = seoGroup.categories.find((c) => c.slug === 'seo') ?? seoGroup.categories[0];
+const category = { slug: seo.slug, title: seo.title };
+const ctxs: Record<string, PageCtx> = {
+  home: { kind: 'home', title: 'Главная' } as PageCtx,
+  catalog: { kind: 'catalog', title: 'Услуги', crumbs: [{ title: 'Услуги' }] } as PageCtx,
+  category: { kind: 'category', title: seo.title, crumbs: [{ href: '/uslugi/', title: 'Услуги' }, { title: seo.title }], direction: seoGroup.slug, category, children: seo.children.map((s) => ({ href: serviceUrl(seo, s), title: s.title })) } as PageCtx,
+  service: { kind: 'service', title: seo.children[0]?.title ?? 'SEO-аудит', crumbs: [{ href: '/uslugi/', title: 'Услуги' }, { href: `/uslugi/${seo.slug}/`, title: seo.title }, { title: seo.children[0]?.title ?? 'SEO-аудит' }], direction: seoGroup.slug, category } as PageCtx,
+  case: { kind: 'case', title: 'Пример кейса SEO', crumbs: [{ href: '/keisy/', title: 'Кейсы' }, { title: 'Пример кейса SEO' }] } as PageCtx,
+  about: { kind: 'about', title: 'О компании', crumbs: [{ title: 'О компании' }] } as PageCtx,
+  prices: { kind: 'prices', title: 'Цены', crumbs: [{ title: 'Цены' }] } as PageCtx,
+  contacts: { kind: 'contacts', title: 'Контакты', crumbs: [{ title: 'Контакты' }] } as PageCtx,
+  blog: { kind: 'blog', title: 'Блог', crumbs: [{ title: 'Блог' }] } as PageCtx,
+  text: { kind: 'text', title: 'Политика конфиденциальности', crumbs: [{ title: 'Политика конфиденциальности' }] } as PageCtx,
+  system: { kind: 'system', title: 'Страница не найдена' } as PageCtx,
+};
+const kindName: Record<string, string> = { home: 'главная', catalog: '«Все услуги»', category: 'категория «SEO-продвижение»', service: 'услуга', case: 'кейс', about: '«О компании»', prices: '«Цены»', contacts: '«Контакты»', blog: '«Блог»', text: 'документ', system: '404' };
+const slug = (s: string) => s.toLowerCase().replace(/[^a-zа-я0-9]+/gi, '-').replace(/^-|-$/g, '');
+---
+<Base title="Блоки" template="system" noTitle>
+  <Fragment slot="after">
+    <div class="container-x bd pb-16 pt-10 md:pt-14">
+      <Eyebrow>Дизайн-система · версия А</Eyebrow>
+      <h1 class="t-h1 mt-2 text-fg">Блоки</h1>
+      <p class="mt-2 max-w-[640px] text-base leading-6 text-fg-muted">Зачем каждый блок, где стоит, из чего состоит, как перестраивается на планшете и телефоне, что в нём движется и откуда тексты. Под описанием — живой пример: тот же компонент, что на сайте. Токены — на странице <a class="text-fg underline underline-offset-4" href="../tokens/">Токены</a>, компоненты — в <a class="text-fg underline underline-offset-4" href="../kit/">UI-ките</a>.</p>
+      <nav class="mt-8 flex flex-wrap gap-1" aria-label="Разделы">
+        <a class="bd-chip" href="#b-rules"><Roll>Как устроено</Roll></a>
+        <a class="bd-chip" href="#b-adapt"><Roll>Адаптация</Roll></a>
+        {blockGroups.map((g) => <a class="bd-chip" href={`#g-${slug(g.title)}`}><Roll>{g.title}</Roll></a>)}
+        <a class="bd-chip" href="#b-global"><Roll>Сквозные</Roll></a>
+        <a class="bd-chip" href="#b-new"><Roll>Новый блок</Roll></a>
+      </nav>
+
+      <section class="bd-sec" id="b-rules">
+        <h2 class="bd-h">Как устроено</h2>
+        <ol class="bd-list mt-6">
+          <li><b>Страница — это список блоков</b> сверху вниз, «блок:вариант» (<code>hero:page</code>, <code>cases:grid</code>). Списки — в <code>src/data/recipes.ts</code>. Какой компонент рисует блок — в <code>src/blocks/Block.astro</code>.</li>
+          <li><b>Один блок — несколько контекстов.</b> Компонент получает <code>ctx</code> (вид страницы, заголовок, категория) и сам выбирает тексты и вариант: например, Hero / Split на услуге, кейсе и «О компании» показывает разные факты.</li>
+          <li><b>Обёртка Section.</b> Каждый блок — <code>&lt;section data-block="…"&gt;</code> с якорем «блок-вариант», отступом 64 / 96 и контейнером. Фон секции на всю ширину. Отступы между блоками не добавлять — их даёт Section.</li>
+          <li><b>Две раскладки.</b> Либо заголовок блока сверху (SectionHead: «/ Раздел», H1, лид, справа «Все … ›»), либо две колонки <code>1fr / 1.4fr</code>: слева заголовок или фото, справа содержимое. Других сеток верхнего уровня нет.</li>
+          <li><b>Тексты — в данных.</b> <code>src/data/content.ts</code> и <code>sitemap.ts</code>. Где тексты пока лежат прямо в компоненте — это указано в описании блока.</li>
+          <li><b>Кнопки «Обсудить задачу»</b> открывают окно заявки (атрибут <code>data-lead</code>); у тарифов и услуг в окно передаётся тема.</li>
+        </ol>
+      </section>
+
+      <section class="bd-sec" id="b-adapt">
+        <h2 class="bd-h">Адаптация — общие правила</h2>
+        <ul class="bd-list bd-ul mt-6">
+          <li><b>Мобильная вёрстка по умолчанию</b>, шире — с префиксами <code>sm 640 · md 768 · lg 1024 · xl 1280</code>.</li>
+          <li><b>Две колонки <code>1fr / 1.4fr</code></b> — только с 1024. До этого левая колонка встаёт над правой.</li>
+          <li><b>Сетки карточек</b> растут ступенями: 1 → 2 → 3 (или 4). Зазор 12 на всех ширинах.</li>
+          <li><b>Типографика</b> переключается на 768: заголовки на телефоне на ступень меньше (H1 48 → 32, H3 32 → 24…).</li>
+          <li><b>Картинки держат пропорцию</b> (<code>aspect-*</code>): фото 4:5, обложки кейсов 4:5, слайдер 3:2 → 4:3 на телефоне, статьи 16:10, обложка кейса 21:9.</li>
+          <li><b>Таблицы не ломаются</b> — листаются вбок (минимум 720).</li>
+          <li><b>На телефоне прячем только декор</b>: стрелки в «Подходе», линию шкалы истории, оглавление документа, анонс широкой статьи. Смысловое содержимое не прячем.</li>
+          <li><b>Высота первого экрана</b> главной — ровно экран (<code>100svh</code>, не ниже 600): адресная строка мобильного браузера не обрезает кнопку.</li>
+          <li><b>Касание вместо наведения.</b> Всё, что раскрывается наведением (меню «Услуги»), раскрывается и кликом. Эффекты наведения на телефоне не нужны для понимания.</li>
+        </ul>
+      </section>
+    </div>
+
+    {blockGroups.map((g) => (
+      <>
+        <div class="container-x bd">
+          <section class="bd-sec" id={`g-${slug(g.title)}`}>
+            <h2 class="bd-h">{g.title}</h2>
+            {g.lead && <p class="mt-2 max-w-[640px] text-base leading-6 text-fg-muted">{g.lead}</p>}
+          </section>
+        </div>
+        {g.items.map((b) => (
+          <>
+            <div class="container-x bd">
+              <article class="bd-card mt-10 rounded-2xl bg-surface p-6 md:p-8" id={`b-${slug(b.name)}`}>
+                <div class="flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1">
+                  <h3 class="t-h3 text-fg">{b.name}</h3>
+                  <p class="text-sm leading-5 text-fg-muted"><code>{b.ids}</code> · <code>{b.file}</code></p>
+                </div>
+                <p class="mt-2 text-base leading-6 text-fg">{b.purpose}</p>
+                <p class="mt-1 text-sm leading-5 text-fg-muted">Где: {b.pages}</p>
+                <div class="mt-6 grid gap-6 lg:grid-cols-2 lg:gap-x-12">
+                  <div><p class="bd-k">Состав</p><ul class="bd-list bd-ul">{b.structure.map((x) => <li>{x}</li>)}</ul></div>
+                  <div><p class="bd-k">Адаптация</p><ul class="bd-list bd-ul">{b.adapt.map((x) => <li>{x}</li>)}</ul></div>
+                  {b.motion && <div><p class="bd-k">Движение и состояния</p><ul class="bd-list bd-ul">{b.motion.map((x) => <li>{x}</li>)}</ul></div>}
+                  <div>
+                    <p class="bd-k">Тексты и данные</p><p class="text-base leading-6 text-fg">{b.data}</p>
+                    {b.notes && <><p class="bd-k mt-6">Нюансы</p><ul class="bd-list bd-ul">{b.notes.map((x) => <li>{x}</li>)}</ul></>}
+                  </div>
+                </div>
+              </article>
+              {b.preview && <p class="mt-6 text-sm leading-5 text-fg-muted">Живой пример · контекст: {kindName[b.preview.kind]}</p>}
+            </div>
+            {b.preview && <div class="bd-prev"><Block id={b.preview.id} ctx={ctxs[b.preview.kind]} index={1} /></div>}
+          </>
+        ))}
+      </>
+    ))}
+
+    <div class="container-x bd pb-24">
+      <section class="bd-sec" id="b-global">
+        <h2 class="bd-h">Сквозные элементы</h2>
+        <p class="mt-2 max-w-[640px] text-base leading-6 text-fg-muted">Есть на каждой странице — живые примеры шапки, подвала и кнопки «Наверх» на этой же странице.</p>
+        <div class="mt-8 grid gap-3 md:grid-cols-2">
+          {globalDocs.map((d) => (
+            <div class="rounded-2xl bg-surface p-6">
+              <p class="t-h5 text-fg">{d.name}</p>
+              <p class="text-sm leading-5 text-fg-muted"><code>{d.file}</code></p>
+              <p class="mt-3 text-base leading-6 text-fg">{d.text}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section class="bd-sec" id="b-new">
+        <h2 class="bd-h">Как добавить блок</h2>
+        <ol class="bd-list mt-6">
+          <li>Проверить, не подходит ли существующий блок с другим контекстом — чаще всего подходит.</li>
+          <li>Компонент в <code>src/blocks/versions/a/</code>, обёрнутый в <code>Section</code>; в шапке файла — комментарий: что это, состав, адаптация, нюансы.</li>
+          <li>Только роли цвета и стили <code>t-*</code>, отступы кратны 4, общие компоненты из кита (Btn, Badge, SectionHead, карточки).</li>
+          <li>Зарегистрировать в <code>Block.astro</code> (<code>versions</code> — для главной, <code>innerA</code> — для внутренних) и добавить «блок:вариант» в <code>recipes.ts</code>.</li>
+          <li>Тексты — в <code>content.ts</code>.</li>
+          <li>Описание — в <code>src/data/blocks-docs.ts</code> (появится здесь). В Figma — набор с вариантами Breakpoint=Desktop / Mobile на странице «Блоки».</li>
+          <li>Проверить на 390, 768, 1024, 1440, в тёмной теме (<code>?theme=dark</code>) и с «Уменьшить движение».</li>
+        </ol>
+      </section>
+    </div>
+  </Fragment>
+</Base>
+
+<style>
+  .bd-sec { margin-top: 96px; scroll-margin-top: 96px; }
+  .bd-card { scroll-margin-top: 96px; }
+  .bd-h { font-family: var(--font-display); font-weight: 400; font-size: 32px; line-height: 40px; letter-spacing: -0.02em; color: var(--fg); font-variant-ligatures: none; padding-top: 24px; border-top: 1px solid var(--stroke); }
+  .bd-chip { display: flex; height: 32px; align-items: center; border-radius: 12px; background: var(--surface); padding: 0 12px; font-size: 14px; font-weight: 500; color: var(--fg); }
+  .bd-k { margin-bottom: 8px; font-size: 14px; line-height: 20px; color: var(--fg-muted); }
+  .bd-list { display: grid; gap: 8px; font-size: 16px; line-height: 24px; color: var(--fg); list-style: none; padding: 0; }
+  ol.bd-list { counter-reset: n; max-width: 760px; gap: 12px; }
+  ol.bd-list > li { counter-increment: n; display: grid; grid-template-columns: 40px 1fr; }
+  ol.bd-list > li::before { content: '/ ' counter(n, decimal-leading-zero); color: var(--fg-muted); font-size: 14px; }
+  .bd-ul > li { position: relative; padding-left: 20px; }
+  .bd-ul > li::before { content: '/'; position: absolute; left: 0; color: var(--brand); font-weight: 800; }
+  .bd-ul { max-width: 760px; }
+  .bd-list b { font-weight: 500; }
+  .bd code { font-family: ui-monospace, 'JetBrains Mono', monospace; font-size: .875em; color: var(--fg); background: var(--stroke); border-radius: 4px; padding: 1px 4px; }
+  /* живой пример — отделён пунктиром сверху и снизу */
+  .bd-prev { position: relative; margin-top: 16px; border-block: 1px dashed var(--stroke); }
+</style>

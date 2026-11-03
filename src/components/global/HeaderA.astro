@@ -9,12 +9,13 @@
  * Десктоп (от 1024px) — «три острова»: логотип без фона слева, меню — стеклянная капсула по центру, телефон и кнопка справа;
  *   между ними видна страница. После прокрутки телефон прячется. «Услуги» раскрываются белой панелью под капсулой, страница под ней слегка размывается.
  * Логотип: «agency» печатается при первом заходе (один раз за визит), курсор цвета бренда гаснет.
- * Мобильные: плашка с бургером, меню — белая панель под ней.
+ * Мобильные: плашка с бургером; меню на весь экран, внизу закреплены «Обсудить задачу» (основная без стрелки, на всю ширину) и телефон — вторичная кнопка с обводкой (иконка + номер, звонит по нажатию).
  */
 import { groups, mainNav, catUrl } from '@/data/sitemap';
 import { categoryCard } from '@/data/content';
 import { url } from '@/lib/url';
 import MoreLink from '../../blocks/versions/a/MoreLink.astro';
+import Btn from '../../blocks/versions/a/Btn.astro';
 
 const navRest = mainNav.filter((i) => i.href !== '/uslugi/');
 const [konsalting, digital] = groups;
@@ -93,7 +94,7 @@ const noDot = (s?: string) => s?.replace(/\.$/, '');
     </div>
 
     <!-- ===== Мобильное меню ===== -->
-    <div class="ha-mob overscroll-contain px-4 pb-8 pt-4 lg:hidden" id="ha-mob" hidden data-ha-mob data-lenis-prevent>
+    <div class="ha-mob overscroll-contain px-3 pt-4 lg:hidden" id="ha-mob" hidden data-ha-mob data-lenis-prevent>
       <details class="py-3">
         <summary class="flex cursor-pointer list-none items-center justify-between t-h5">Услуги <svg class="ha-mob-chev size-6 text-fg transition-transform duration-200" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></summary>
         {groups.map((g) => (
@@ -102,12 +103,13 @@ const noDot = (s?: string) => s?.replace(/\.$/, '');
             {g.categories.map((c) => <a class="block py-2 font-normal text-fg" href={url(catUrl(c))}>{c.title}</a>)}
           </div>
         ))}
-        <a class="mt-2 block py-2 text-sm text-fg-muted underline underline-offset-4" href={url('/uslugi/')}>Все услуги</a>
+        <MoreLink class="mt-2 inline-block py-2" href={url('/uslugi/')}>Все услуги</MoreLink>
       </details>
       {navRest.map((i) => <a class="t-h5 block py-3" href={url(i.href)}>{i.title}{i.draft && <sup class="ml-1 text-sm text-fg-muted">(?)</sup>}</a>)}
-      <div class="mt-6 flex flex-col items-start gap-3 text-sm text-fg-muted">
-        <a class="inline-flex h-10 items-center rounded-[5px] bg-action px-4 font-medium text-on-action" href={url('/kontakty/')} data-lead="">Обсудить задачу</a>
-        <a class="text-base text-fg" href="tel:+70000000000">+7 XXX XXX-XX-XX</a>
+      <!-- Действия прижаты к низу экрана (зона большого пальца) и не уезжают, когда список «Услуг» прокручивается -->
+      <div class="ha-mob-actions sticky bottom-0 mt-auto flex flex-col gap-2 bg-page pb-[max(16px,env(safe-area-inset-bottom))] pt-6">
+        <Btn full noIcon href={url('/kontakty/')} data-lead="">Обсудить задачу</Btn>
+        <Btn full variant="outline" href="tel:+70000000000" aria-label="Позвонить: +7 XXX XXX-XX-XX"><svg class="mr-2 inline size-4 align-[-3px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>+7 XXX XXX-XX-XX</Btn>
       </div>
     </div>
   </div>
@@ -131,7 +133,10 @@ const noDot = (s?: string) => s?.replace(/\.$/, '');
     /* двойной [data-mob] — сильнее правила стекла после прокрутки ([data-ha][data-scrolled]) */
     [data-ha][data-mob][data-mob] { bottom: 0; display: flex; flex-direction: column; background: var(--page); -webkit-backdrop-filter: none; backdrop-filter: none; }
     [data-ha][data-mob] .ha-bar { flex: 1; min-height: 0; display: flex; flex-direction: column; box-shadow: none; }
-    [data-ha][data-mob] .ha-mob { flex: 1; min-height: 0; overflow-y: auto; }
+    [data-ha][data-mob] .ha-mob { flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; }
+    [data-ha][data-mob] .ha-mob > * { flex-shrink: 0; }
+    /* над кнопками — мягкое затухание, когда длинный список уходит под них */
+    .ha-mob-actions::before { content: ''; position: absolute; left: 0; right: 0; bottom: 100%; height: 24px; pointer-events: none; background: linear-gradient(transparent, var(--page)); }
     /* кнопка «Наверх» не висит поверх меню */
     :global(html.ha-mob-open .to-top) { display: none; }
   }
@@ -215,7 +220,12 @@ const noDot = (s?: string) => s?.replace(/\.$/, '');
     matchMedia('(min-width: 1024px)').addEventListener('change', (e) => { if (e.matches && !mob.hidden) setMob(false); });
 
     // После прокрутки за шапкой появляется полоса размытого стекла
-    const onScroll = () => root.toggleAttribute('data-scrolled', scrollY > 20);
+    // Пока шапка над первым экраном главной — data-on-hero (в тёмной теме кнопки там белые, потом обычные)
+    const hero = document.querySelector('.hero-a-inner')?.closest('section');
+    const onScroll = () => {
+      root.toggleAttribute('data-scrolled', scrollY > 20);
+      root.toggleAttribute('data-on-hero', !!hero && hero.getBoundingClientRect().bottom > root.offsetHeight);
+    };
     onScroll();
     addEventListener('scroll', onScroll, { passive: true });
 

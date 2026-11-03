@@ -3,14 +3,14 @@
  * А · кнопка — по wearedirect.co (раздел «03 / Selected work», кнопка View More), как и кнопка в шапке:
  * две плашки через зазор 2px — текст и квадрат с иконкой «стрелка в круге», скругление 5px, высота 40.
  * При наведении цвет плашек не меняется: текст перекатывается (уезжает вверх, снизу въезжает копия), стрелка ↗ поворачивается в →, у «скачать» стрелка опускается.
- * Варианты: dark — чёрные плашки (основная); outline — вторичная: одна плашка с обводкой 1,5px, без заливки и без иконки,
- * при наведении обводка темнеет; light — серая плашка текста и чёрная иконка.
+ * Варианты: dark — чёрные плашки (основная); outline — вторичная (единственная): одна плашка с обводкой 1px, без заливки и без плашки-иконки;
+ * иконку можно поставить перед текстом прямо в подписи (как телефон в мобильном меню).
  * as — a | button | span (span — когда вся карточка уже ссылка). full — текстовая плашка растягивается. noIcon — без плашки с иконкой. icon="download" — иконка «скачать».
  */
 import type { HTMLAttributes } from 'astro/types';
 type Props = HTMLAttributes<'a'> & HTMLAttributes<'button'> & {
   as?: 'a' | 'button' | 'span';
-  variant?: 'dark' | 'light' | 'outline';
+  variant?: 'dark' | 'outline';
   full?: boolean;
   /** Без плашки с иконкой (например, «Показать ещё») */
   noIcon?: boolean;
@@ -22,12 +22,10 @@ const { as = 'a', variant = 'dark', full = false, noIcon = false, icon: iconName
 const Tag = as;
 const txt = {
   dark: 'bg-action text-on-action',
-  light: 'bg-stroke text-fg',
-  outline: 'text-fg shadow-[inset_0_0_0_1.5px_var(--outline)]',
+  outline: 'text-fg shadow-[inset_0_0_0_1px_var(--outline)]',
 }[variant];
 const ic = {
   dark: 'bg-action text-on-action',
-  light: 'bg-action text-on-action',
   outline: '',
 }[variant];
 const icon = variant !== 'outline' && !noIcon;

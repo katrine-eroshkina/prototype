@@ -22,11 +22,11 @@ const messengers = [
   { t: 'Telegram', icon: 'telegram' as const, href: 'https://t.me/' },
   { t: 'MAX', icon: 'max' as const, href: '#' },
 ];
-// Книга основателя: обложка, название и ссылки — заглушки, ждём от заказчика
+// Книга основателя: обложка и название от заказчика; описание и ссылки — заглушки, ждём от заказчика
 const book = {
-  title: 'Название книги',
+  title: 'Инструменты рекламы и маркетинга для малого и среднего бизнеса',
   about: 'О чём книга и какую задачу бизнеса помогает решить. Для кого она и что читатель заберёт с собой',
-  cover: '',
+  cover: `${base}/books/instrumenty-reklamy.webp`,
   links: [
     { t: 'Печатная', icon: BookOpen, href: '#' },
     { t: 'Аудиокнига', icon: Headphones, href: '#' },
@@ -54,7 +54,7 @@ const book = {
         <div class="bk-wrap relative mb-6 ml-2 mt-2 w-24 md:absolute md:left-6 md:top-1/2 md:m-0 md:w-28 md:-translate-y-1/2" aria-hidden={book.cover ? undefined : 'true'}>
           <div class="bk">
             {book.cover
-              ? <img class="bk-cover object-cover" src={book.cover} alt={`Обложка книги «${book.title}»`} loading="lazy" />
+              ? <span class="bk-cover"><img class="size-full rounded-[inherit] object-cover" src={book.cover} alt={`Обложка книги «${book.title}»`} loading="lazy" width="480" height="658" /></span>
               : <span class="bk-cover bk-ph"><span class="bk-ph-brand">burkov<b>/</b></span><span class="bk-ph-title">{book.title}</span></span>}
             <span class="bk-pages"></span>
           </div>
@@ -84,7 +84,7 @@ const book = {
 <style>
   /* Книга: перспектива, обложка повёрнута к зрителю, справа — срез страниц (толщина 12 / 16) */
   .bk-wrap { perspective: 900px; }
-  .bk { --t: 12px; position: relative; aspect-ratio: 2 / 3; transform-style: preserve-3d;
+  .bk { --t: 12px; position: relative; aspect-ratio: 480 / 658; /* пропорции обложки от заказчика */ transform-style: preserve-3d;
     transform: rotateY(-28deg) rotateX(4deg); transform-origin: 30% 50%;
     transition: transform .5s cubic-bezier(.2, .7, .2, 1); }
   @media (min-width: 768px) { .bk { --t: 16px; } }

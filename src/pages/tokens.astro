@@ -1,0 +1,371 @@
+---
+/**
+ * Токены версии А — подробное описание: что это, где используется, почему так и чего нельзя.
+ * Доступна только по ссылке /tokens/ (в меню и подвале её нет), как /kit/ и /blocks/.
+ * Значения в таблицах — те же, что в src/styles/global.css и в Figma (коллекции Primitives и Semantic).
+ * Контраст считается при сборке из hex, поэтому при смене цвета цифры обновятся сами.
+ */
+import Base from '../layouts/Base.astro';
+import Eyebrow from '../blocks/versions/a/Eyebrow.astro';
+import Roll from '../blocks/versions/a/Roll.astro';
+
+/* ---------- контраст по WCAG ---------- */
+const lum = (hex: string) => {
+  const c = hex.replace('#', '').match(/../g)!.map((x) => parseInt(x, 16) / 255).map((v) => (v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4));
+  return 0.2126 * c[0] + 0.7152 * c[1] + 0.0722 * c[2];
+};
+const contrast = (a: string, b: string) => { const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p); return ((x + 0.05) / (y + 0.05)).toFixed(1); };
+
+/** Базовая палитра (Primitives). В коде напрямую не используется — только через роли. */
+const palette = [
+  { name: 'white', hex: '#FFFFFF', note: 'фон страницы, текст на кнопках и на синем (светлая тема)' },
+  { name: 'gray-50', hex: '#FAFAF9', note: 'плашки и карточки (светлая)' },
+  { name: 'gray-200', hex: '#ECECEA', note: 'линии (светлая), текст (тёмная)' },
+  { name: 'gray-500', hex: '#878787', note: 'вторичный текст (обе темы)' },
+  { name: 'gray-800', hex: '#2A2B2E', note: 'линии (тёмная)' },
+  { name: 'gray-850', hex: '#18191B', note: 'плашки и карточки (тёмная)' },
+  { name: 'gray-900', hex: '#2C2C2C', note: 'текст (светлая)' },
+  { name: 'gray-950', hex: '#0C0D0F', note: 'кнопки (светлая), фон страницы (тёмная)' },
+  { name: 'blue-500', hex: '#127EEE', note: 'бренд (светлая); в коде задан как oklch(0.6 0.19 255)' },
+  { name: 'slate-800', hex: '#212B37', note: 'плашки кнопок и бейджей (тёмная)' },
+  { name: 'cyan-300', hex: '#6FC7EF', note: 'текст на кнопках и бейджах, акценты (тёмная)' },
+];
+
+/** Роли (Semantic). Имя роли = CSS-переменная --имя = Tailwind-цвет = переменная в Figma. */
+const roles = [
+  { name: 'fg', light: '#2C2C2C', lightRef: 'gray-900', dark: '#ECECEA', darkRef: 'gray-200', cls: 'text-fg · bg-fg · border-fg',
+    where: 'Заголовки, основной текст, цифры результатов, текст ссылок и меню, нижняя линия полей формы, иконки в тексте. Тёмные квадраты со стрелкой («Подход», «Что входит») — bg-fg с иконкой text-page.',
+    why: 'Не чистый чёрный: #2C2C2C мягче на белом и не «режет» глаз в длинном тексте.',
+    dont: 'Не красить fg кнопки — для них action. Не писать #000 и #2c2c2c в блоках.' },
+  { name: 'fg-muted', light: '#878787', lightRef: 'gray-500', dark: '#878787', darkRef: 'gray-500', cls: 'text-fg-muted',
+    where: 'Лиды под заголовками, подписи, мета (дата, рубрика), «было» в «было → стало», «/ 01» в номерах, подпись к полю, зачёркнутое «как обычно», иконки-помощники (копировать, документ).',
+    why: 'Одна вторичная ступень вместо нескольких серых — проще держать иерархию.',
+    dont: 'Контраст на белом всего ~3.6 — только для вспомогательного текста 14 px и крупнее. Важное (цена, условие, ошибка) — fg.' },
+  { name: 'fg-inverse', light: '#FFFFFF', lightRef: 'white', dark: '#FFFFFF', darkRef: 'white', cls: 'text-fg-inverse · text-fg-inverse/70',
+    where: 'Белый текст поверх фото и затемнения: цифры и подписи на обложках кейсов, подпись под окном отзыва и в лайтбоксе скриншотов.',
+    why: 'Фото и затемнение не зависят от темы, поэтому и текст на них в обеих темах белый.',
+    dont: 'Не использовать на кнопках и бейджах — для этого on-action и on-brand (в тёмной теме они голубые).' },
+  { name: 'stroke', light: '#ECECEA', lightRef: 'gray-200', dark: '#2A2B2E', darkRef: 'gray-800', cls: 'border-stroke · bg-stroke',
+    where: 'Линии и разделители (таблицы, «Подход», тарифы над списком), текстовая плашка светлой кнопки, стрелки слайдера кейсов, фон фильтра при наведении, заглушка обложки книги.',
+    why: 'Линия едва заметна — делит, но не рисует сетку. Сайт держится на плашках, а не на рамках.',
+    dont: 'Не делать линии темнее и толще 1 px. Рамки вокруг карточек не нужны — карточки отделяются фоном surface.' },
+  { name: 'surface', light: '#FAFAF9', lightRef: 'gray-50', dark: '#18191B', darkRef: 'gray-850', cls: 'bg-surface',
+    where: 'Карточки (тарифы, отзывы, услуги, кейсы-метрики), строки аккордеонов (услуги, FAQ), карточка книги, фильтры, заглушки картинок и карты.',
+    why: 'Едва тёплый серый: на белом читается как «поднятая» плашка без тени.',
+    dont: 'Не класть surface на surface. Для вложенного — page (белая плашка внутри серой) или stroke.' },
+  { name: 'page', light: '#FFFFFF', lightRef: 'white', dark: '#0C0D0F', darkRef: 'gray-950', cls: 'bg-page · text-page',
+    where: 'Фон страницы, плашка шапки, окна (заявка), белая плашка внутри серой, иконка на тёмном квадрате (bg-fg + text-page), галочка в чекбоксе.',
+    why: 'В тёмной теме page становится почти чёрным — всё, что «вырезано» цветом фона, остаётся вырезанным.',
+    dont: 'Не писать bg-white — в тёмной теме он останется белым.' },
+  { name: 'action', light: '#0C0D0F', lightRef: 'gray-950', dark: '#212B37', darkRef: 'slate-800', cls: 'bg-action',
+    where: 'Только фон кнопок: основная кнопка и её иконка, «Обсудить задачу» в шапке, «Наверх», выбранный фильтр, стрелка слайдера при наведении.',
+    why: 'Чуть темнее текста — кнопка весомее заголовка. В тёмной теме — приглушённая сине-серая плашка: яркий синий на чёрном выглядел бы резко.',
+    dont: 'Не использовать для текста и линий. При наведении цвет кнопки не меняется (перекатывается текст, поворачивается стрелка).' },
+  { name: 'on-action', light: '#FFFFFF', lightRef: 'white', dark: '#6FC7EF', darkRef: 'cyan-300', cls: 'text-on-action',
+    where: 'Текст и иконка на фоне action: подписи кнопок, стрелка в круге, стрелка «Наверх», текст выбранного фильтра.',
+    why: 'Отдельная роль, потому что в тёмной теме текст на кнопке голубой, а белый текст на фото — нет.',
+    dont: 'Не использовать вне плашки action.' },
+  { name: 'brand', light: '#127EEE', lightRef: 'blue-500', dark: '#6FC7EF', darkRef: 'cyan-300', cls: 'text-brand · bg-brand',
+    where: 'Акценты: слэш в логотипе и в «/ Раздел», курсор в логотипе подвала, зачёркивание и подчёркивание в «Подходе», линии и точки схем этапов, метки на карте, точки шкалы истории, стрелка карточки при наведении, ссылки в тексте статьи.',
+    why: 'Синий — единственный цветной акцент сайта, поэтому его мало: только то, на что нужно посмотреть.',
+    dont: 'Не делать синие фоны с текстом (для этого brand-bg + on-brand). Не красить синим заголовки целиком.' },
+  { name: 'brand-bg', light: '#CEEBFD', lightRef: 'blue-100', dark: '#212B37', darkRef: 'slate-800', cls: 'bg-brand-bg',
+    where: 'Фон бейджей (услуги, рубрики, «Чаще выбирают»), кружков с галочкой в списках, кружка «Заявка отправлена».',
+    why: 'Тональная плашка в обеих темах: в светлой — светло-голубая с синим текстом, в тёмной — тёмно-синяя с голубым. Так бейджи выглядят одинаково на любом фоне.',
+    dont: 'Не использовать для крупных плашек и секций — только мелкие метки.' },
+  { name: 'on-brand', light: '#127EEE', lightRef: 'blue-500', dark: '#6FC7EF', darkRef: 'cyan-300', cls: 'text-on-brand',
+    where: 'Текст бейджа, галочка в кружке.',
+    why: 'Пара к brand-bg. В обеих темах равен brand: синий в светлой, голубой в тёмной.',
+    dont: 'Не использовать вне brand-bg.' },
+];
+
+/** Пары для проверки контраста */
+const pairs = [
+  { t: 'Основной текст', fg: 'fg', bg: 'page', min: 4.5 },
+  { t: 'Основной текст на плашке', fg: 'fg', bg: 'surface', min: 4.5 },
+  { t: 'Вторичный текст', fg: 'fg-muted', bg: 'page', min: 3 },
+  { t: 'Вторичный текст на плашке', fg: 'fg-muted', bg: 'surface', min: 3 },
+  { t: 'Текст кнопки', fg: 'on-action', bg: 'action', min: 4.5 },
+  { t: 'Текст бейджа', fg: 'on-brand', bg: 'brand-bg', min: 4.5 },
+  { t: 'Акцент на фоне', fg: 'brand', bg: 'page', min: 3 },
+];
+const byName = Object.fromEntries(roles.map((r) => [r.name, r]));
+const pairRows = pairs.map((p) => ({ ...p, l: contrast(byName[p.fg].light, byName[p.bg].light), d: contrast(byName[p.fg].dark, byName[p.bg].dark) }));
+
+/** Служебные полупрозрачные переменные (без Tailwind-класса; только в стилях) */
+const utility = [
+  { name: '--glass', light: 'white 60 %', dark: '#0C0D0F 60 %', where: 'Полоса стекла за шапкой после прокрутки (с размытием 12)' },
+  { name: '--glass-strong', light: 'white 70 %', dark: '#18191B 70 %', where: 'Капсула меню в шапке на десктопе (размытие 14)' },
+  { name: '--glass-soft', light: 'white 25 %', dark: '#0C0D0F 35 %', where: 'Размытие страницы под раскрытым меню «Услуги»' },
+  { name: '--hairline', light: '#2C2C2C 6 %', dark: 'white 8 %', where: 'Тонкая обводка и мягкая тень плашки шапки и панели «Услуги»' },
+  { name: '--outline', light: '= fg (#2C2C2C)', dark: '= fg', where: 'Обводка 1 px вторичной кнопки (outline)' },
+];
+
+/** Текстовые стили. В коде — классы t-*, в Figma — стили с теми же именами (мобильные — Mobile/…). */
+const type = [
+  { name: 'Display', cls: 't-display', d: '64 / 64', m: '40 / 40', w: 400, use: 'Заголовок первого экрана главной, «404»' },
+  { name: 'H1', cls: 't-h1', d: '48 / 56', m: '32 / 40', w: 400, use: 'Заголовок страницы и заголовок блока, фраза «Подхода», форма заявки' },
+  { name: 'H2', cls: 't-h2', d: '40 / 48', m: '32 / 40', w: 400, use: 'Цифры «было → стало», годы истории, метрики' },
+  { name: 'H3', cls: 't-h3', d: '32 / 40', m: '24 / 32', w: 400, use: 'Цены, цитата основателя, подзаголовки кейса и документа, заголовок окна' },
+  { name: 'H4', cls: 't-h4', d: '24 / 32', m: '20 / 28', w: 400, use: 'Названия услуг, тарифов, карточек; значения фактов на первом экране' },
+  { name: 'H5', cls: 't-h5', d: '20 / 28', m: '—', w: 400, use: 'Подписи карточек, вопросы FAQ, контакты, пункты мобильного меню, название книги' },
+  { name: 'Body', cls: 't-body', d: '16 / 24', m: '—', w: 400, use: 'Основной текст, лиды, пункты списков, имена' },
+  { name: 'Small', cls: 't-small', d: '14 / 20', m: '—', w: 400, use: 'Подписи, мета, хлебные крошки, согласие' },
+  { name: 'Label', cls: 't-label', d: '14 / 20', m: '—', w: 500, use: 'Кнопки, ссылки «… ›», меню в шапке' },
+  { name: 'Caption', cls: 't-caption', d: '12 / 16', m: '—', w: 500, use: 'Бейджи, подпись карты' },
+];
+
+const breakpoints = [
+  { bp: '< 640', name: 'телефон', what: 'Одна колонка. Поля контейнера 16. Отступ секций 64 сверху и снизу. Мобильная типографика. Шапка — плашка с логотипом и бургером.' },
+  { bp: 'sm · 640', name: 'большой телефон', what: 'Поля 24. Появляются кнопки в шапке. Сетки карточек — 2 колонки (галочки, этапы, история, метрики).' },
+  { bp: 'md · 768', name: 'планшет', what: 'Десктопная типографика (t-* переключаются здесь). Отступ секций 96. Отзывы, кейсы, статьи — 2 колонки. Книга встаёт слева от текста.' },
+  { bp: 'lg · 1024', name: 'ноутбук', what: 'Поля 40. Главная раскладка 1fr / 1.4fr включается. Меню в шапке вместо бургера. Тарифы и кейсы — 3 колонки, этапы и команда — 4.' },
+  { bp: 'xl · 1280', name: 'десктоп', what: 'Контейнер упирается в 1280 (контент 1200). Каталог услуг — 3 колонки. Телефон в шапке.' },
+];
+
+const space = [4, 8, 12, 16, 20, 24, 32, 40, 48, 64, 80, 96];
+const spaceUse: Record<number, string> = { 4: 'подпись под цифрой, бейджи между собой', 8: 'заголовок → лид, две плашки кнопки (2)', 12: 'между карточками в сетке (gap-3), между пунктами списка', 16: 'поля контейнера на телефоне, между плашками аккордеона', 24: 'поля карточки на телефоне, между пунктами контактов', 32: 'поля карточки, лид → кнопка', 40: 'поля контейнера на ноутбуке, между блоком книги и «Написать лично»', 48: 'заголовок блока → содержимое', 64: 'отступ секции на телефоне, колонки 1fr / 1.4fr', 96: 'отступ секции на десктопе' };
+
+const radii = [
+  { r: '5px', name: 'radius-btn · 5', use: 'Кнопки (обе плашки), «Наверх», иконка-логотип' },
+  { r: '12px', name: 'radius-md · 12', use: 'Бейджи, фильтры, панель «Услуги», капсула меню' },
+  { r: '16px', name: 'radius-card · 16', use: 'Карточки, плашки аккордеона, обложки, карта, окна' },
+  { r: '9999px', name: 'radius-full', use: 'Кружки галочек, точки на карте и шкале, капсула меню в шапке' },
+];
+
+const motion = [
+  { name: 'Перекатка текста (Roll)', v: '0,4 с · cubic-bezier(.65, 0, .25, 1)', where: 'Все текстовые ссылки и подписи кнопок: текст уезжает вверх, снизу въезжает копия. Цвет при этом не меняется.' },
+  { name: 'Стрелка кнопки', v: '0,2 с · ease', where: 'Стрелка в круге поворачивается на 45° (↗ → →); у «Скачать» стрелка опускается на 2 px; у «Наверх» поднимается.' },
+  { name: 'Слайдер кейсов', v: '~0,5 с до места, перелёт 1,5 %, возврат к ~1 с', where: 'Пружина; соседние элементы едут в разные стороны, каждый в своём окошке.' },
+  { name: 'Панель «Услуги»', v: '0,35 с · cubic-bezier(.2, .7, .2, 1); пункты лесенкой по 35 мс', where: 'Раскрытие меню в шапке; страница под ним размывается.' },
+  { name: 'Окна (заявка)', v: '0,25 с · ease', where: 'Окно поднимается на 12 px и проявляется, фон затемняется.' },
+  { name: 'Книга', v: '0,5 с · cubic-bezier(.2, .7, .2, 1)', where: 'При наведении на карточку разворачивается с −28° до −10° и поднимается на 6 px.' },
+  { name: 'Печать логотипа', v: '110 мс на букву, курсор мигает 1,1 с', where: 'Только логотип в подвале, когда подвал появился на экране. В шапке печати нет.' },
+  { name: 'Фон первого экрана', v: 'блик 14 с (проход — первые 56 %), зерно 0,32 с шагами', where: 'В тёмной теме один прогресс --hb-p двигает и голубой шарик, и белый блик в буквах.' },
+  { name: '«Подход»', v: 'по прокрутке', where: 'Слова проявляются, линия зачёркивания и подчёркивания растёт; строки «как обычно → у нас» по очереди. Назад не гаснет.' },
+  { name: 'Плавная прокрутка', v: 'Lenis · lerp 0,1', where: 'Весь сайт. Внутри окон и мобильного меню — обычная прокрутка.' },
+];
+---
+<Base title="Токены" template="system" noTitle>
+  <div class="tk pb-24 pt-10 md:pt-14">
+    <Eyebrow>Дизайн-система · версия А</Eyebrow>
+    <h1 class="t-h1 mt-2 text-fg">Токены</h1>
+    <p class="mt-2 max-w-[640px] text-base leading-6 text-fg-muted">Что это, где используется, почему так и чего нельзя. Для дизайнера и программиста. Значения совпадают с <code>global.css</code> и с переменными в Figma. Посмотреть тёмную тему этой страницы: <a class="text-fg underline underline-offset-4" href="?theme=dark">?theme=dark</a> · <a class="text-fg underline underline-offset-4" href="?theme=light">светлая</a>.</p>
+    <nav class="mt-8 flex flex-wrap gap-1" aria-label="Разделы">
+      {['Как устроено', 'Роли цвета', 'Контраст', 'Палитра', 'Служебные', 'Типографика', 'Брейкпоинты', 'Отступы', 'Скругления', 'Движение', 'Поведение', 'Тёмная тема', 'Новый токен'].map((t, i) => <a class="flex h-8 items-center rounded-md bg-surface px-3 text-sm font-medium text-fg" href={`#t${i + 1}`}><Roll>{t}</Roll></a>)}
+    </nav>
+
+    <!-- 1 -->
+    <section class="tk-sec" id="t1">
+      <h2 class="tk-h">Как устроено</h2>
+      <ol class="tk-list mt-6">
+        <li><b>Два уровня.</b> Палитра — сами оттенки (gray-900, blue-500…). Роли — зачем красим (fg — текст, action — кнопка). В блоках и макетах используются <b>только роли</b>.</li>
+        <li><b>Одно имя везде.</b> Роль <code>fg</code> — это CSS-переменная <code>--fg</code>, Tailwind-классы <code>text-fg / bg-fg / border-fg</code> и переменная <code>fg</code> в Figma (коллекция Semantic, в Dev Mode показывает <code>var(--fg)</code>).</li>
+        <li><b>Тема меняет роли, а не блоки.</b> Светлая и тёмная — это два набора значений одних и тех же ролей. Блок не знает, какая сейчас тема.</li>
+        <li><b>Никаких hex в блоках.</b> Если нужен цвет, которого нет среди ролей, — сначала добавляем роль (см. «Новый токен»). Исключения — фон первого экрана (свой набор градиентов в HeroBg) и обложки-заглушки.</li>
+        <li><b>Размеры кратны 4.</b> Отступы, высоты, размеры иконок и плашек. Шрифт — только Inter.</li>
+      </ol>
+    </section>
+
+    <!-- 2 -->
+    <section class="tk-sec" id="t2">
+      <h2 class="tk-h">Роли цвета</h2>
+      <p class="mt-2 max-w-[640px] text-sm leading-5 text-fg-muted">11 ролей. Слева образцы для светлой и тёмной темы. «Где» — реальные места на сайте, «Почему» — логика выбора, «Нельзя» — частые ошибки.</p>
+      <div class="mt-8 grid gap-3">
+        {roles.map((r) => (
+          <article class="grid gap-6 rounded-2xl bg-surface p-6 md:grid-cols-[200px_1fr] md:p-8">
+            <div>
+              <div class="flex gap-2">
+                <span class="tk-sw" style={`background:${r.light}`}><span class="tk-sw-l">Light</span></span>
+                <span class="tk-sw" style={`background:${r.dark}`}><span class="tk-sw-l">Dark</span></span>
+              </div>
+              <p class="t-h5 mt-4 text-fg">{r.name}</p>
+              <p class="text-sm leading-5 text-fg-muted">{r.lightRef} → {r.darkRef}</p>
+              <p class="mt-1 text-sm leading-5 text-fg-muted">{r.light} · {r.dark}</p>
+            </div>
+            <div class="grid gap-3 text-base leading-6 text-fg">
+              <p><span class="tk-k">Классы</span><code>{r.cls}</code> · <code>var(--{r.name})</code></p>
+              <p><span class="tk-k">Где</span>{r.where}</p>
+              <p><span class="tk-k">Почему</span>{r.why}</p>
+              <p><span class="tk-k">Нельзя</span>{r.dont}</p>
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+
+    <!-- 3 -->
+    <section class="tk-sec" id="t3">
+      <h2 class="tk-h">Контраст</h2>
+      <p class="mt-2 max-w-[640px] text-sm leading-5 text-fg-muted">По WCAG: для обычного текста нужно 4.5, для крупного и вспомогательного — 3. Считается из значений ролей при сборке страницы.</p>
+      <div class="mt-6 overflow-x-auto">
+        <table class="tk-table min-w-[560px]">
+          <thead><tr><th>Пара</th><th>Роли</th><th>Light</th><th>Dark</th><th>Минимум</th></tr></thead>
+          <tbody>
+            {pairRows.map((p) => (
+              <tr><td>{p.t}</td><td><code>{p.fg}</code> на <code>{p.bg}</code></td>
+                <td class:list={[+p.l < p.min && 'tk-bad']}>{p.l}</td><td class:list={[+p.d < p.min && 'tk-bad']}>{p.d}</td><td>{p.min}</td></tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="mt-4 text-sm leading-5 text-fg-muted">Синий акцент в светлой теме (≈4.0) не используем мелким текстом — только слэши, линии и метки. Ссылки в тексте статьи — 18 px, этого достаточно.</p>
+    </section>
+
+    <!-- 4 -->
+    <section class="tk-sec" id="t4">
+      <h2 class="tk-h">Палитра</h2>
+      <p class="mt-2 max-w-[640px] text-sm leading-5 text-fg-muted">Сами оттенки (в Figma — коллекция Primitives, скрыта из выбора цвета). Напрямую в блоках не используются.</p>
+      <div class="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+        {palette.map((c) => (
+          <div>
+            <div class="h-16 rounded-2xl ring-1 ring-inset ring-black/5" style={`background:${c.hex}`}></div>
+            <p class="mt-2 text-sm font-medium leading-5 text-fg">{c.name}</p>
+            <p class="text-sm leading-5 text-fg-muted">{c.hex}</p>
+            <p class="mt-1 text-sm leading-5 text-fg-muted">{c.note}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <!-- 5 -->
+    <section class="tk-sec" id="t5">
+      <h2 class="tk-h">Служебные переменные</h2>
+      <p class="mt-2 max-w-[640px] text-sm leading-5 text-fg-muted">Полупрозрачные цвета для стекла, тонких линий и обводок. Классов Tailwind у них нет — только в стилях компонентов.</p>
+      <div class="mt-6 overflow-x-auto">
+        <table class="tk-table min-w-[560px]">
+          <thead><tr><th>Переменная</th><th>Light</th><th>Dark</th><th>Где</th></tr></thead>
+          <tbody>{utility.map((u) => <tr><td><code>{u.name}</code></td><td>{u.light}</td><td>{u.dark}</td><td>{u.where}</td></tr>)}</tbody>
+        </table>
+      </div>
+      <p class="mt-4 text-sm leading-5 text-fg-muted">Фон первого экрана, формы заявки, 404 и «Спасибо» (HeroBg) — размытые полосы из своего набора градиентов, отдельно для светлой и тёмной темы. В Figma они привязаны к переменным <code>bg/…</code> в той же коллекции Semantic.</p>
+    </section>
+
+    <!-- 6 -->
+    <section class="tk-sec" id="t6">
+      <h2 class="tk-h">Типографика</h2>
+      <p class="mt-2 max-w-[640px] text-sm leading-5 text-fg-muted">10 стилей, только Inter. Заголовки (Display, H1–H5) — вес 400, трекинг −2 %, без лигатур. Вес 500 — только у Label и Caption. Мобильный размер включается до 768 px; варианты <code>md:t-h5</code> работают.</p>
+      <div class="mt-6 grid gap-3">
+        {type.map((t) => (
+          <div class="grid gap-3 border-t border-stroke pt-4 md:grid-cols-[1fr_200px_1.2fr] md:items-baseline">
+            <p class:list={[t.cls, 'text-fg']}>{t.name} — Маркетинг в деньгах</p>
+            <p class="text-sm leading-5 text-fg-muted"><code>{t.cls}</code><br />{t.d}{t.m !== '—' && <> · телефон {t.m}</>} · {t.w}</p>
+            <p class="text-sm leading-5 text-fg-muted">{t.use}</p>
+          </div>
+        ))}
+      </div>
+      <ul class="tk-list mt-6">
+        <li>Не задавать размер шрифта в блоке напрямую (<code>text-[32px]</code>) — только класс стиля. Нужен новый размер — сначала договариваемся о новом стиле.</li>
+        <li>Цвет текста задаётся отдельно от стиля: <code>t-h4 text-fg</code>.</li>
+        <li>Заголовки блоков не переносятся вручную через <code>&lt;br&gt;</code> — ширину держит <code>max-w</code> и <code>text-balance</code>.</li>
+      </ul>
+    </section>
+
+    <!-- 7 -->
+    <section class="tk-sec" id="t7">
+      <h2 class="tk-h">Брейкпоинты</h2>
+      <p class="mt-2 max-w-[640px] text-sm leading-5 text-fg-muted">Стандартные брейкпоинты Tailwind. Вёрстка мобильная по умолчанию: без префикса — телефон, с префиксом — от этой ширины и шире.</p>
+      <div class="mt-6 overflow-x-auto">
+        <table class="tk-table min-w-[560px]">
+          <thead><tr><th>Ширина</th><th>Что это</th><th>Что меняется</th></tr></thead>
+          <tbody>{breakpoints.map((b) => <tr><td><code>{b.bp}</code></td><td>{b.name}</td><td>{b.what}</td></tr>)}</tbody>
+        </table>
+      </div>
+      <p class="mt-4 text-sm leading-5 text-fg-muted">Макеты в Figma — 1440 (контент 1200, поля 120) и 390 (поля 16).</p>
+    </section>
+
+    <!-- 8 -->
+    <section class="tk-sec" id="t8">
+      <h2 class="tk-h">Сетка и отступы</h2>
+      <ul class="tk-list mt-6">
+        <li><b>Контейнер</b> (<code>container-x</code>): до 1280 px, поля 16 / 24 (sm) / 40 (lg). В подвале контейнер на всю ширину, поля 24 / 32.</li>
+        <li><b>Секция</b> (<code>Section</code>): отступ 64 сверху и снизу на телефоне, 96 — от 768. Фон секции — на всю ширину, содержимое — в контейнере.</li>
+        <li><b>Главная раскладка</b> — две колонки <code>1fr / 1.4fr</code> с зазором 64, включается с 1024. Слева заголовок или фото, справа содержимое. До 1024 — одна колонка.</li>
+        <li><b>Заголовок блока</b> (<code>SectionHead</code>): «/ Раздел» → 8 → заголовок H1 (до 620) → 8 → лид. Справа «Все … ›». От заголовка до содержимого — 48.</li>
+        <li><b>Карточки</b> в сетке — зазор 12. Поля карточки 32 (телефон 24).</li>
+      </ul>
+      <div class="mt-8 grid gap-2">
+        {space.map((s) => <div class="flex items-center gap-4"><span class="w-8 text-right text-sm leading-5 text-fg-muted">{s}</span><span class="h-3 shrink-0 rounded-sm bg-brand/80" style={`width:${s * 3}px`}></span><span class="text-sm leading-5 text-fg-muted">{spaceUse[s] ?? ''}</span></div>)}
+      </div>
+    </section>
+
+    <!-- 9 -->
+    <section class="tk-sec" id="t9">
+      <h2 class="tk-h">Скругления</h2>
+      <div class="mt-6 grid grid-cols-2 gap-6 lg:grid-cols-4">
+        {radii.map((r) => <div><div class="h-20 border border-stroke bg-surface" style={`border-radius:${r.r}`}></div><p class="mt-3 t-label text-fg">{r.name}</p><p class="text-sm leading-5 text-fg-muted">{r.use}</p></div>)}
+      </div>
+      <p class="mt-4 text-sm leading-5 text-fg-muted">Вложенные элементы скругляются меньше родителя: карточка 16 → кнопка в ней 5. Отдельный случай — обложка книги (2 у корешка, 4 у края): это не токен, а часть рисунка книги.</p>
+    </section>
+
+    <!-- 10 -->
+    <section class="tk-sec" id="t10">
+      <h2 class="tk-h">Движение</h2>
+      <p class="mt-2 max-w-[640px] text-sm leading-5 text-fg-muted">Все анимации выключаются при «Уменьшить движение» в системе (<code>prefers-reduced-motion</code>) — тогда всё сразу в конечном состоянии.</p>
+      <div class="mt-6 overflow-x-auto">
+        <table class="tk-table min-w-[640px]">
+          <thead><tr><th>Что</th><th>Время и кривая</th><th>Где и как</th></tr></thead>
+          <tbody>{motion.map((m) => <tr><td>{m.name}</td><td><code>{m.v}</code></td><td>{m.where}</td></tr>)}</tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 11 -->
+    <section class="tk-sec" id="t11">
+      <h2 class="tk-h">Поведение</h2>
+      <ul class="tk-list mt-6">
+        <li><b>Кнопки при наведении не меняют цвет.</b> Перекатывается текст, поворачивается стрелка. Исключения: стрелки слайдера и фильтры — у них фон меняется на action.</li>
+        <li><b>Текстовые ссылки перекатываются</b> (Roll), цвет не меняется.</li>
+        <li><b>Телефон и почта</b> — без эффекта наведения.</li>
+        <li><b>Карточки-ссылки</b> (услуги, кейсы, статьи): при наведении меняется только стрелка ↗ (сдвиг и цвет brand), обложка статьи чуть приближается.</li>
+        <li><b>Неактивная кнопка</b> — прозрачность 30 %, стрелка не поворачивается. «Отправить» неактивна, пока не отмечено согласие.</li>
+        <li><b>Фокус с клавиатуры</b> — стандартная обводка браузера, не убирать.</li>
+        <li><b>Окна</b> закрываются крестиком, Esc и кликом по фону. Крестик — чёрная иконка 24 (fg) без плашки, зона нажатия 40×40; так же в мобильном меню. Мобильное меню блокирует прокрутку сайта.</li>
+      </ul>
+    </section>
+
+    <!-- 12 -->
+    <section class="tk-sec" id="t12">
+      <h2 class="tk-h">Тёмная тема</h2>
+      <ul class="tk-list mt-6">
+        <li><b>Как включается.</b> Сейчас — для просмотра, ссылкой <code>?theme=dark</code> (ставит <code>data-theme="dark"</code> на <code>&lt;html&gt;</code>, держится до закрытия вкладки). На боевом сайте — по настройке системы, тот же атрибут ставит скрипт по <code>prefers-color-scheme</code>.</li>
+        <li><b>Где значения.</b> Блок <code>html[data-theme="dark"]</code> в конце <code>global.css</code> и режим Dark в коллекции Semantic в Figma.</li>
+        <li><b>Кнопки и бейджи тональные</b>: плашка slate-800, текст cyan-300 (контраст 7.6). Акценты тоже голубые — двух разных синих на странице нет.</li>
+        <li><b>Фон первого экрана</b> — ночная версия тех же полос. Блик пробегает по буквам «burkov/» белым, шарик — голубым, одной анимацией.</li>
+        <li><b>Что не меняется</b>: фото, обложки кейсов, затемнение под окнами. Карта инвертируется фильтром.</li>
+      </ul>
+    </section>
+
+    <!-- 13 -->
+    <section class="tk-sec" id="t13">
+      <h2 class="tk-h">Как добавить токен</h2>
+      <ol class="tk-list mt-6">
+        <li>Проверить, что ни одна роль не подходит. Чаще всего подходит — новая роль нужна, только если цвет должен вести себя иначе в тёмной теме.</li>
+        <li><code>global.css</code>: значение в <code>:root</code>, значение для тёмной темы в <code>html[data-theme="dark"]</code>, строка <code>--color-имя: var(--имя)</code> в <code>@theme</code> — тогда появятся классы <code>text-имя / bg-имя</code>.</li>
+        <li>Figma: переменная в Semantic с обоими режимами, ссылкой на примитив, ограничением области (scopes) и кодом <code>var(--имя)</code>.</li>
+        <li>Добавить роль сюда и в кит (<code>/kit/</code>).</li>
+      </ol>
+    </section>
+  </div>
+</Base>
+
+<style>
+  .tk-sec { margin-top: 96px; scroll-margin-top: 96px; }
+  .tk-h { font-family: var(--font-display); font-weight: 400; font-size: 32px; line-height: 40px; letter-spacing: -0.02em; color: var(--fg); font-variant-ligatures: none; padding-top: 24px; border-top: 1px solid var(--stroke); }
+  .tk-list { display: grid; gap: 12px; max-width: 760px; font-size: 16px; line-height: 24px; color: var(--fg); list-style: none; padding: 0; }
+  ol.tk-list { counter-reset: n; }
+  ol.tk-list > li { counter-increment: n; display: grid; grid-template-columns: 32px 1fr; }
+  ol.tk-list > li::before { content: '/ ' counter(n, decimal-leading-zero); color: var(--fg-muted); font-size: 14px; }
+  ul.tk-list > li { padding-left: 20px; position: relative; }
+  ul.tk-list > li::before { content: '/'; position: absolute; left: 0; color: var(--brand); font-weight: 800; }
+  .tk-list b { font-weight: 500; }
+  .tk code, .tk-table code { font-family: ui-monospace, 'JetBrains Mono', monospace; font-size: .875em; color: var(--fg); background: var(--stroke); border-radius: 4px; padding: 1px 4px; white-space: nowrap; }
+  .tk-k { display: inline-block; min-width: 80px; margin-right: 8px; font-size: 14px; line-height: 20px; color: var(--fg-muted); }
+  .tk-sw { display: grid; place-items: end start; width: 64px; height: 64px; padding: 6px 8px; border-radius: 12px; box-shadow: inset 0 0 0 1px rgb(0 0 0 / .06); font-size: 11px; line-height: 1; }
+  /* подпись образца читается на любом цвете */
+  .tk-sw-l { color: #fff; mix-blend-mode: difference; opacity: .6; }
+  .tk-table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; line-height: 20px; color: var(--fg); }
+  .tk-table th { font-weight: 500; color: var(--fg-muted); padding: 12px 16px 12px 0; border-bottom: 1px solid var(--stroke); }
+  .tk-table td { padding: 12px 16px 12px 0; border-bottom: 1px solid var(--stroke); vertical-align: top; }
+  .tk-bad { color: #d4380d; font-weight: 500; }
+</style>

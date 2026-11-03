@@ -108,8 +108,8 @@
   --fg-muted: #878787;   /* gray-500 · вторичный текст, подписи, «/ Раздел», иконки */
   --fg-inverse: #ffffff; /* white · белый текст поверх фото и затемнения */
   --on-action: #ffffff;  /* white · текст и иконка на кнопке */
-  --brand-bg: var(--brand); /* blue-500 · фон бейджей и кружков с галочкой */
-  --on-brand: #ffffff;   /* white · текст и галочка на brand-bg */
+  --brand-bg: #ceebfd;   /* blue-100 · фон бейджей и кружков с галочкой — светлая тональная плашка (как тёмная в тёмной теме) */
+  --on-brand: var(--brand); /* blue-500 · текст и галочка на brand-bg */
   --stroke: #ececea;     /* gray-200 · линии, разделители, светлая кнопка, стрелки слайдера */
   --surface: #fafaf9;    /* gray-50 · плашки, карточки, заглушки */
   --page: #ffffff;       /* white · фон страницы */
@@ -119,7 +119,7 @@
   --glass-strong: rgb(255 255 255 / .7);
   --glass-soft: rgb(255 255 255 / .25);
   --hairline: rgb(44 44 44 / .06);
-  --outline: rgb(12 13 15 / .3);
+  --outline: var(--fg);
 }
 :root { --display-font: 'Inter Tight', 'Inter', ui-sans-serif, system-ui, sans-serif; }
 
@@ -276,7 +276,7 @@ html[data-theme="dark"] {
   --glass-strong: rgb(24 25 27 / .7);
   --glass-soft: rgb(12 13 15 / .35);
   --hairline: rgb(255 255 255 / .08);
-  --outline: rgb(236 236 234 / .3);
+  --outline: var(--fg);
 }
 html[data-theme="dark"][data-style="a"], html[data-theme="dark"][data-style="a"] .dark {
   color-scheme: dark;
@@ -297,4 +297,8 @@ html[data-theme="dark"] .pc-bg-0, html[data-theme="dark"] .post-cover { backgrou
 html[data-theme="dark"] .pc-bg-1, html[data-theme="dark"] .post-cover-2 { background: radial-gradient(70% 80% at 25% 75%, color-mix(in oklab, var(--brand) 20%, transparent), transparent 70%), var(--surface); }
 html[data-theme="dark"] .pc-bg-2 { background: radial-gradient(90% 90% at 50% 0%, #22303f, transparent 70%), var(--surface); }
 /* карта — инверсия серой подложки */
+/* первый экран главной: кнопка белая с тёмным текстом — на тёмном фоне hero тональная кнопка теряется */
+html[data-theme="dark"] .hero-a-inner { --action: #ffffff; --on-action: #212b37; }
+/* кнопки шапки — тоже белые, пока шапка над первым экраном; дальше обычные (цвет меняется плавно, transition в HeaderA) */
+html[data-theme="dark"] [data-ha][data-on-hero]:not([data-mob]) .ha-btn { --action: #ffffff; --on-action: #212b37; }
 html[data-theme="dark"] img[src*="/geo/map"] { filter: grayscale(1) invert(1) contrast(.85); opacity: .5; }

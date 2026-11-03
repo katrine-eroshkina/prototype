@@ -51,8 +51,8 @@ const roles = [
   { name: 'surface', ref: 'gray-50', css: 'var(--surface)', role: 'Плашки, карточки, заглушки' },
   { name: 'page', ref: 'white', css: 'var(--page)', role: 'Фон страницы' },
   { name: 'brand', ref: 'blue-500', css: 'var(--brand)', role: 'Акцент: слэш, курсор, подчёркивания, линии схем, стрелки при наведении' },
-  { name: 'brand-bg', ref: 'blue-500', css: 'var(--brand-bg)', role: 'Фон бейджей и кружков с галочкой' },
-  { name: 'on-brand', ref: 'white', css: 'var(--on-brand)', role: 'Текст и галочка на brand-bg' },
+  { name: 'brand-bg', ref: 'blue-100', css: 'var(--brand-bg)', role: 'Фон бейджей и кружков с галочкой' },
+  { name: 'on-brand', ref: 'blue-500', css: 'var(--on-brand)', role: 'Текст и галочка на brand-bg' },
 ];
 
 /** Текстовые стили. d — десктоп, m — телефон (если отличается). Все — Inter. */
@@ -84,7 +84,7 @@ const c0 = listCases[0];
   <div class="kit pb-24 pt-10 md:pt-14">
     <Eyebrow>UI-кит · версия А</Eyebrow>
     <h1 class="t-h1 mt-2 text-fg">Токены и компоненты</h1>
-    <p class="mt-2 max-w-[620px] text-base leading-6 text-fg-muted">Эталон для Figma: имена цветов, стилей и компонентов здесь совпадают с Figma. Все примеры — настоящие компоненты сайта.</p>
+    <p class="mt-2 max-w-[620px] text-base leading-6 text-fg-muted">Эталон для Figma: имена цветов, стилей и компонентов здесь совпадают с Figma. Все примеры — настоящие компоненты сайта. Подробно, что для чего и почему, — на страницах <a class="text-fg underline underline-offset-4" href="../tokens/">Токены</a> и <a class="text-fg underline underline-offset-4" href="../blocks/">Блоки</a>.</p>
     <nav class="mt-8 flex flex-wrap gap-1" aria-label="Разделы кита">
       {['Цвета', 'Типографика', 'Сетка и отступы', 'Скругления', 'Иконки', 'Кнопки', 'Ссылки', 'Бейджи и подписи', 'Форма', 'Аккордеон', 'Заголовок блока', 'Карточки'].map((t, i) => <a class="flex h-8 items-center rounded-md bg-surface px-3 text-sm font-medium text-fg" href={`#k${i + 1}`}><Roll>{t}</Roll></a>)}
     </nav>
@@ -194,8 +194,8 @@ const c0 = listCases[0];
       <p class="mt-2 text-sm leading-5 text-fg-muted">Высота 40, скругление 5, текст 14 medium, плашки через зазор 2. При наведении цвет не меняется: текст перекатывается, стрелка поворачивается на 45°, у «скачать» стрелка опускается. Наведите, чтобы посмотреть.</p>
       <div class="mt-6 grid gap-8 md:grid-cols-2">
         <div class="k-row"><Btn href="#k6">Обсудить задачу</Btn><span class="k-cap">Btn · dark (основная)</span></div>
-        <div class="k-row"><Btn href="#k6" variant="light">Смотреть кейсы</Btn><span class="k-cap">Btn · light</span></div>
-        <div class="k-row"><Btn href="#k6" variant="outline">Показать ещё</Btn><span class="k-cap">Btn · outline (вторичная, без иконки)</span></div>
+        <div class="k-row"><Btn href="#k6" variant="outline">Показать ещё</Btn><span class="k-cap">Btn · outline (единственная вторичная)</span></div>
+        <div class="k-row"><Btn href="#k6" variant="outline"><svg class="mr-2 inline size-4 align-[-3px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>+7 XXX XXX-XX-XX</Btn><span class="k-cap">Btn · outline с иконкой перед текстом (телефон в мобильном меню)</span></div>
         <div class="k-row"><Btn href="#k6" noIcon>Показать ещё</Btn><span class="k-cap">Btn · dark без иконки</span></div>
         <div class="k-row"><Btn href="#k6" icon="download">Скачать презентацию</Btn><span class="k-cap">Btn · иконка «скачать»</span></div>
         <div class="k-row"><Btn as="button" disabled>Отправить</Btn><span class="k-cap">Btn · неактивная (30 %)</span></div>
