@@ -299,6 +299,8 @@ html[data-theme="dark"] .pc-bg-2 { background: radial-gradient(90% 90% at 50% 0%
 /* карта — инверсия серой подложки */
 /* первый экран главной: кнопка белая с тёмным текстом — на тёмном фоне hero тональная кнопка теряется */
 html[data-theme="dark"] .hero-a-inner { --action: #ffffff; --on-action: #212b37; }
+/* подпись «/ Консалтинг и Digital услуги» на первом экране — белая (fg-inverse), слэш остаётся цвета бренда */
+html[data-theme="dark"] .hero-a-inner > p:first-child { color: var(--fg-inverse); }
 /* кнопки шапки — тоже белые, пока шапка над первым экраном; дальше обычные (цвет меняется плавно, transition в HeaderA) */
 html[data-theme="dark"] [data-ha][data-on-hero]:not([data-mob]) .ha-btn { --action: #ffffff; --on-action: #212b37; }
 html[data-theme="dark"] img[src*="/geo/map"] { filter: grayscale(1) invert(1) contrast(.85); opacity: .5; }

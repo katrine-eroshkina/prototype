@@ -2,7 +2,7 @@
 /**
  * А · hero:main — по макету в Figma (файл EQKIauZQ0T9oU9YligoxlV, узел 226:1206).
  * Ровно один экран (шапка плавает поверх), содержимое — по центру экрана:
- * подпись «/ Консалтинг и Digital услуги» (синий слэш, как в логотипе) → заголовок 64/64 → 16px → описание → 32px → кнопка.
+ * подпись «/ Консалтинг и Digital услуги» (синий слэш, как в логотипе) → 8px → заголовок 64/64 → 16px → описание → 32px → кнопка.
  * В тёмной теме кнопка здесь белая с тёмным текстом (см. .hero-a-inner в global.css), чтобы не терялась на тёмном фоне.
  * Фон — как у Router: размытые полосы, зерно, огромное размытое «burkov/» с аурой и переливом (HeroBg).
  */
@@ -17,7 +17,7 @@ import { homeHero } from '@/data/content';
 
   <div class="hero-a-inner relative flex flex-col items-center text-center">
     <Eyebrow>Консалтинг и Digital услуги</Eyebrow>
-    <h1 class="hero-h1 t-display max-w-[656px] text-balance">{homeHero.title}</h1>
+    <h1 class="hero-h1 t-display mt-2 max-w-[656px] text-balance">{homeHero.title}</h1>
     <p class="mt-4 max-w-[512px] t-body text-fg/80">{homeHero.lead.replace(/\.$/, '')}</p>
     <Btn class="mt-8" href="#cta-form" data-lead="">{homeHero.primary}</Btn>
   </div>
