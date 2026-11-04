@@ -97,7 +97,7 @@ const book = {
     background: linear-gradient(90deg, rgb(0 0 0 / .28) 0, rgb(255 255 255 / .18) 3%, transparent 7%, transparent 92%, rgb(0 0 0 / .12)); }
   /* срез страниц справа */
   .bk-pages { position: absolute; top: 2px; bottom: 2px; right: 0; width: var(--t);
-    transform-origin: right center; transform: translateX(calc(var(--t) / 2)) rotateY(90deg);
+    transform-origin: center; transform: translateX(calc(var(--t) / 2)) rotateY(90deg); /* поворот вокруг своей середины: срез встаёт ровно к краю обложки, от её лицевой стороны до задней */
     background: repeating-linear-gradient(90deg, #f3f2ee 0 1px, #dcdad3 1px 2px); }
   /* заглушка обложки — в цветах бренда */
   .bk-ph { display: flex; flex-direction: column; justify-content: space-between; padding: 10%; overflow: hidden;
