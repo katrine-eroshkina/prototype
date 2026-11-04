@@ -2,8 +2,8 @@
 /**
  * А · первый экран «заголовок + цифры» — общий для услуги (hero:form), кейса (hero:case) и «О компании» (hero:about).
  * Сетка как у блоков главной (1fr / 1.4fr). Слева крошки, [синяя метка], заголовок 48/56, [текст серым], [список «Подойдёт, если»], [кнопка];
- * справа факты светло-серыми карточками 2×2 (подпись серым, значение 24/32 шрифтом заголовков), по центру высоты левой части.
- * У кейса ниже — широкая обложка 21:9.
+ * справа факты светло-серыми карточками 2×2 (на телефоне — в одну колонку) (подпись серым, значение 24/32 шрифтом заголовков), по центру высоты левой части.
+ * У кейса ниже — широкая обложка 21:9 (на телефоне 4:3, через 32px).
  *  услуга — список «Подойдёт, если» и «Получить расчёт» (ведёт на форму внизу), факты из состава работ;
  *  кейс — метка услуги, итог серым, паспорт проекта, обложка;
  *  «О компании» — текст, «Скачать презентацию» с иконкой «скачать», цифры компании (заглушки до данных от заказчика).
@@ -65,7 +65,7 @@ if (id === 'hero:case') {
       {h.list && <Problems {ctx} class="mt-8" />}
       {h.btn && <Btn class="mt-8" href={h.btn.href} icon={h.btn.download ? 'download' : 'arrow'} download={h.btn.download} data-lead={h.btn.lead ? '' : undefined}>{h.btn.label}</Btn>}
     </div>
-    <dl class="grid grid-cols-2 gap-1 self-center">
+    <dl class="grid gap-1 self-center md:grid-cols-2">
       {h.facts.map((f) => (
         <div class="rounded-2xl bg-surface p-5 md:p-6">
           <dt class="text-sm leading-5 text-fg-muted">{f.l}</dt>
@@ -75,7 +75,7 @@ if (id === 'hero:case') {
     </dl>
   </div>
   {h.cover && (
-    <div class="mt-12 aspect-[21/9] overflow-hidden rounded-2xl bg-surface">
+    <div class="mt-8 aspect-[4/3] overflow-hidden rounded-2xl bg-surface md:mt-12 md:aspect-[21/9]">
       <img class="size-full object-cover" src={h.cover} style="object-position:76% 50%" alt="" />
     </div>
   )}

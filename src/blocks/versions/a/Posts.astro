@@ -22,7 +22,7 @@ const others = related ? posts.filter((p) => p.slug !== related).slice(0, 3) : [
 {related ? (
   <Section id="cases" variant="posts">
     <SectionHead eyebrow="Блог" link={{ href: '/blog/', label: 'Все статьи' }}>Читайте также</SectionHead>
-    <div class="mt-12 grid gap-x-3 gap-y-10 md:grid-cols-2 lg:grid-cols-3">
+    <div class="mt-10 md:mt-12 grid gap-x-3 gap-y-10 md:grid-cols-2 lg:grid-cols-3">
       {others.map((p, i) => <PostCard href={href(p.slug)} title={p.t} rubric={p.r} {i} />)}
     </div>
   </Section>
@@ -37,7 +37,7 @@ const others = related ? posts.filter((p) => p.slug !== related).slice(0, 3) : [
       <span class="text-sm leading-5 text-fg-muted"><span data-post-count>{posts.length}</span> статей</span>
     </div>
     <div class="mt-8" data-post-first><PostCard href={href(first.slug)} title={first.t} rubric={first.r} wide /></div>
-    <div class="mt-12 grid gap-x-3 gap-y-10 md:grid-cols-2 lg:grid-cols-3" data-post-grid>
+    <div class="mt-10 md:mt-12 grid gap-x-3 gap-y-10 md:grid-cols-2 lg:grid-cols-3" data-post-grid>
       {rest.map((p, i) => <PostCard href={href(p.slug)} title={p.t} rubric={p.r} i={i + 1} />)}
     </div>
     <div class="mt-12 flex justify-center">

@@ -2,7 +2,11 @@
 /**
  * А · заголовок блока — по макету блока услуг в Figma (и системе Primefold):
  * мини-заголовок «/ Название» 16/24 (Eyebrow) → 8px → заголовок 48/56 обычным начертанием, ширина до 620px (длинный уходит в 2 строки)
- * → 8px → описание 16/24 серым, по необходимости (проп lead или слот lead). Справа — ссылка-переход по центру заголовка: чёрная, при наведении текст перекатывается (.roll).
+ * → 8px → описание 16/24 серым, по необходимости (проп lead или слот lead).
+ * Ссылка-переход (чёрная, при наведении текст перекатывается):
+ *  — телефон: всегда последней строкой — под заголовком, а если есть описание, то под описанием (16px);
+ *  — от 768px: справа; без описания — по центру заголовка, с описанием — по нижней строке описания,
+ *    так что описание может быть любой длины, ссылка всегда закрывает шапку блока.
  * Заголовок — в слоте, одним цветом.
  */
 import { url } from '@/lib/url';
@@ -14,10 +18,11 @@ const hasLead = !!lead || Astro.slots.has('lead');
 ---
 <div class:list={[center && 'text-center', className]}>
   {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
-  <div class:list={['flex flex-wrap items-center gap-x-6 gap-y-4', eyebrow && 'mt-2', center ? 'justify-center' : 'justify-between']}>
-    <h2 class:list={['t-h1 max-w-[620px] text-balance text-fg', center && 'mx-auto']}><slot /></h2>
-    {link && <MoreLink href={url(link.href)}>{link.label}</MoreLink>}
+  <div class:list={['flex flex-col gap-4', eyebrow && 'mt-2', center ? 'items-center' : ['items-start md:flex-row md:justify-between md:gap-6', hasLead ? 'md:items-end' : 'md:items-center']]}>
+    <div class:list={['min-w-0', center && 'mx-auto']}>
+      <h2 class:list={['t-h1 max-w-[620px] text-balance text-fg', center && 'mx-auto']}><slot /></h2>
+      {hasLead && <p class:list={['mt-2 max-w-[620px] text-base leading-6 text-fg-muted', center && 'mx-auto']}>{lead}<slot name="lead" /></p>}
+    </div>
+    {link && <MoreLink class="shrink-0" href={url(link.href)}>{link.label}</MoreLink>}
   </div>
-  {hasLead && <p class:list={['mt-2 max-w-[620px] text-base leading-6 text-fg-muted', center && 'mx-auto']}>{lead}<slot name="lead" /></p>}
 </div>
-

@@ -18,7 +18,7 @@ const monthly = ctx.direction === 'digital';
 ---
 <Section id="services" variant="children">
   <SectionHead eyebrow="Услуги">Что входит в направление</SectionHead>
-  <div class="mt-12 grid auto-rows-fr gap-3 md:grid-cols-2 xl:grid-cols-3">
+  <div class="mt-10 md:mt-12 grid auto-rows-fr gap-3 md:grid-cols-2 xl:grid-cols-3">
     {cards.map((s) => {
       const Tag = s.href ? 'a' : 'div';
       return (

@@ -11,7 +11,7 @@ interface Props { ctx: PageCtx }
 ---
 <Section id="process" variant="history">
   <SectionHead eyebrow="История">Как мы росли</SectionHead>
-  <ol class="relative mt-12 grid gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
+  <ol class="relative mt-10 md:mt-12 grid gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8">
     <span class="absolute inset-x-0 top-[5px] hidden h-px bg-stroke lg:block" aria-hidden="true"></span>
     {history.map((h, i) => (
       <li class="relative">

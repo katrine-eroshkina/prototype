@@ -21,7 +21,7 @@ const items = isCase
   <SectionHead eyebrow="Результаты" lead="Что изменилось для бизнеса: какие действия дали эффект и как это отразилось на выручке">
     {ctx.kind === 'service' ? 'Пример результата' : 'Результаты'}
   </SectionHead>
-  <div class:list={['mt-12 grid gap-3', isCase ? 'sm:grid-cols-2 lg:grid-cols-4' : 'md:grid-cols-3']}>
+  <div class:list={['mt-10 md:mt-12 grid gap-3', isCase ? 'sm:grid-cols-2 lg:grid-cols-4' : 'md:grid-cols-3']}>
     {items.map((m) => (
       <div class="flex flex-col rounded-2xl bg-surface p-6 md:p-8">
         <p class="text-sm leading-5 text-fg-muted">{m.label}</p>

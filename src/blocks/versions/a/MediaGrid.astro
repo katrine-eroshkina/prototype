@@ -36,7 +36,7 @@ const link = docs || ctx?.kind === 'about' ? undefined : { href: '/o-kompanii/',
   <SectionHead eyebrow={docs ? 'Документы' : 'Команда'} {link}>
     {docs ? 'Награды и сертификаты' : 'Команда, которая ведёт ваш проект'}
   </SectionHead>
-  <div class="mt-12 grid grid-cols-2 gap-4 lg:grid-cols-4">
+  <div class="mt-10 md:mt-12 grid grid-cols-2 gap-4 lg:grid-cols-4">
     {items.map((m) => (
       <div>
         {m.img

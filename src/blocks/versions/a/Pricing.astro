@@ -34,7 +34,7 @@ const split = (p: string) => { const [v, per] = p.split('/'); return { v: v.trim
       ) : (
         <SectionHead eyebrow="Цены">{set.title}</SectionHead>
       )}
-      <ul class="mt-12 grid gap-3 lg:grid-cols-3">
+      <ul class="mt-10 md:mt-12 grid gap-3 lg:grid-cols-3">
         {set.list.map((t) => {
           const pr = split(t.price);
           return (

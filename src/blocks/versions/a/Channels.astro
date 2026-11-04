@@ -27,7 +27,7 @@ const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 <Section id="table" variant="compare">
   <SectionHead eyebrow="Сравнение">Сравните пакеты</SectionHead>
   <!-- pt-3: место над таблицей, чтобы бейдж на верхней границе колонки не обрезался прокруткой -->
-  <div class="mt-9 overflow-x-auto pt-3">
+  <div class="mt-7 overflow-x-auto pt-3 md:mt-9">
     <table class="w-full min-w-[720px] table-fixed text-left">
       <thead>
         <tr class="border-y border-stroke">
@@ -68,7 +68,7 @@ const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
   <SectionHead eyebrow="Сравнение" lead={isPrices ? 'Цена зависит от канала: как быстро приходят заявки и как меняется их стоимость' : undefined}>
     {isPrices ? 'От чего зависит цена' : 'Какой канал выбрать'}
   </SectionHead>
-  <div class="mt-12 overflow-x-auto">
+  <div class="mt-10 md:mt-12 overflow-x-auto">
     <table class="w-full min-w-[720px] table-fixed text-left">
       <thead>
         <tr class="border-y border-stroke">

@@ -18,7 +18,7 @@ const rf = data.reframe;
 <Section id="cards" variant="includes">
   <SectionHead eyebrow="Состав работ" lead="Состав фиксируем в договоре — без «по ситуации»">Что входит в работу</SectionHead>
 
-  <div class="mt-12 grid auto-rows-fr gap-3 sm:grid-cols-2 lg:grid-cols-3">
+  <div class="mt-10 md:mt-12 grid auto-rows-fr gap-3 sm:grid-cols-2 lg:grid-cols-3">
     {data.groups.map((g, i) => (
       <div class="rounded-2xl bg-surface p-6 md:p-8">
         <h3 class="t-h4 text-fg">{g.t}</h3>
@@ -37,7 +37,7 @@ const rf = data.reframe;
      слева «Сейчас» — зачёркнутые проблемы серым, справа подсвеченная колонка — наш результат; стрелка на стыке колонок. -->
 <Section id="cards" variant="deliverables">
   <SectionHead eyebrow="Результат" lead={rf.lead}>{rf.title}</SectionHead>
-  <div class="mt-12 border-y border-stroke">
+  <div class="mt-10 md:mt-12 border-y border-stroke">
     <!-- шапка колонок -->
     <div class="relative grid md:grid-cols-2">
       <div class="flex items-center gap-3 py-5 pr-6 text-sm leading-5 text-fg-muted"><span class="grid size-5 place-items-center rounded-full bg-stroke" aria-hidden="true"><Minus size={12} strokeWidth={3} /></span>Сейчас</div>

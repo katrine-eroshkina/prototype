@@ -50,7 +50,7 @@ const filters = ['Все', ...new Set(listCases.map((c) => c.tag))];
     <SectionHead eyebrow="Кейсы" link={{ href: '/keisy/', label: ctx.kind === 'case' ? 'Больше кейсов' : 'Все кейсы' }}>
       {ctx.kind === 'case' ? 'Подобрали для вас' : 'Результаты в цифрах'}
     </SectionHead>
-    <div class="mt-12 grid gap-x-3 gap-y-10 md:grid-cols-2 lg:grid-cols-3">
+    <div class="mt-10 md:mt-12 grid gap-x-3 gap-y-10 md:grid-cols-2 lg:grid-cols-3">
       {sampleCases.map((c, i) => (
         <CaseCard href={href(i)} tag={c.tag} from={c.from} to={c.to} unit={c.unit} caption={`${c.title} за ${c.period}`} cover={covers[i]} />
       ))}
